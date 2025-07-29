@@ -74,8 +74,6 @@
                 height:300,
                 plugins:'preview code lists',
                 toolbar:'undo redo | bold italic underline | numlist bullist | code preview',
-                menubar: false,
-                branding: false,
                 setup(editor){
                     templateEditor = editor;
                     editor.on('init', ()=> {
@@ -90,8 +88,6 @@
                 height:220,
                 plugins:'code lists',
                 toolbar:'undo redo | bold italic underline | numlist bullist | code',
-                menubar: false,
-                branding: false,
                 setup(e){
                     customEditor = e;
                     e.on('init', ()=> {
