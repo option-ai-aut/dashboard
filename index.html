@@ -1125,6 +1125,13 @@
                         document.getElementById('proposalDashboard').style.display = 'block';
                     }
                     
+                    // Fill client data in sidebar
+                    if (data.client) {
+                        document.getElementById('clientName').textContent = data.client['Full Name'] || '-';
+                        document.getElementById('clientLocation').textContent = data.client['Location'] || '-';
+                        document.getElementById('createdDate').textContent = new Date().toLocaleDateString('de-DE');
+                    }
+                    
                     // Track proposal view
                     setTimeout(() => trackProposalView(code), 1000);
                     
