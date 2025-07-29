@@ -791,6 +791,10 @@
             
             <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e9ecef;">
                 <a href="/login.html" id="loginBtn" class="btn btn-secondary" style="text-decoration: none;">Login</a>
+                <button id="signupBtn"
+                        class="bg-gray-200 hover:bg-gray-300 text-sm px-4 py-2 rounded">
+                    Sign&nbsp;up
+                </button>
             </div>
         </div>
     </div>
@@ -1592,6 +1596,10 @@
         document.getElementById('loginBtn').addEventListener('click', (e) => {
             e.preventDefault();
             netlifyIdentity.open();
+        });
+
+        document.getElementById('signupBtn').addEventListener('click', () => {
+            netlifyIdentity.open('signup');      // zeigt Registrier‑Tab
         });
 
         // Redirect‑Logik nach Login
