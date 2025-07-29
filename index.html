@@ -790,7 +790,7 @@
             </div>
             
             <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e9ecef;">
-                <a href="/login.html" class="btn btn-secondary" style="text-decoration: none;">Login</a>
+                <a href="/login.html" id="loginBtn" class="btn btn-secondary" style="text-decoration: none;">Login</a>
             </div>
         </div>
     </div>
@@ -1577,6 +1577,38 @@
                 console.error('Error in trackProposalSignature:', error);
             }
         }
+    </script>
+
+    <!-- Netlify Identity Widget -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+        // Initialisierung: Identity‑Service auf Netlify‑Domain fest verdrahten
+        netlifyIdentity.init({
+            APIUrl: "https://option-ai-at.netlify.app/.netlify/identity",
+            allow_signup: true       // nur für Testphase
+        });
+
+        // Login‑Button ansteuern
+        document.getElementById('loginBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            netlifyIdentity.open();
+        });
+
+        // Redirect‑Logik nach Login
+        netlifyIdentity.on('login', user => {
+            const roles = user.app_metadata.roles || [];
+            if (roles.includes('admin')) {
+                window.location = '/admin/';
+            } else if (roles.includes('customer')) {
+                const code = user.user_metadata.proposal_code;
+                window.location = `/dashboard.html?code=${code}`;
+            } else {
+                alert('Keine Rolle zugeordnet – bitte Support kontaktieren.');
+                netlifyIdentity.logout();
+            }
+        });
+
+        netlifyIdentity.on('logout', () => window.location = '/');
     </script>
 </body>
 </html>
