@@ -1120,20 +1120,30 @@
                         const clientLocationEl = document.getElementById('clientLocation');
                         const createdDateEl = document.getElementById('createdDate');
                         
-                        if (clientNameEl) clientNameEl.textContent = data.client['Full Name'] || '-';
-                        if (clientLocationEl) clientLocationEl.textContent = data.client['Location'] || '-';
-                        if (createdDateEl) createdDateEl.textContent = new Date().toLocaleDateString('de-DE');
+                        if (clientNameEl) clientNameEl.textContent = data.client['Full Name'] || data.client['Lead Name'] || '-';
+                        if (clientLocationEl) clientLocationEl.textContent = `${data.client['Company'] || ''} ${data.client['Country'] ? '(' + data.client['Country'] + ')' : ''}`.trim() || '-';
+                        if (createdDateEl) {
+                            const createdDate = data.client['createdTime'] ? new Date(data.client['createdTime']).toLocaleDateString('de-DE') : new Date().toLocaleDateString('de-DE');
+                            createdDateEl.textContent = createdDate;
+                        }
+                        
+                        console.log('Client data filled:', {
+                            name: data.client['Full Name'] || data.client['Lead Name'],
+                            company: data.client['Company'],
+                            country: data.client['Country'],
+                            created: data.client['createdTime']
+                        });
                     }
+                    
+                    // Show proposal dashboard first
+                    document.getElementById('codeEntryScreen').style.display = 'none';
+                    document.getElementById('proposalDashboard').style.display = 'block';
                     
                     // Replace proposal content with combined HTML
                     const proposalContentElement = document.getElementById('proposal-content');
                     if (proposalContentElement && html) {
                         proposalContentElement.outerHTML = html;
                         console.log('Proposal content replaced with template + custom HTML');
-                    } else {
-                        // Fallback: show proposal dashboard with default content
-                        document.getElementById('codeEntryScreen').style.display = 'none';
-                        document.getElementById('proposalDashboard').style.display = 'block';
                     }
                     
                     // Track proposal view
