@@ -1114,6 +1114,17 @@
                         html += data.client.custom_html;
                     }
                     
+                    // Fill client data in sidebar BEFORE replacing content
+                    if (data.client) {
+                        const clientNameEl = document.getElementById('clientName');
+                        const clientLocationEl = document.getElementById('clientLocation');
+                        const createdDateEl = document.getElementById('createdDate');
+                        
+                        if (clientNameEl) clientNameEl.textContent = data.client['Full Name'] || '-';
+                        if (clientLocationEl) clientLocationEl.textContent = data.client['Location'] || '-';
+                        if (createdDateEl) createdDateEl.textContent = new Date().toLocaleDateString('de-DE');
+                    }
+                    
                     // Replace proposal content with combined HTML
                     const proposalContentElement = document.getElementById('proposal-content');
                     if (proposalContentElement && html) {
@@ -1123,13 +1134,6 @@
                         // Fallback: show proposal dashboard with default content
                         document.getElementById('codeEntryScreen').style.display = 'none';
                         document.getElementById('proposalDashboard').style.display = 'block';
-                    }
-                    
-                    // Fill client data in sidebar
-                    if (data.client) {
-                        document.getElementById('clientName').textContent = data.client['Full Name'] || '-';
-                        document.getElementById('clientLocation').textContent = data.client['Location'] || '-';
-                        document.getElementById('createdDate').textContent = new Date().toLocaleDateString('de-DE');
                     }
                     
                     // Track proposal view
