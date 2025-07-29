@@ -103,23 +103,29 @@
             });
         }
         
-        fetch(`https://optionai.optionai.at/webhook/admin/load-client?code=${code}`)
-            .then(r=>r.json())
-            .then(data => {
-                const first = Array.isArray(data) ? data[0] : data;
-                window.clientData = first;
-                
-                // Initialize TinyMCE editors with loaded data
-                initializeEditorsWithData();
-                
-                // Set content after editors are ready
-                setTimeout(() => {
-                    tinymce.get('templateEditor').setContent(first.template.HTML || '');
-                    tinymce.get('customEditor').setContent(first.client.custom_html || '');
-                }, 500);
-                
-                document.getElementById('statusSelect').value = first.client.Status || 'draft';
-            });
+        fetch('https://optionai.optionai.at/webhook/admin/load-client',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ proposal_code: code })
+        })
+        .then(r=>r.json())
+        .then(data=>{
+            const first = Array.isArray(data) ? data[0] : data;
+            if(!first){ alert('Kein Datensatz gefunden'); return; }
+
+            window.clientData = first;
+            
+            // Initialize TinyMCE editors with loaded data
+            initializeEditorsWithData();
+            
+            // Set content after editors are ready
+            setTimeout(() => {
+                tinymce.get('templateEditor').setContent(first.template.HTML || '');
+                tinymce.get('customEditor').setContent(first.client["Custom HTML"] || '');
+            }, 500);
+            
+            document.getElementById('statusSelect').value = first.client.Status || 'draft';
+        });
         
         document.getElementById('editBtn').onclick = () => {
             console.log('Bearbeiten-Button geklickt');
@@ -132,8 +138,8 @@
             }
             
             const body = JSON.stringify({
-                template_id: window.clientData.template.id,
-                html: templateEditor.getContent()
+                template_id: clientData.template.id,
+                html: tinymce.get('templateEditor').getContent()
             });
             await fetch('https://optionai.optionai.at/webhook/admin/save-template',{
                 method:'POST',
@@ -154,8 +160,9 @@
                 method:'POST',
                 headers:{'Content-Type':'application/json'},
                 body: JSON.stringify({
-                    proposal_code: window.clientData.client["Proposal Code"],
-                    custom_html: customEditor.getContent()
+                    proposal_code: clientData.client["Proposal Code"],
+                    custom_html: tinymce.get('customEditor').getContent(),
+                    status: document.getElementById('statusSelect').value
                 })
             });
             showToast('Custom gespeichert ✅');
@@ -168,7 +175,7 @@
                 method:'POST',
                 headers:{'Content-Type':'application/json'},
                 body: JSON.stringify({
-                    proposal_code: window.clientData.client["Proposal Code"],
+                    proposal_code: clientData.client["Proposal Code"],
                     status
                 })
             });
