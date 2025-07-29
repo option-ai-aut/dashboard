@@ -390,11 +390,7 @@
         });
 
         /** 2. Danach Daten laden **************************************/
-        fetch('https://optionai.optionai.at/webhook/admin/load-client', {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ proposal_code: code })
-        })
+        fetch(`https://optionai.optionai.at/webhook/admin/load-client?proposal_code=${code}`)
         .then(r=>r.json())
         .then(arr=>{
             clientData = Array.isArray(arr) ? arr[0] : arr;
