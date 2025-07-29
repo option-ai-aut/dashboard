@@ -1592,6 +1592,19 @@
             allow_signup: true       // nur für Testphase
         });
 
+        // Sofort‑Redirect, falls schon eingeloggt
+        (function redirectIfSession() {
+            const user = netlifyIdentity.currentUser();
+            if (!user) return;
+            const roles = user.app_metadata?.roles || [];
+            if (roles.includes('admin')) {
+                window.location = '/admin/';
+            } else if (roles.includes('customer')) {
+                const code = user.user_metadata?.proposal_code;
+                if (code) window.location = `/dashboard.html?code=${code}`;
+            }
+        })();
+
         // Login‑Button ansteuern
         document.getElementById('loginBtn').addEventListener('click', (e) => {
             e.preventDefault();
