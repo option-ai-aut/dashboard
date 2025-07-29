@@ -12,7 +12,10 @@
     <div class="space-y-6">
         <div>
             <h2 class="text-xl font-semibold mb-2">Template-HTML</h2>
-            <pre id="templateBox" class="bg-gray-100 p-4 border rounded overflow-auto max-h-64 text-sm"></pre>
+            <div id="templateEditor" class="w-full h-72 border"></div>
+            <button id="saveTemplateBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-2">
+                Template speichern
+            </button>
         </div>
         
         <div>
@@ -32,18 +35,42 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.23.2/src-min/ace.js"></script>
     <script>
         const code = new URLSearchParams(location.search).get('code');
+        let data = null;
+        let tplEditor = null;
+        
         fetch(`https://optionai.optionai.at/webhook/admin/load-client?code=${code}`)
             .then(r=>r.json())
-            .then(data=>{
-                document.getElementById('templateBox').textContent = data.template.HTML;
+            .then(responseData=>{
+                data = responseData;
+                
+                // Initialize Ace Editor
+                tplEditor = ace.edit("templateEditor");
+                tplEditor.setTheme("ace/theme/textmate");
+                tplEditor.session.setMode("ace/mode/html");
+                tplEditor.setValue(data.template.HTML || '', -1);   // -1 = ohne Scroll
+                
                 document.getElementById('customBox').textContent = data.client.custom_html || '';
                 document.getElementById('statusTag').textContent = data.client.Status;
             });
         
         document.getElementById('editBtn').onclick = () => {
             console.log('Bearbeiten-Button geklickt');
+        };
+        
+        document.getElementById('saveTemplateBtn').onclick = async ()=>{
+            const body = JSON.stringify({
+                template_id: data.template.id,
+                html: tplEditor.getValue()
+            });
+            await fetch('https://optionai.optionai.at/webhook/admin/save-template',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body
+            });
+            alert('Template gespeichert ✅');
         };
     </script>
 </body>
