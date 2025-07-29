@@ -18,21 +18,37 @@
             </button>
         </div>
         
-        <div>
-            <h2 class="text-xl font-semibold mb-2">Custom-HTML</h2>
-            <pre id="customBox" class="bg-gray-100 p-4 border rounded overflow-auto max-h-64 text-sm"></pre>
-        </div>
+        <!-- Custom HTML -->
+        <h3 class="mt-8 mb-2 font-semibold">Custom-HTML (nur für diesen Kunden)</h3>
+        <div id="customEditor" class="w-full h-56 border"></div>
+        <button id="saveCustomBtn"
+                class="mt-2 bg-blue-600 text-white px-4 py-2 rounded">
+            Custom speichern
+        </button>
         
-        <div>
-            <h2 class="text-xl font-semibold mb-2">Status</h2>
-            <span id="statusTag" class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"></span>
-        </div>
+        <!-- Status -->
+        <h3 class="mt-8 mb-2 font-semibold">Status</h3>
+        <select id="statusSelect" class="border px-3 py-2 rounded">
+            <option value="draft">draft</option>
+            <option value="pending">pending</option>
+            <option value="approved">approved</option>
+            <option value="signed">signed</option>
+        </select>
+        <button id="saveStatusBtn"
+                class="ml-2 bg-green-600 text-white px-4 py-2 rounded">
+            Status speichern
+        </button>
         
         <div>
             <button id="editBtn" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">
                 Bearbeiten
             </button>
         </div>
+    </div>
+
+    <div id="toast"
+         class="fixed bottom-4 right-4 bg-black text-white px-4 py-2 rounded hidden">
+        Gespeichert ✅
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.23.2/src-min/ace.js"></script>
@@ -46,19 +62,36 @@
             .then(responseData=>{
                 data = responseData;
                 
-                // Initialize Ace Editor
+                // Initialize Template Ace Editor
                 tplEditor = ace.edit("templateEditor");
                 tplEditor.setTheme("ace/theme/textmate");
                 tplEditor.session.setMode("ace/mode/html");
                 tplEditor.setValue(data.template.HTML || '', -1);   // -1 = ohne Scroll
                 
-                document.getElementById('customBox').textContent = data.client.custom_html || '';
-                document.getElementById('statusTag').textContent = data.client.Status;
+                // --- Custom Editor ---
+                const cstEditor = ace.edit('customEditor');
+                cstEditor.setTheme('ace/theme/textmate');
+                cstEditor.session.setMode('ace/mode/html');
+                cstEditor.setValue(data.client.custom_html || '', -1);
+                
+                // Status Select initial
+                document.getElementById('statusSelect').value = data.client.Status || 'draft';
+                
+                // Store custom editor reference
+                window.cstEditor = cstEditor;
             });
         
         document.getElementById('editBtn').onclick = () => {
             console.log('Bearbeiten-Button geklickt');
         };
+        
+        // Toast helper
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg; 
+            t.classList.remove('hidden');
+            setTimeout(()=>t.classList.add('hidden'), 2000);
+        }
         
         document.getElementById('saveTemplateBtn').onclick = async ()=>{
             const body = JSON.stringify({
@@ -70,7 +103,34 @@
                 headers:{'Content-Type':'application/json'},
                 body
             });
-            alert('Template gespeichert ✅');
+            showToast('Template gespeichert ✅');
+        };
+        
+        // Custom-Save
+        document.getElementById('saveCustomBtn').onclick = async () => {
+            await fetch('https://optionai.optionai.at/webhook/admin/save-proposal',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    proposal_code: data.client["Proposal Code"],
+                    custom_html: window.cstEditor.getValue()
+                })
+            });
+            showToast('Custom gespeichert ✅');
+        };
+        
+        // Status-Save
+        document.getElementById('saveStatusBtn').onclick = async () => {
+            const status = document.getElementById('statusSelect').value;
+            await fetch('https://optionai.optionai.at/webhook/admin/save-proposal',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    proposal_code: data.client["Proposal Code"],
+                    status
+                })
+            });
+            showToast('Status gespeichert ✅');
         };
     </script>
 </body>
