@@ -1,186 +1,60 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client Details</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="p-8">
-    <h1 class="text-3xl font-bold mb-6">Client-Details</h1>
+<script>
+    const code = new URLSearchParams(location.search).get('code');
+    let clientData = null;     // global
     
-    <div class="space-y-6">
-        <div>
-            <h2 class="text-xl font-semibold mb-2">Template-HTML</h2>
-            <textarea id="templateEditor" class="w-full h-72 border"></textarea>
-            <button id="saveTemplateBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-2">
-                Template speichern
-            </button>
-        </div>
-        
-        <!-- Custom HTML -->
-        <h3 class="mt-8 mb-2 font-semibold">Custom-HTML (nur für diesen Kunden)</h3>
-        <textarea id="customEditor" class="w-full h-56 border"></textarea>
-        <button id="saveCustomBtn"
-                class="mt-2 bg-blue-600 text-white px-4 py-2 rounded">
-            Custom speichern
-        </button>
-        
-        <!-- Status -->
-        <h3 class="mt-8 mb-2 font-semibold">Status</h3>
-        <select id="statusSelect" class="border px-3 py-2 rounded">
-            <option value="draft">draft</option>
-            <option value="pending">pending</option>
-            <option value="approved">approved</option>
-            <option value="signed">signed</option>
-        </select>
-        <button id="saveStatusBtn"
-                class="ml-2 bg-green-600 text-white px-4 py-2 rounded">
-            Status speichern
-        </button>
-        
-        <div>
-            <button id="editBtn" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">
-                Bearbeiten
-            </button>
-        </div>
-    </div>
-
-    <div id="toast"
-         class="fixed bottom-4 right-4 bg-black text-white px-4 py-2 rounded hidden">
-        Gespeichert ✅
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/tinymce@5.10.7/tinymce.min.js" referrerpolicy="origin"></script>
-    <script>
-        const code = new URLSearchParams(location.search).get('code');
-        let data = null;
-        let templateEditor = null;
-        let customEditor = null;
-        
-        // Toast helper
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.textContent = msg; 
-            t.classList.remove('hidden');
-            setTimeout(()=>t.classList.add('hidden'), 2000);
-        }
-        
-        // Initialize TinyMCE editors with data
-        function initializeEditorsWithData() {
-            const templateHTML = data.template ? data.template.HTML || '' : '';
-            const customHTML = data.client ? data.client.custom_html || '' : '';
-            
-            console.log('Template HTML:', templateHTML); // Debug
-            console.log('Custom HTML:', customHTML); // Debug
-            
-            // Template Editor
-            tinymce.init({
-                selector:'#templateEditor',
-                height:300,
-                plugins:'preview code lists',
-                toolbar:'undo redo | bold italic underline | numlist bullist | code preview',
-                setup(editor){
-                    templateEditor = editor;
-                    editor.on('init', ()=> {
-                        editor.setContent(templateHTML);
-                    });
-                }
-            });
-            
-            // Custom Editor
-            tinymce.init({
-                selector:'#customEditor',
-                height:220,
-                plugins:'code lists',
-                toolbar:'undo redo | bold italic underline | numlist bullist | code',
-                setup(e){
-                    customEditor = e;
-                    e.on('init', ()=> {
-                        e.setContent(customHTML);
-                    });
-                }
-            });
-        }
-        
-        fetch('https://optionai.optionai.at/webhook/admin/load-client',{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ proposal_code: code })
-        })
-        .then(r=>r.json())
-        .then(data=>{
-            const first = Array.isArray(data) ? data[0] : data;
-            if(!first){ alert('Kein Datensatz gefunden'); return; }
-
-            window.clientData = first;
-            
-            // Initialize TinyMCE editors with loaded data
-            initializeEditorsWithData();
-            
-            // Set content after editors are ready
-            setTimeout(() => {
-                tinymce.get('templateEditor').setContent(first.template.HTML || '');
-                tinymce.get('customEditor').setContent(first.client["Custom HTML"] || '');
-            }, 500);
-            
-            document.getElementById('statusSelect').value = first.client.Status || 'draft';
-        });
-        
-        document.getElementById('editBtn').onclick = () => {
-            console.log('Bearbeiten-Button geklickt');
-        };
-        
-        document.getElementById('saveTemplateBtn').onclick = async ()=>{
-            if (!templateEditor) {
-                showToast('Editor noch nicht bereit');
-                return;
-            }
-            
-            const body = JSON.stringify({
-                template_id: clientData.template.id,
-                html: tinymce.get('templateEditor').getContent()
-            });
-            await fetch('https://optionai.optionai.at/webhook/admin/save-template',{
-                method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body
-            });
-            showToast('Template gespeichert ✅');
-        };
-        
-        // Custom-Save
-        document.getElementById('saveCustomBtn').onclick = async () => {
-            if (!customEditor) {
-                showToast('Editor noch nicht bereit');
-                return;
-            }
-            
-            await fetch('https://optionai.optionai.at/webhook/admin/save-proposal',{
-                method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body: JSON.stringify({
-                    proposal_code: clientData.client["Proposal Code"],
-                    custom_html: tinymce.get('customEditor').getContent(),
-                    status: document.getElementById('statusSelect').value
-                })
-            });
-            showToast('Custom gespeichert ✅');
-        };
-        
-        // Status-Save
-        document.getElementById('saveStatusBtn').onclick = async () => {
-            const status = document.getElementById('statusSelect').value;
-            await fetch('https://optionai.optionai.at/webhook/admin/save-proposal',{
-                method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body: JSON.stringify({
-                    proposal_code: clientData.client["Proposal Code"],
-                    status
-                })
-            });
-            showToast('Status gespeichert ✅');
-        };
+    /** 1. Init TinyMCE leer ***************************************/
+    tinymce.init({ selector:'#templateEditor', height:300,
+      plugins:'preview code lists', toolbar:'undo redo | bold italic underline | numlist bullist | code preview'
+    });
+    tinymce.init({ selector:'#customEditor',  height:220,
+      plugins:'code lists', toolbar:'undo redo | bold italic underline | numlist bullist | code'
+    });
+    
+    /** 2. Danach Daten laden **************************************/
+    fetch('https://optionai.optionai.at/webhook/admin/load-client', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ proposal_code: code })
+    })
+    .then(r=>r.json())
+    .then(arr=>{
+       clientData = Array.isArray(arr) ? arr[0] : arr;
+       if(!clientData){ alert('Kein Datensatz gefunden'); return; }
+    
+       // Warten bis beide Editoren bereit sind
+       tinymce.activeEditor ? fillEditors() : tinymce.on('AddEditor', fillEditors);
+    });
+    
+    function fillEditors(){
+       tinymce.get('templateEditor').setContent(clientData.template.HTML || '');
+       tinymce.get('customEditor').setContent(clientData.client["Custom HTML"] || '');
+       document.getElementById('statusSelect').value = clientData.client.Status || 'draft';
+    }
+    
+    /** 3. Speichern ************************************************/
+    document.getElementById('saveTemplateBtn').onclick = async ()=>{
+      await fetch('https://optionai.optionai.at/webhook/admin/save-template',{
+         method:'POST',
+         headers:{'Content-Type':'application/json'},
+         body: JSON.stringify({
+           template_id: clientData.template.id,
+           html: tinymce.get('templateEditor').getContent()
+         })
+      });
+      showToast('Template gespeichert ✅');
+    };
+    
+    document.getElementById('saveCustomBtn').onclick = async ()=>{
+      await fetch('https://optionai.optionai.at/webhook/admin/save-proposal',{
+         method:'POST',
+         headers:{'Content-Type':'application/json'},
+         body: JSON.stringify({
+           proposal_code: clientData.client["Proposal Code"],
+           custom_html: tinymce.get('customEditor').getContent(),
+           status: document.getElementById('statusSelect').value
+         })
+      });
+      showToast('Custom gespeichert ✅');
+    };
     </script>
-</body>
-</html>
+    
