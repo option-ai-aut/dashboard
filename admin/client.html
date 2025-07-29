@@ -77,7 +77,9 @@
                 setup(editor){
                     templateEditor = editor;
                     editor.on('init', ()=> {
-                        editor.setContent(data.template.HTML || '');
+                        if (data && data.template) {
+                            editor.setContent(data.template.HTML || '');
+                        }
                     });
                 }
             });
@@ -91,7 +93,9 @@
                 setup(e){
                     customEditor = e;
                     e.on('init', ()=> {
-                        e.setContent(data.client.custom_html || '');
+                        if (data && data.client) {
+                            e.setContent(data.client.custom_html || '');
+                        }
                     });
                 }
             });
