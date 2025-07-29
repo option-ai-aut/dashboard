@@ -82,6 +82,40 @@
             font-size: 0.9rem;
         }
 
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #66b3ff 0%, #66b3ff 100%);
+            color: #000000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 179, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #000;
+            border: 2px solid #66b3ff;
+        }
+
+        .btn-secondary:hover {
+            background: #66b3ff;
+            color: #000000;
+        }
+
         @media (max-width: 600px) {
             .login-container {
                 padding: 40px 30px;
@@ -110,6 +144,11 @@
             <div id="statusText"></div>
         </div>
 
+        <div style="display: flex; gap: 15px; justify-content: center; margin: 20px 0;">
+            <button id="loginBtn" class="btn btn-primary">Login</button>
+            <button id="signupBtn" class="btn btn-secondary">Sign up</button>
+        </div>
+
         <div class="footer">
             <p>AI Cold Outreach System</p>
         </div>
@@ -119,9 +158,18 @@
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script>
         netlifyIdentity.init({
-            APIUrl: "https://optionai.netlify.app/.netlify/identity"
+            APIUrl: "https://option-ai-at.netlify.app/.netlify/identity",
+            allow_signup: true       // <-- neu
         });
-        netlifyIdentity.open();
+
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            netlifyIdentity.open('login');      // explizit Login‑Tab
+        });
+
+        document.getElementById('signupBtn').addEventListener('click', () => {
+            netlifyIdentity.open('signup');     // zeigt direkt den Registrieren‑Tab
+        });
+
         netlifyIdentity.on('login', user=>{
             const roles = user.app_metadata.roles || [];
             if (roles.includes('admin')) {
