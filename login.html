@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - AI Cold Outreach System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f0f2f5 0%, #e8ecf1 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a1a1a;
+        }
+
+        .login-container {
+            background: white;
+            padding: 60px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        h1 {
+            color: #1a1a1a;
+            margin-bottom: 15px;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .status-message {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-loading {
+            background: #f0f9ff;
+            color: #1e40af;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .status-error {
+            background: #fee;
+            color: #c53030;
+            border-left: 4px solid #e53e3e;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .login-container {
+                padding: 40px 30px;
+                margin: 20px;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">option.ai</div>
+        <h1>Admin Login</h1>
+        <p class="subtitle">
+            Melden Sie sich an, um auf das Admin-Dashboard zuzugreifen.
+        </p>
+        
+        <div id="statusMessage" class="status-message">
+            <div id="statusText"></div>
+        </div>
+
+        <div class="footer">
+            <p>AI Cold Outreach System</p>
+        </div>
+    </div>
+
+    <!-- Netlify Identity Widget -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+        netlifyIdentity.init({
+            APIUrl: "https://optionai.netlify.app/.netlify/identity"
+        });
+        netlifyIdentity.open();
+        netlifyIdentity.on('login', user=>{
+            const roles = user.app_metadata.roles || [];
+            if (roles.includes('admin')) {
+                window.location = '/admin/';
+            } else if (roles.includes('customer')) {
+                const code = user.user_metadata.proposal_code;
+                window.location = `/dashboard.html?code=${code}`;
+            } else {
+                alert('Keine Rolle zugeordnet – bitte Support kontaktieren.');
+                netlifyIdentity.logout();
+            }
+        });
+        netlifyIdentity.on('logout', ()=>window.location='/');
+    </script>
+</body>
+</html>
