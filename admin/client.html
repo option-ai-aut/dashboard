@@ -1,60 +1,457 @@
-<script>
-    const code = new URLSearchParams(location.search).get('code');
-    let clientData = null;     // global
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Details - option.ai</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%);
+            color: white;
+            padding: 25px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        .header-content {
+            width: 100%;
+            padding: 0 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            flex-shrink: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #66b3ff 0%, #66b3ff 100%);
+            color: #000000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 179, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid #66b3ff;
+        }
+
+        .btn-secondary:hover {
+            background: #66b3ff;
+            color: #000000;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 50px 30px;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #000000;
+            margin-bottom: 15px;
+            letter-spacing: -0.03em;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 50px;
+        }
+
+        .editor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .editor-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .save-btn {
+            background: rgba(102, 179, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(102, 179, 255, 0.5);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .save-btn:hover {
+            background: rgba(102, 179, 255, 0.4);
+            border-color: #66b3ff;
+            transform: translateY(-1px);
+        }
+
+        .editor-container {
+            padding: 30px;
+        }
+
+        .status-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .status-controls {
+            padding: 30px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .status-select {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1a1a1a;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .status-select:focus {
+            outline: none;
+            border-color: #66b3ff;
+            box-shadow: 0 0 0 4px rgba(102, 179, 255, 0.15);
+        }
+
+        .action-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            padding: 30px;
+            text-align: center;
+        }
+
+        .edit-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 1200px) {
+            .editor-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 20px;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .main-container {
+                padding: 30px 20px;
+            }
+
+            .page-title {
+                font-size: 2.2rem;
+            }
+
+            .card-header {
+                padding: 20px 25px;
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .editor-container {
+                padding: 20px;
+            }
+
+            .status-controls {
+                padding: 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .action-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="logo">option.ai</div>
+            <div class="header-actions">
+                <a href="/admin/" class="btn btn-secondary">← Zurück zu Clients</a>
+                <a href="/login.html" class="btn btn-primary">🔐 Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <h1 class="page-title">Client Details</h1>
+        <p class="page-subtitle">Bearbeiten Sie Templates und Client-spezifische Inhalte</p>
+
+        <!-- Editors Grid -->
+        <div class="editor-grid">
+            <!-- Template Editor -->
+            <div class="editor-card">
+                <div class="card-header">
+                    <h2 class="card-title">Template HTML</h2>
+                    <button id="saveTemplateBtn" class="save-btn">
+                        💾 Speichern
+                    </button>
+                </div>
+                <div class="editor-container">
+                    <textarea id="templateEditor"></textarea>
+                </div>
+            </div>
+
+            <!-- Custom Editor -->
+            <div class="editor-card">
+                <div class="card-header">
+                    <h2 class="card-title">Custom HTML</h2>
+                    <button id="saveCustomBtn" class="save-btn">
+                        💾 Speichern
+                    </button>
+                </div>
+                <div class="editor-container">
+                    <textarea id="customEditor"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Section -->
+        <div class="status-section">
+            <div class="card-header">
+                <h2 class="card-title">Proposal Status</h2>
+                <button id="saveStatusBtn" class="save-btn">
+                    💾 Status Speichern
+                </button>
+            </div>
+            <div class="status-controls">
+                <select id="statusSelect" class="status-select">
+                    <option value="draft">Draft</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="signed">Signed</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Action Section -->
+        <div class="action-section">
+            <button id="editBtn" class="edit-btn">
+                ✏️ Client Bearbeiten
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        Gespeichert ✅
+    </div>
+
+    <!-- TinyMCE CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@5.10.7/tinymce.min.js" referrerpolicy="origin"></script>
     
-    /** 1. Init TinyMCE leer ***************************************/
-    tinymce.init({ selector:'#templateEditor', height:300,
-      plugins:'preview code lists', toolbar:'undo redo | bold italic underline | numlist bullist | code preview'
-    });
-    tinymce.init({ selector:'#customEditor',  height:220,
-      plugins:'code lists', toolbar:'undo redo | bold italic underline | numlist bullist | code'
-    });
-    
-    /** 2. Danach Daten laden **************************************/
-    fetch('https://optionai.optionai.at/webhook/admin/load-client', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ proposal_code: code })
-    })
-    .then(r=>r.json())
-    .then(arr=>{
-       clientData = Array.isArray(arr) ? arr[0] : arr;
-       if(!clientData){ alert('Kein Datensatz gefunden'); return; }
-    
-       // Warten bis beide Editoren bereit sind
-       tinymce.activeEditor ? fillEditors() : tinymce.on('AddEditor', fillEditors);
-    });
-    
-    function fillEditors(){
-       tinymce.get('templateEditor').setContent(clientData.template.HTML || '');
-       tinymce.get('customEditor').setContent(clientData.client["Custom HTML"] || '');
-       document.getElementById('statusSelect').value = clientData.client.Status || 'draft';
-    }
-    
-    /** 3. Speichern ************************************************/
-    document.getElementById('saveTemplateBtn').onclick = async ()=>{
-      await fetch('https://optionai.optionai.at/webhook/admin/save-template',{
-         method:'POST',
-         headers:{'Content-Type':'application/json'},
-         body: JSON.stringify({
-           template_id: clientData.template.id,
-           html: tinymce.get('templateEditor').getContent()
-         })
-      });
-      showToast('Template gespeichert ✅');
-    };
-    
-    document.getElementById('saveCustomBtn').onclick = async ()=>{
-      await fetch('https://optionai.optionai.at/webhook/admin/save-proposal',{
-         method:'POST',
-         headers:{'Content-Type':'application/json'},
-         body: JSON.stringify({
-           proposal_code: clientData.client["Proposal Code"],
-           custom_html: tinymce.get('customEditor').getContent(),
-           status: document.getElementById('statusSelect').value
-         })
-      });
-      showToast('Custom gespeichert ✅');
-    };
+    <script>
+        const code = new URLSearchParams(location.search).get('code');
+        let clientData = null;
+
+        // Toast helper
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        /** 1. Init TinyMCE leer ***************************************/
+        tinymce.init({ 
+            selector:'#templateEditor', 
+            height:300,
+            plugins:'preview code lists', 
+            toolbar:'undo redo | bold italic underline | numlist bullist | code preview'
+        });
+        
+        tinymce.init({ 
+            selector:'#customEditor',  
+            height:220,
+            plugins:'code lists', 
+            toolbar:'undo redo | bold italic underline | numlist bullist | code'
+        });
+
+        /** 2. Danach Daten laden **************************************/
+        fetch('https://optionai.optionai.at/webhook/admin/load-client', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ proposal_code: code })
+        })
+        .then(r=>r.json())
+        .then(arr=>{
+            clientData = Array.isArray(arr) ? arr[0] : arr;
+            if(!clientData){ alert('Kein Datensatz gefunden'); return; }
+
+            // Warten bis beide Editoren bereit sind
+            tinymce.activeEditor ? fillEditors() : tinymce.on('AddEditor', fillEditors);
+        });
+
+        function fillEditors(){
+            tinymce.get('templateEditor').setContent(clientData.template.HTML || '');
+            tinymce.get('customEditor').setContent(clientData.client["Custom HTML"] || '');
+            document.getElementById('statusSelect').value = clientData.client.Status || 'draft';
+        }
+
+        /** 3. Speichern ************************************************/
+        document.getElementById('saveTemplateBtn').onclick = async ()=>{
+            await fetch('https://optionai.optionai.at/webhook/admin/save-template',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    template_id: clientData.template.id,
+                    html: tinymce.get('templateEditor').getContent()
+                })
+            });
+            showToast('Template gespeichert ✅');
+        };
+
+        document.getElementById('saveCustomBtn').onclick = async ()=>{
+            await fetch('https://optionai.optionai.at/webhook/admin/save-proposal',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    proposal_code: clientData.client["Proposal Code"],
+                    custom_html: tinymce.get('customEditor').getContent(),
+                    status: document.getElementById('statusSelect').value
+                })
+            });
+            showToast('Custom gespeichert ✅');
+        };
+
+        document.getElementById('saveStatusBtn').onclick = async () => {
+            const status = document.getElementById('statusSelect').value;
+            await fetch('https://optionai.optionai.at/webhook/admin/save-proposal',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    proposal_code: clientData.client["Proposal Code"],
+                    status
+                })
+            });
+            showToast('Status gespeichert ✅');
+        };
+
+        document.getElementById('editBtn').onclick = () => {
+            console.log('Bearbeiten-Button geklickt');
+        };
     </script>
-    
+</body>
+</html>

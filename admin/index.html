@@ -3,55 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Admin Dashboard - option.ai</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%);
+            color: white;
+            padding: 25px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        .header-content {
+            width: 100%;
+            padding: 0 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            flex-shrink: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #66b3ff 0%, #66b3ff 100%);
+            color: #000000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 179, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid #66b3ff;
+        }
+
+        .btn-secondary:hover {
+            background: #66b3ff;
+            color: #000000;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 50px 30px;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #000000;
+            margin-bottom: 15px;
+            letter-spacing: -0.03em;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 50px;
+        }
+
+        .clients-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%);
+            color: white;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .reload-btn {
+            background: rgba(102, 179, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(102, 179, 255, 0.5);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reload-btn:hover {
+            background: rgba(102, 179, 255, 0.4);
+            border-color: #66b3ff;
+            transform: translateY(-1px);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .clients-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-header {
+            background: #f8f9fa;
+        }
+
+        .table-header th {
+            padding: 20px 30px;
+            text-align: left;
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table-row {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .table-row:hover {
+            background: #fafbfc;
+        }
+
+        .table-cell {
+            padding: 25px 30px;
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-draft {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-approved {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .status-signed {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .action-link {
+            color: #66b3ff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            padding: 8px 16px;
+            border-radius: 6px;
+        }
+
+        .action-link:hover {
+            background: rgba(102, 179, 255, 0.1);
+            color: #0066cc;
+        }
+
+        .loading-state {
+            padding: 60px;
+            text-align: center;
+            color: #666;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #66b3ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .empty-state {
+            padding: 60px;
+            text-align: center;
+            color: #666;
+        }
+
+        .error-state {
+            padding: 60px;
+            text-align: center;
+            color: #dc2626;
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 20px;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .main-container {
+                padding: 30px 20px;
+            }
+
+            .page-title {
+                font-size: 2.2rem;
+            }
+
+            .card-header {
+                padding: 20px 25px;
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .table-header th,
+            .table-cell {
+                padding: 15px 20px;
+            }
+
+            .clients-table {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <div class="container mx-auto px-6 py-8">
-        <!-- Header Card -->
-        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Clients</h1>
-                    <p class="text-gray-600 mt-1">Admin Dashboard - Client Management</p>
-                </div>
-                <button id="reloadBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors shadow-sm">
+<body>
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="logo">option.ai</div>
+            <div class="header-actions">
+                <a href="/login.html" class="btn btn-secondary">🔐 Logout</a>
+                <a href="/" class="btn btn-primary">🏠 Proposal Dashboard</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <h1 class="page-title">Client Management</h1>
+        <p class="page-subtitle">Verwalten Sie alle Proposal-Clients und deren Status</p>
+
+        <!-- Clients Card -->
+        <div class="clients-card">
+            <div class="card-header">
+                <h2 class="card-title">Client Übersicht</h2>
+                <button id="reloadBtn" class="reload-btn">
                     🔄 Neu laden
                 </button>
             </div>
-        </div>
-
-        <!-- Clients Table Card -->
-        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-xl font-semibold text-gray-900">Client Übersicht</h2>
-            </div>
             
-            <div class="overflow-x-auto">
-                <table id="clientsTable" class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+            <div class="table-container">
+                <table id="clientsTable" class="clients-table">
+                    <thead class="table-header">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Öffnen</th>
+                            <th>Proposal Code</th>
+                            <th>Kunden Name</th>
+                            <th>Status</th>
+                            <th>Aktion</th>
                         </tr>
                     </thead>
-                    <tbody id="clientsTableBody" class="bg-white divide-y divide-gray-200">
+                    <tbody id="clientsTableBody">
                         <!-- Table rows will be inserted here -->
                     </tbody>
                 </table>
             </div>
 
             <!-- Loading State -->
-            <div id="loadingState" class="px-6 py-12 text-center">
-                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <p class="mt-2 text-gray-600">Clients werden geladen...</p>
+            <div id="loadingState" class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Clients werden geladen...</p>
             </div>
 
             <!-- Empty State -->
-            <div id="emptyState" class="hidden px-6 py-12 text-center">
-                <p class="text-gray-600">Keine Clients gefunden.</p>
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <p>Keine Clients gefunden.</p>
             </div>
         </div>
     </div>
@@ -60,14 +355,14 @@
         // Status badge helper
         function getStatusBadge(status) {
             const statusMap = {
-                'draft': { class: 'bg-gray-100 text-gray-800', text: 'Draft' },
-                'pending': { class: 'bg-yellow-100 text-yellow-800', text: 'Pending' },
-                'approved': { class: 'bg-green-100 text-green-800', text: 'Approved' },
-                'signed': { class: 'bg-blue-100 text-blue-800', text: 'Signed' }
+                'draft': { class: 'status-badge status-draft', text: 'Draft' },
+                'pending': { class: 'status-badge status-pending', text: 'Pending' },
+                'approved': { class: 'status-badge status-approved', text: 'Approved' },
+                'signed': { class: 'status-badge status-signed', text: 'Signed' }
             };
             
-            const config = statusMap[status] || { class: 'bg-gray-100 text-gray-800', text: status };
-            return `<span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${config.class}">${config.text}</span>`;
+            const config = statusMap[status] || { class: 'status-badge status-draft', text: status };
+            return `<span class="${config.class}">${config.text}</span>`;
         }
 
         async function loadClients(){
@@ -94,26 +389,26 @@
                 
                 list.forEach(c=>{
                     const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-gray-50 transition-colors';
+                    tr.className = 'table-row';
                     
                     const proposalCode = c["Proposal Code"] || '-';
                     const fullName = c["Full Name"] || '-';
                     const status = c.Status || 'draft';
                     
                     tr.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            ${proposalCode}
+                        <td class="table-cell">
+                            <strong>${proposalCode}</strong>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td class="table-cell">
                             ${fullName}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td class="table-cell">
                             ${getStatusBadge(status)}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td class="table-cell">
                             <a href="/admin/client.html?code=${encodeURIComponent(proposalCode)}" 
-                               class="text-blue-600 hover:text-blue-900 font-medium transition-colors">
-                                Öffnen →
+                               class="action-link">
+                                Bearbeiten →
                             </a>
                         </td>
                     `;
@@ -129,7 +424,7 @@
                 // Show error message in table
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="4" class="px-6 py-12 text-center text-red-600">
+                        <td colspan="4" class="error-state">
                             Fehler beim Laden der Clients: ${error.message}
                         </td>
                     </tr>
