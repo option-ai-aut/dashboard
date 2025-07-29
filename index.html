@@ -964,8 +964,9 @@
                 
                 <div class="client-info">
                     <h4>Kunde</h4>
-                    <p><strong id="clientName">-</strong></p>
-                    <p id="clientLocation">-</p>
+                    <p><strong id="sidebarName">-</strong></p>
+                    <p id="sidebarCompany">-</p>
+                    <p id="sidebarCountry">-</p>
                     <p style="margin-top: 10px; font-size: 0.9rem;">
                         Erstellt: <strong id="createdDate">-</strong>
                     </p>
@@ -1116,22 +1117,24 @@
                     
                     // Fill client data in sidebar BEFORE replacing content
                     if (data.client) {
-                        const clientNameEl = document.getElementById('clientName');
-                        const clientLocationEl = document.getElementById('clientLocation');
+                        const sidebarNameEl = document.getElementById('sidebarName');
+                        const sidebarCompanyEl = document.getElementById('sidebarCompany');
+                        const sidebarCountryEl = document.getElementById('sidebarCountry');
                         const createdDateEl = document.getElementById('createdDate');
                         
-                        if (clientNameEl) clientNameEl.textContent = data.client['Full Name'] || data.client['Lead Name'] || '-';
-                        if (clientLocationEl) clientLocationEl.textContent = `${data.client['Company'] || ''} ${data.client['Country'] ? '(' + data.client['Country'] + ')' : ''}`.trim() || '-';
+                        if (sidebarNameEl) sidebarNameEl.textContent = data.client["Full Name"];
+                        if (sidebarCompanyEl) sidebarCompanyEl.textContent = data.client.Company;
+                        if (sidebarCountryEl) sidebarCountryEl.textContent = data.client.Country;
                         if (createdDateEl) {
-                            const createdDate = data.client['createdTime'] ? new Date(data.client['createdTime']).toLocaleDateString('de-DE') : new Date().toLocaleDateString('de-DE');
+                            const createdDate = data.client.createdTime ? new Date(data.client.createdTime).toLocaleDateString('de-DE') : new Date().toLocaleDateString('de-DE');
                             createdDateEl.textContent = createdDate;
                         }
                         
                         console.log('Client data filled:', {
-                            name: data.client['Full Name'] || data.client['Lead Name'],
-                            company: data.client['Company'],
-                            country: data.client['Country'],
-                            created: data.client['createdTime']
+                            name: data.client["Full Name"],
+                            company: data.client.Company,
+                            country: data.client.Country,
+                            created: data.client.createdTime
                         });
                     }
                     
