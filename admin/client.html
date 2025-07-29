@@ -105,15 +105,20 @@
         
         fetch(`https://optionai.optionai.at/webhook/admin/load-client?code=${code}`)
             .then(r=>r.json())
-            .then(responseData=>{
-                data = responseData;
-                console.log('Loaded data:', data); // Debug
-                
-                // Status Select initial
-                document.getElementById('statusSelect').value = data.client.Status || 'draft';
+            .then(data => {
+                const first = Array.isArray(data) ? data[0] : data;
+                window.clientData = first;
                 
                 // Initialize TinyMCE editors with loaded data
                 initializeEditorsWithData();
+                
+                // Set content after editors are ready
+                setTimeout(() => {
+                    tinymce.get('templateEditor').setContent(first.template.HTML || '');
+                    tinymce.get('customEditor').setContent(first.client.custom_html || '');
+                }, 500);
+                
+                document.getElementById('statusSelect').value = first.client.Status || 'draft';
             });
         
         document.getElementById('editBtn').onclick = () => {
@@ -127,7 +132,7 @@
             }
             
             const body = JSON.stringify({
-                template_id: data.template.id,
+                template_id: window.clientData.template.id,
                 html: templateEditor.getContent()
             });
             await fetch('https://optionai.optionai.at/webhook/admin/save-template',{
@@ -149,7 +154,7 @@
                 method:'POST',
                 headers:{'Content-Type':'application/json'},
                 body: JSON.stringify({
-                    proposal_code: data.client["Proposal Code"],
+                    proposal_code: window.clientData.client["Proposal Code"],
                     custom_html: customEditor.getContent()
                 })
             });
@@ -163,7 +168,7 @@
                 method:'POST',
                 headers:{'Content-Type':'application/json'},
                 body: JSON.stringify({
-                    proposal_code: data.client["Proposal Code"],
+                    proposal_code: window.clientData.client["Proposal Code"],
                     status
                 })
             });
