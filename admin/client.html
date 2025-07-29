@@ -66,8 +66,14 @@
             setTimeout(()=>t.classList.add('hidden'), 2000);
         }
         
-        // Initialize TinyMCE editors
-        function initializeEditors() {
+        // Initialize TinyMCE editors with data
+        function initializeEditorsWithData() {
+            const templateHTML = data.template ? data.template.HTML || '' : '';
+            const customHTML = data.client ? data.client.custom_html || '' : '';
+            
+            console.log('Template HTML:', templateHTML); // Debug
+            console.log('Custom HTML:', customHTML); // Debug
+            
             // Template Editor
             tinymce.init({
                 selector:'#templateEditor',
@@ -77,9 +83,7 @@
                 setup(editor){
                     templateEditor = editor;
                     editor.on('init', ()=> {
-                        if (data && data.template) {
-                            editor.setContent(data.template.HTML || '');
-                        }
+                        editor.setContent(templateHTML);
                     });
                 }
             });
@@ -93,9 +97,7 @@
                 setup(e){
                     customEditor = e;
                     e.on('init', ()=> {
-                        if (data && data.client) {
-                            e.setContent(data.client.custom_html || '');
-                        }
+                        e.setContent(customHTML);
                     });
                 }
             });
@@ -105,12 +107,13 @@
             .then(r=>r.json())
             .then(responseData=>{
                 data = responseData;
-                
-                // Initialize TinyMCE editors after data is loaded
-                initializeEditors();
+                console.log('Loaded data:', data); // Debug
                 
                 // Status Select initial
                 document.getElementById('statusSelect').value = data.client.Status || 'draft';
+                
+                // Initialize TinyMCE editors with loaded data
+                initializeEditorsWithData();
             });
         
         document.getElementById('editBtn').onclick = () => {
