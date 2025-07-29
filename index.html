@@ -88,42 +88,52 @@
             color: #000000;
         }
 
+        .sidebar .btn-secondary {
+            color: #000000;
+        }
+
         .dashboard-container {
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            min-height: 100vh;
-            padding: 50px 30px;
-            gap: 60px;
+            min-height: calc(100vh - 100px);
+            padding: 120px 50px 50px 50px;
+            padding-right: calc(25vw + 100px);
             position: relative;
         }
 
         .proposal-content {
-            width: 900px;
+            width: 100%;
+            max-width: 900px;
             background: white;
             box-shadow: 0 0 30px rgba(0,0,0,0.15), 0 0 60px rgba(0,0,0,0.1);
             border-radius: 12px;
             overflow: hidden;
-            position: relative;
-            min-height: 100vh;
+            padding: 40px;
         }
 
         .sidebar {
             position: fixed;
-            right: 60px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 380px;
-            height: fit-content;
-            z-index: 50;
+            right: 50px;
+            top: 120px;
+            bottom: 50px;
+            width: 25vw;
+            min-width: 300px;
+            max-width: 400px;
+            background: transparent;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
         .status-card {
             background: white;
-            padding: 35px;
-            border-radius: 16px;
+            padding: clamp(15px, 3vw, 35px);
+            border-radius: clamp(8px, 2vw, 16px);
             box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            flex-shrink: 0;
         }
 
         .status-header {
@@ -671,48 +681,68 @@
             }
         }
 
-        @media (max-width: 1400px) {
+        @media (max-width: 1200px) {
+            .dashboard-container {
+                padding: 100px 20px 30px 20px;
+                padding-right: calc(30vw + 60px);
+            }
+            
+            .proposal-content {
+                padding: 30px;
+            }
+            
             .sidebar {
-                position: relative;
-                right: auto;
-                top: auto;
-                transform: none;
-                width: 100%;
-                margin-top: 50px;
+                width: 30vw;
+                min-width: 280px;
+                max-width: 350px;
+                right: 30px;
+                top: 100px;
+                bottom: 30px;
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .sidebar {
+                width: 35vw;
+                min-width: 260px;
+                max-width: 320px;
+                right: 20px;
+                top: 100px;
+                bottom: 30px;
             }
             
             .dashboard-container {
-                flex-direction: column;
-                align-items: center;
+                padding: 100px 20px 30px 20px;
+                padding-right: calc(35vw + 40px);
             }
         }
         
-        @media (max-width: 1000px) {
+        @media (max-width: 900px) {
+            .dashboard-container {
+                flex-direction: column;
+                align-items: center;
+                padding: 120px 15px 20px 15px;
+                padding-right: 15px;
+            }
+
             .proposal-content {
                 width: 100%;
-                max-width: 900px;
+                min-width: auto;
+                margin-bottom: 30px;
             }
             
-            .dashboard-container {
-                padding: 30px 20px;
-            }
-            
-            .header-content {
-                padding: 0 30px;
+            .sidebar {
+                position: relative;
+                top: auto;
+                bottom: auto;
+                transform: none;
+                right: auto;
+                width: 100%;
+                max-width: 500px;
             }
         }
         
         @media (max-width: 768px) {
-            .proposal-content {
-                width: 100%;
-                max-width: 900px;
-                margin: 0 15px;
-            }
-            
-            .dashboard-container {
-                padding: 20px 15px;
-            }
-            
             .header-content {
                 padding: 0 20px;
                 flex-direction: column;
@@ -729,29 +759,12 @@
                 width: 100%;
             }
 
-            .content-section {
-                padding: 40px 30px;
-            }
-
-            .cover-section {
-                padding: 60px 30px;
-            }
-
-            .cover-title {
-                font-size: 2.2rem;
-            }
-
-            .section-title {
-                font-size: 1.8rem;
-            }
-            
-            .sidebar {
-                width: 100%;
-                margin-top: 30px;
+            .proposal-content {
+                padding: 20px;
             }
             
             .status-card {
-                padding: 25px;
+                padding: 20px;
             }
         }
     </style>
@@ -761,21 +774,21 @@
     <div id="codeEntryScreen" class="code-entry-container">
         <div class="code-entry-form">
             <div class="logo-main">option.ai</div>
-            <h1>Proposal-Code eingeben</h1>
-            <p>Geben Sie Ihren Proposal Code ein, um das Dokument zu laden.</p>
+            <h1>Angebot-Code eingeben</h1>
+            <p>Geben Sie Ihren Code ein, um das Dokument zu laden.</p>
             
             <form onsubmit="validateCode(event)" class="code-form">
                 <div class="input-group">
                     <input 
                         type="text" 
                         id="proposalCodeInput" 
-                        placeholder="PROP-XXXX-XXXX eingeben"
+                        placeholder="PROP-XXXX-XXXX"
                         required
                         autocomplete="off"
                         class="code-input"
                     >
                     <button type="submit" class="btn btn-primary" id="loadButton">
-                        Proposal laden
+                        Angebot laden
                     </button>
                 </div>
             </form>
@@ -786,7 +799,7 @@
             
             <div id="loadingMessage" class="loading-message" style="display: none;">
                 <div class="loading-spinner"></div>
-                Proposal wird geladen...
+                Angebot wird geladen...
             </div>
         </div>
     </div>
@@ -798,199 +811,61 @@
             <div class="header-content">
                 <div class="logo">option.ai</div>
                 <div class="dashboard-actions">
-                    <button class="btn btn-secondary" onclick="downloadPDF()">🖨️ Als PDF drucken/speichern</button>
-                    <button class="btn btn-primary" onclick="openSignatureModal()">✍️ Jetzt Unterschreiben</button>
+                    <a href="/login.html" class="btn btn-secondary">🔐 Admin Login</a>
                 </div>
             </div>
         </header>
 
         <!-- Dashboard Container -->
         <div class="dashboard-container">
-        <!-- Main Proposal Content -->
-        <div class="proposal-content" id="proposal-content">
-            <!-- Cover Section -->
-            <div class="cover-section">
-                <div class="cover-header">
-                    <div class="cover-header-left">option.ai</div>
-                    <div class="cover-header-right">CAMERIX</div>
-                </div>
-                <h1 class="cover-title">AI-COLD OUTREACH<br>SYSTEM</h1>
-                <p class="cover-subtitle">Tiefenpersonalisierte KI-Kampagnen für automatisierte Lead-Generierung</p>
-            </div>
-
-            <!-- Project Description Section -->
-            <div class="content-section">
-                <h2 class="section-title">Projektbeschreibung</h2>
-                <p style="font-size: 1.1rem; margin-bottom: 25px; color: #666;">
-                    Implementierung eines KI-basierten Cold-Email Outreach Systems mit tiefenpersonalisierten Kampagnen 
-                    zur automatisierten Lead-Generierung für Ihr Unternehmen.
-                </p>
-            </div>
-
-            <!-- Problem Section -->
-            <div class="content-section" id="problemSection">
-                <h2 class="section-title">Das Problem</h2>
-                <p style="font-size: 1.1rem; margin-bottom: 25px; color: #666;">
-                    Viele Unternehmen verlieren wertvolle Leads, arbeiten zu manuell und bremsen ihr eigenes Wachstum – 
-                    weil es an Struktur, Follow-ups und Automatisierung fehlt.
-                </p>
-
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">👥</div>
-                        <h3 class="feature-title">Menschen-Probleme</h3>
-                        <p>Team nicht fähig genug zum Skalieren</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">📈</div>
-                        <h3 class="feature-title">Markt-Probleme</h3>
-                        <p>Neue Technologien, Disruptionen, Rezessionen</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">⚙️</div>
-                        <h3 class="feature-title">System-Probleme</h3>
-                        <p>Fehlende Automatisierung und Struktur</p>
-                    </div>
+            <!-- Main Proposal Content -->
+            <div class="proposal-content" id="proposal-content">
+                <div style="padding: 100px; text-align: center; color: #666;">
+                    <h2>Proposal wird geladen...</h2>
+                    <p>Bitte warten Sie, während das Proposal aus der Datenbank geladen wird.</p>
                 </div>
             </div>
 
-            <!-- Solution Section -->
-            <div class="content-section">
-                <h2 class="section-title">Unsere Lösung</h2>
-                <div style="background: #f8f9fa; padding: 25px; border-radius: 10px; text-align: center; margin: 25px 0;" id="solutionQuote">
-                    <h3 style="color: #000; font-size: 1.3rem;">
-                        "Wir implementieren ein tiefenpersonalisiertes KI-Kaltakquise-System, 
-                        das nie müde wird und kontinuierlich qualifizierte Leads generiert."
-                    </h3>
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Erste Karte: Kundendaten & Actions -->
+                <div class="status-card">
+                    <div class="status-header">
+                        <div class="status-dot"></div>
+                        <span class="status-text">Proposal Live</span>
+                    </div>
+                    
+                    <div class="client-info">
+                        <h4>Kunde</h4>
+                        <p><strong id="sidebarName">-</strong></p>
+                        <p id="sidebarCompany">-</p>
+                        <p id="sidebarAddress">-</p>
+                        <p id="sidebarCountry">-</p>
+                        <p style="margin-top: 10px; font-size: 0.9rem;">
+                            Erstellt: <strong id="createdDate">-</strong>
+                        </p>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="openSignatureModal()" style="width: 100%;">
+                            ✍️ Proposal Unterschreiben
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadPDF()" style="width: 100%;">
+                            🖨️ Als PDF drucken/speichern
+                        </button>
+                    </div>
                 </div>
 
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">🎯</div>
-                        <h3 class="feature-title">5.000 Lead-Recherche</h3>
-                        <p>Potenzielle Unternehmen in Ihrer Wunschnische</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">🤖</div>
-                        <h3 class="feature-title">KI-Personalisierung</h3>
-                        <p>Individuell-personalisierte Icebreaker für jeden Kontakt</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">⚡</div>
-                        <h3 class="feature-title">Vollautomatisierung</h3>
-                        <p>90-180 E-Mails/Tag mit intelligenten Follow-ups</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">📊</div>
-                        <h3 class="feature-title">Performance-Tracking</h3>
-                        <p>Kontinuierliche Optimierung und Reporting</p>
-                    </div>
+                <!-- Zweite Karte: Nächste Schritte -->
+                <div class="status-card" style="margin-top: 20px;">
+                    <h4 style="margin-bottom: 15px; color: #000;">Nächste Schritte</h4>
+                    <ul class="benefits-list" style="font-size: 0.9rem;">
+                        <li>Proposal prüfen und unterschreiben</li>
+                        <li>Kick-Off Call vereinbaren</li>
+                        <li>Projektstart innerhalb 48h</li>
+                    </ul>
                 </div>
             </div>
-
-            <!-- Timeline Section -->
-            <div class="content-section">
-                <h2 class="section-title">Projektablauf</h2>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-phase">Phase 1: Setup & Konfiguration</div>
-                        <div class="timeline-duration">Tag 1-21</div>
-                        <ul class="benefits-list">
-                            <li>Kick-Off-Call und Account-Setup</li>
-                            <li>Domain-Setup und Warming (21 Tage)</li>
-                            <li>Lead-Recherche und Kampagnen-Erstellung</li>
-                        </ul>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-phase">Phase 2: Kampagnen-Launch</div>
-                        <div class="timeline-duration">Tag 22-24</div>
-                        <ul class="benefits-list">
-                            <li>System-Launch mit ersten Kampagnen</li>
-                            <li>Finale Tests und Qualitätssicherung</li>
-                        </ul>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-phase">Phase 3: Vollbetrieb</div>
-                        <div class="timeline-duration">Tag 25-60</div>
-                        <ul class="benefits-list">
-                            <li>Laufender Service und Monitoring</li>
-                            <li>Wöchentliche Performance-Reports</li>
-                            <li>Kontinuierliche Optimierung</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pricing Section -->
-            <div class="content-section">
-                <h2 class="section-title">Investition</h2>
-                <div class="pricing-highlight">
-                    <div class="guarantee-badge">60-Tage-Erfolgsgarantie</div>
-                    <div class="price-amount">€2.447</div>
-                    <p style="font-size: 1.1rem; margin-bottom: 15px;">Einmalige Implementierungsgebühr (Netto)</p>
-                    <p style="font-size: 1rem; opacity: 0.9;">+ ca. €180-250/Monat laufende Kosten</p>
-                    <p style="font-size: 1.1rem; margin-top: 20px; font-weight: 600;">
-                        Sollten wir nach 60 Tagen nicht mindestens 15 qualifizierte Rückmeldungen generieren, 
-                        ist die Implementierung gänzlich kostenfrei.
-                    </p>
-                </div>
-
-                <h3 style="font-size: 1.5rem; margin: 30px 0 20px 0; color: #000;">Im Paket enthalten:</h3>
-                <ul class="benefits-list">
-                    <li>Kick-Off-Call und persönliche Betreuung</li>
-                    <li>Domain-Setup und professionelles Warming</li>
-                    <li>Lead-Recherche (5.000 Unternehmen)</li>
-                    <li>Vollständige Systemkonfiguration</li>
-                    <li>Individuelle Kampagnen-Erstellung</li>
-                    <li>60 Tage intensive Betreuung und Optimierung</li>
-                    <li>Vollständige Dokumentation</li>
-                    <li>Optional: 30 Min. Team-Training</li>
-                </ul>
-
-                <div style="background: #f8f9fa; padding: 25px; border-radius: 10px; margin: 30px 0;">
-                    <h4 style="color: #000; margin-bottom: 10px;">Zahlungskonditionen:</h4>
-                    <p style="color: #666;">100% Zahlung nach 60 Tagen bei erfolgreichem Erreichen von 15 positiven Rückmeldungen</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="status-card">
-                <div class="status-header">
-                    <div class="status-dot"></div>
-                    <span class="status-text">Proposal Live</span>
-                </div>
-                
-                <div class="client-info">
-                    <h4>Kunde</h4>
-                    <p><strong id="sidebarName">-</strong></p>
-                    <p id="sidebarCompany">-</p>
-                    <p id="sidebarCountry">-</p>
-                    <p style="margin-top: 10px; font-size: 0.9rem;">
-                        Erstellt: <strong id="createdDate">-</strong>
-                    </p>
-                </div>
-
-                <div class="action-buttons">
-                    <button class="btn btn-primary" onclick="openSignatureModal()" style="width: 100%;">
-                        ✍️ Proposal Unterschreiben
-                    </button>
-                    <button class="btn btn-secondary" onclick="downloadPDF()" style="width: 100%;">
-                        🖨️ Als PDF drucken/speichern
-                    </button>
-                </div>
-            </div>
-
-            <div class="status-card">
-                <h4 style="margin-bottom: 15px; color: #000;">Nächste Schritte</h4>
-                <ul class="benefits-list" style="font-size: 0.9rem;">
-                    <li>Proposal prüfen und unterschreiben</li>
-                    <li>Kick-Off Call vereinbaren</li>
-                    <li>Projektstart innerhalb 48h</li>
-                </ul>
-            </div>
-        </div>
     </div>
 
     <!-- Signature Modal -->
@@ -1100,41 +975,72 @@
                     const data = await response.json();
                     console.log('Response Data:', data);
                     
-                    // Check if proposal is approved
-                    if (data.client && data.client.status !== 'approved') {
-                        console.log('Proposal status is not approved:', data.client.status);
+                    // Parse the array structure - find template and client items
+                    let templateItem = null;
+                    let clientItem = null;
+                    
+                    if (Array.isArray(data)) {
+                        templateItem = data.find(item => item.template) || data[0];
+                        clientItem = data.find(item => item.client) || data[1];
+                    } else {
+                        templateItem = data.template ? data : null;
+                        clientItem = data.client ? data : null;
+                    }
+                    
+                    console.log('=== PARSED STRUCTURE ===');
+                    console.log('Template item:', templateItem);
+                    console.log('Client item:', clientItem);
+                    
+                    // Extract actual data
+                    const template = templateItem?.template || templateItem;
+                    const client = clientItem?.client || clientItem;
+                    
+                    console.log('=== EXTRACTED DATA ===');
+                    console.log('Template:', template);
+                    console.log('Client:', client);
+                    
+                    // Check if proposal is draft
+                    if (client && client.Status === 'draft') {
+                        console.log('Proposal status is draft:', client.Status);
                         document.body.innerHTML = '<h2>Proposal wird bearbeitet …</h2>';
                         return;
                     }
                     
                     console.log('✅ Proposal is approved, rendering content');
                     
-                    // Combine template HTML and custom HTML
-                    let html = data.template ? data.template.HTML : '';
-                    if (data.client && data.client.custom_html) {
-                        html += data.client.custom_html;
+                    // Use Custom HTML from client (das ist das komplette Proposal HTML)
+                    let html = '';
+                    if (client && client["Custom HTML"]) {
+                        html = client["Custom HTML"];
+                    } else if (template && template.HTML) {
+                        html = template.HTML;
                     }
                     
+                    console.log('=== HTML DEBUG ===');
+                    console.log('Custom HTML from client:', client ? client["Custom HTML"] : 'No client');
+                    console.log('Template HTML:', template ? template.HTML : 'No template');
+                    console.log('Final HTML length:', html.length);
+                    
                     // Fill client data in sidebar BEFORE replacing content
-                    if (data.client) {
-                        const sidebarNameEl = document.getElementById('sidebarName');
-                        const sidebarCompanyEl = document.getElementById('sidebarCompany');
-                        const sidebarCountryEl = document.getElementById('sidebarCountry');
-                        const createdDateEl = document.getElementById('createdDate');
-                        
-                        if (sidebarNameEl) sidebarNameEl.textContent = data.client["Full Name"];
-                        if (sidebarCompanyEl) sidebarCompanyEl.textContent = data.client.Company;
-                        if (sidebarCountryEl) sidebarCountryEl.textContent = data.client.Country;
-                        if (createdDateEl) {
-                            const createdDate = data.client.createdTime ? new Date(data.client.createdTime).toLocaleDateString('de-DE') : new Date().toLocaleDateString('de-DE');
-                            createdDateEl.textContent = createdDate;
+                    if (client) {
+                        // Seitenleiste füllen
+                        const c = client;
+                        document.getElementById('sidebarName').textContent    = c["Full Name"] || '';
+                        document.getElementById('sidebarCompany').textContent = c.Company      || '';
+                        document.getElementById('sidebarAddress').textContent = c.Address      || '';
+                        document.getElementById('sidebarCountry').textContent = c.Country      || '';
+
+                        // Erstelldatum (ISO‑String → deutsches Datum)
+                        if (c.createdTime){
+                            const d = new Date(c.createdTime);
+                            document.getElementById('createdDate').textContent = d.toLocaleDateString('de-DE');
                         }
                         
                         console.log('Client data filled:', {
-                            name: data.client["Full Name"],
-                            company: data.client.Company,
-                            country: data.client.Country,
-                            created: data.client.createdTime
+                            name: c["Full Name"],
+                            company: c.Company,
+                            country: c.Country,
+                            created: c.createdTime
                         });
                     }
                     
@@ -1142,11 +1048,33 @@
                     document.getElementById('codeEntryScreen').style.display = 'none';
                     document.getElementById('proposalDashboard').style.display = 'block';
                     
-                    // Replace proposal content with combined HTML
+                    // Replace proposal content with HTML from N8n
                     const proposalContentElement = document.getElementById('proposal-content');
-                    if (proposalContentElement && html) {
-                        proposalContentElement.outerHTML = html;
-                        console.log('Proposal content replaced with template + custom HTML');
+                    if (html && html.trim().length > 0) {
+                        console.log('✅ Replacing proposal content with HTML from N8n');
+                        // Remove all styles and classes from the HTML
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+                        
+                        // Strip all style attributes and classes
+                        const allElements = tempDiv.querySelectorAll('*');
+                        allElements.forEach(el => {
+                            el.removeAttribute('style');
+                            el.removeAttribute('class');
+                        });
+                        
+                        proposalContentElement.innerHTML = tempDiv.innerHTML;
+                    } else {
+                        console.error('❌ No HTML content found in N8n response');
+                        console.log('Available client fields:', client ? Object.keys(client) : 'No client');
+                        proposalContentElement.innerHTML = `
+                            <div style="padding: 100px; text-align: center; color: #dc2626; background: white;">
+                                <h2>Kein Proposal-Inhalt verfügbar</h2>
+                                <p>Das Proposal wurde noch nicht erstellt oder ist leer.</p>
+                                <p>Custom HTML Feld: "${client ? client["Custom HTML"] || 'LEER' : 'Kein Client'}"</p>
+                                <p>Verfügbare Felder: ${client ? Object.keys(client).join(', ') : 'Keine'}</p>
+                            </div>
+                        `;
                     }
                     
                     // Track proposal view
