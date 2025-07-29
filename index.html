@@ -1079,7 +1079,7 @@
                 console.log('Calling load-client API...');
                 
                 // Make API request with timeout
-                const response = await fetch(`https://optionai.optionai.at/webhook/admin/load-client?code=${encodeURIComponent(code)}`, {
+                const response = await fetch(`https://optionai.optionai.at/webhook/admin/load-client?proposal_code=${encodeURIComponent(code)}`, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json'
