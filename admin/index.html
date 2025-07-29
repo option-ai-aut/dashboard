@@ -3,17 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard (ohne Login)</title>
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Admin Dashboard (ohne Login)</h1>
+<body class="p-8">
+    <h1 class="text-3xl font-bold mb-6">Clients</h1>
     
-    <table id="clientsTable" border="1">
+    <button id="reloadBtn" class="bg-blue-500 text-white px-4 py-2 rounded mb-4 hover:bg-blue-600">
+        Neu laden
+    </button>
+    
+    <table id="clientsTable" class="w-full border-collapse border border-gray-300">
         <thead>
-            <tr>
-                <th>Code</th>
-                <th>Name</th>
-                <th>Status</th>
+            <tr class="bg-gray-100">
+                <th class="border border-gray-300 px-4 py-2 text-left font-bold">Code</th>
+                <th class="border border-gray-300 px-4 py-2 text-left font-bold">Name</th>
+                <th class="border border-gray-300 px-4 py-2 text-left font-bold">Status</th>
+                <th class="border border-gray-300 px-4 py-2 text-left font-bold">Öffnen</th>
             </tr>
         </thead>
         <tbody>
@@ -22,29 +28,24 @@
     </table>
 
     <script>
-        fetch('https://optionai.optionai.at/webhook/admin/load-clients')
-            .then(r => r.json())
-            .then(list => {
-                const tbody = document.querySelector('#clientsTable tbody');
-                tbody.innerHTML = '';
-                
-                if (Array.isArray(list)) {
-                    list.forEach(client => {
-                        const row = document.createElement('tr');
-                        const code = client['Proposal Code'] || client.proposalCode || '-';
-                        const name = client['Full Name'] || client.fullName || '-';
-                        const status = client.status || 'draft';
-                        
-                        row.innerHTML = `
-                            <td>${code}</td>
-                            <td>${name}</td>
-                            <td>${status}</td>
-                        `;
-                        tbody.appendChild(row);
-                    });
-                }
-            })
-            .catch(console.error);
+        async function loadClients(){
+            const res = await fetch('https://optionai.optionai.at/webhook/admin/load-clients');
+            const list = await res.json();
+            const body = document.querySelector('#clientsTable tbody');
+            body.innerHTML = '';
+            list.forEach(c=>{
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50';
+                tr.innerHTML = `
+                    <td class="border border-gray-300 px-4 py-2">${c["Proposal Code"]}</td>
+                    <td class="border border-gray-300 px-4 py-2">${c["Full Name"]}</td>
+                    <td class="border border-gray-300 px-4 py-2">${c.Status}</td>
+                    <td class="border border-gray-300 px-4 py-2"><a href="/admin/client.html?code=${c["Proposal Code"]}" class="text-blue-600 underline">öffnen</a></td>`;
+                body.appendChild(tr);
+            });
+        }
+        document.getElementById('reloadBtn').onclick = loadClients;
+        loadClients();
     </script>
 </body>
 </html>

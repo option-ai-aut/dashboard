@@ -3,413 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client Editor - AI Cold Outreach System</title>
+    <title>Client Details</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.4/ace.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.4/mode-html.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.4/theme-monokai.js"></script>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Toast Container -->
-    <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
-
-    <div class="container mx-auto px-4 py-8">
-        <!-- Header -->
-        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Client Editor</h1>
-                    <p class="text-gray-600 mt-1" id="clientInfo">Proposal Code: <span id="proposalCode">-</span></p>
-                </div>
-                <div class="flex gap-3">
-                    <a href="index.html" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md transition-colors">
-                        Zurück zur Übersicht
-                    </a>
-                    <button id="logoutBtn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md transition-colors">
-                        Logout
-                    </button>
-                </div>
-            </div>
+<body class="p-8">
+    <h1 class="text-3xl font-bold mb-6">Client-Details</h1>
+    
+    <div class="space-y-6">
+        <div>
+            <h2 class="text-xl font-semibold mb-2">Template-HTML</h2>
+            <pre id="templateBox" class="bg-gray-100 p-4 border rounded overflow-auto max-h-64 text-sm"></pre>
         </div>
-
-        <!-- Status Messages -->
-        <div id="statusMessage" class="hidden mb-6 p-4 rounded-md">
-            <div id="statusText"></div>
+        
+        <div>
+            <h2 class="text-xl font-semibold mb-2">Custom-HTML</h2>
+            <pre id="customBox" class="bg-gray-100 p-4 border rounded overflow-auto max-h-64 text-sm"></pre>
         </div>
-
-        <!-- Loading State -->
-        <div id="loadingState" class="bg-white rounded-lg shadow-sm p-12 text-center">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            <p class="mt-2 text-gray-600">Client Daten werden geladen...</p>
+        
+        <div>
+            <h2 class="text-xl font-semibold mb-2">Status</h2>
+            <span id="statusTag" class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"></span>
         </div>
-
-        <!-- Main Content -->
-        <div id="mainContent" class="hidden space-y-6">
-            <!-- Status Section -->
-            <div class="bg-white rounded-lg shadow-sm p-6">
-                <h2 class="text-xl font-semibold text-gray-900 mb-4">Status</h2>
-                <div class="flex items-center gap-4">
-                    <select id="statusSelect" class="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="draft">Draft</option>
-                        <option value="pending">Pending</option>
-                        <option value="approved">Approved</option>
-                        <option value="signed">Signed</option>
-                    </select>
-                    <span class="text-sm text-gray-500">Status wird automatisch gespeichert</span>
-                </div>
-            </div>
-
-            <!-- Template Editor -->
-            <div class="bg-white rounded-lg shadow-sm p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold text-gray-900">Template HTML Editor</h2>
-                    <button id="saveTemplateBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors">
-                        Template Speichern
-                    </button>
-                </div>
-                <div id="templateEditor" class="border border-gray-300 rounded-md" style="height: 400px;"></div>
-                <p class="text-sm text-gray-500 mt-2">Bearbeiten Sie hier das Template HTML für alle Proposals mit diesem Template.</p>
-            </div>
-
-            <!-- Custom HTML Editor -->
-            <div class="bg-white rounded-lg shadow-sm p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold text-gray-900">Custom HTML Editor</h2>
-                    <button id="saveCustomBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors">
-                        Custom HTML Speichern
-                    </button>
-                </div>
-                <div id="customEditor" class="border border-gray-300 rounded-md" style="height: 400px;"></div>
-                <p class="text-sm text-gray-500 mt-2">Spezifische HTML-Anpassungen nur für diesen Client.</p>
-            </div>
+        
+        <div>
+            <button id="editBtn" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">
+                Bearbeiten
+            </button>
         </div>
     </div>
 
     <script>
-        // Global variables
-        let clientData = null;
-        let templateEditor = null;
-        let customEditor = null;
-        let proposalCode = null;
-
-        // Toast notification helper
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            
-            const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
-            
-            toast.className = `${bgColor} text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full opacity-0`;
-            toast.innerHTML = `
-                <div class="flex items-center">
-                    <span>${message}</span>
-                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
-                        ×
-                    </button>
-                </div>
-            `;
-            
-            container.appendChild(toast);
-            
-            // Animate in
-            setTimeout(() => {
-                toast.classList.remove('translate-x-full', 'opacity-0');
-            }, 100);
-            
-            // Auto remove after 3 seconds
-            setTimeout(() => {
-                if (toast.parentElement) {
-                    toast.classList.add('translate-x-full', 'opacity-0');
-                    setTimeout(() => toast.remove(), 300);
-                }
-            }, 3000);
-        }
-
-        // Status message helper
-        function showStatus(message, type = 'info') {
-            const statusDiv = document.getElementById('statusMessage');
-            const statusText = document.getElementById('statusText');
-            
-            statusDiv.className = 'mb-6 p-4 rounded-md';
-            
-            switch(type) {
-                case 'error':
-                    statusDiv.classList.add('bg-red-50', 'text-red-700', 'border', 'border-red-200');
-                    break;
-                case 'success':
-                    statusDiv.classList.add('bg-green-50', 'text-green-700', 'border', 'border-green-200');
-                    break;
-                default:
-                    statusDiv.classList.add('bg-blue-50', 'text-blue-700', 'border', 'border-blue-200');
-            }
-            
-            statusText.textContent = message;
-            statusDiv.classList.remove('hidden');
-        }
-
-        function hideStatus() {
-            document.getElementById('statusMessage').classList.add('hidden');
-        }
-
-        // Initialize Ace editors
-        function initializeEditors() {
-            // Template Editor
-            templateEditor = ace.edit('templateEditor');
-            templateEditor.setTheme('ace/theme/monokai');
-            templateEditor.session.setMode('ace/mode/html');
-            templateEditor.setOptions({
-                fontSize: '14px',
-                wrap: true,
-                enableBasicAutocompletion: true,
-                enableLiveAutocompletion: true
+        const code = new URLSearchParams(location.search).get('code');
+        fetch(`https://optionai.optionai.at/webhook/admin/load-client?code=${code}`)
+            .then(r=>r.json())
+            .then(data=>{
+                document.getElementById('templateBox').textContent = data.template.HTML;
+                document.getElementById('customBox').textContent = data.client.custom_html || '';
+                document.getElementById('statusTag').textContent = data.client.Status;
             });
-
-            // Custom Editor
-            customEditor = ace.edit('customEditor');
-            customEditor.setTheme('ace/theme/monokai');
-            customEditor.session.setMode('ace/mode/html');
-            customEditor.setOptions({
-                fontSize: '14px',
-                wrap: true,
-                enableBasicAutocompletion: true,
-                enableLiveAutocompletion: true
-            });
-
-            console.log('Ace editors initialized');
-        }
-
-        // Load client data from API
-        async function loadClientData() {
-            console.log('Loading client data for code:', proposalCode);
-            
-            try {
-                // Check authentication
-                const user = netlifyIdentity.currentUser();
-                if (!user) {
-                    window.location.href = '/login.html';
-                    return;
-                }
-
-                // Check admin role
-                const roles = user.app_metadata?.roles || [];
-                if (!roles.includes('admin')) {
-                    showStatus('Zugriff verweigert. Admin-Berechtigung erforderlich.', 'error');
-                    return;
-                }
-
-                // Get JWT token
-                const token = user.token.access_token;
-
-                // Make API call
-                const response = await fetch(`https://optionai.optionai.at/webhook/admin/load-client?code=${encodeURIComponent(proposalCode)}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                console.log('API Response Status:', response.status);
-
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                console.log('Client data loaded:', data);
-
-                clientData = data;
-                populateUI(data);
-                
-            } catch (error) {
-                console.error('Error loading client data:', error);
-                showStatus(`Fehler beim Laden der Client-Daten: ${error.message}`, 'error');
-            } finally {
-                // Hide loading state
-                document.getElementById('loadingState').classList.add('hidden');
-                document.getElementById('mainContent').classList.remove('hidden');
-            }
-        }
-
-        // Populate UI with loaded data
-        function populateUI(data) {
-            console.log('Populating UI with data:', data);
-
-            // Update proposal code display
-            document.getElementById('proposalCode').textContent = proposalCode;
-
-            // Set status dropdown
-            const statusSelect = document.getElementById('statusSelect');
-            if (data.client && data.client.status) {
-                statusSelect.value = data.client.status;
-            }
-
-            // Set template editor content
-            if (data.template && data.template.HTML) {
-                templateEditor.setValue(data.template.HTML, -1);
-            }
-
-            // Set custom editor content
-            const customHtml = (data.client && data.client.custom_html) || '';
-            customEditor.setValue(customHtml, -1);
-
-            console.log('UI populated successfully');
-        }
-
-        // Save status
-        async function saveStatus(newStatus) {
-            console.log('Saving status:', newStatus);
-
-            try {
-                const user = netlifyIdentity.currentUser();
-                const token = user.token.access_token;
-
-                const response = await fetch('https://optionai.optionai.at/webhook/admin/save-proposal', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        proposal_code: proposalCode,
-                        status: newStatus
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
-                }
-
-                console.log('Status saved successfully');
-                showToast('Status gespeichert ✅');
-                
-            } catch (error) {
-                console.error('Error saving status:', error);
-                showToast(`Fehler beim Speichern: ${error.message}`, 'error');
-            }
-        }
-
-        // Save template
-        async function saveTemplate() {
-            console.log('Saving template...');
-
-            try {
-                const user = netlifyIdentity.currentUser();
-                const token = user.token.access_token;
-
-                const templateHtml = templateEditor.getValue();
-                const templateId = clientData.template.template_id;
-
-                const response = await fetch('https://optionai.optionai.at/webhook/admin/save-template', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        template_id: templateId,
-                        html: templateHtml
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
-                }
-
-                console.log('Template saved successfully');
-                showToast('Template gespeichert ✅');
-                
-            } catch (error) {
-                console.error('Error saving template:', error);
-                showToast(`Fehler beim Speichern: ${error.message}`, 'error');
-            }
-        }
-
-        // Save custom HTML
-        async function saveCustomHtml() {
-            console.log('Saving custom HTML...');
-
-            try {
-                const user = netlifyIdentity.currentUser();
-                const token = user.token.access_token;
-
-                const customHtml = customEditor.getValue();
-
-                const response = await fetch('https://optionai.optionai.at/webhook/admin/save-proposal', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        proposal_code: proposalCode,
-                        custom_html: customHtml
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
-                }
-
-                console.log('Custom HTML saved successfully');
-                showToast('Custom HTML gespeichert ✅');
-                
-            } catch (error) {
-                console.error('Error saving custom HTML:', error);
-                showToast(`Fehler beim Speichern: ${error.message}`, 'error');
-            }
-        }
-
-        // Logout handler
-        function handleLogout() {
-            netlifyIdentity.logout();
-        }
-
-        // Initialize on page load
-        window.addEventListener('DOMContentLoaded', function() {
-            console.log('Client editor initializing...');
-
-            // Extract proposal code from URL
-            proposalCode = new URLSearchParams(location.search).get('code');
-            console.log('Proposal code from URL:', proposalCode);
-
-            if (!proposalCode) {
-                showStatus('Kein Proposal Code in der URL gefunden.', 'error');
-                return;
-            }
-
-            // Set up event listeners
-            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
-            
-            document.getElementById('statusSelect').addEventListener('change', function(e) {
-                saveStatus(e.target.value);
-            });
-            
-            document.getElementById('saveTemplateBtn').addEventListener('click', saveTemplate);
-            document.getElementById('saveCustomBtn').addEventListener('click', saveCustomHtml);
-
-            // Initialize editors
-            initializeEditors();
-
-            // Initialize Netlify Identity
-            netlifyIdentity.on('init', function(user) {
-                console.log('Netlify Identity initialized, user:', user);
-                if (user) {
-                    loadClientData();
-                } else {
-                    window.location.href = '/login.html';
-                }
-            });
-
-            netlifyIdentity.on('logout', function() {
-                console.log('User logged out, redirecting...');
-                window.location.href = '/';
-            });
-
-            // Initialize the widget
-            netlifyIdentity.init();
-        });
+        
+        document.getElementById('editBtn').onclick = () => {
+            console.log('Bearbeiten-Button geklickt');
+        };
     </script>
 </body>
 </html>
