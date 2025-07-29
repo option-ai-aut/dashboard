@@ -70,27 +70,33 @@
         function initializeEditors() {
             // Template Editor
             tinymce.init({
-                selector: '#templateEditor',
-                height: 400,
-                plugins: 'lists code',
-                toolbar: 'bold italic underline | bullist numlist | code',
+                selector:'#templateEditor',
+                height:300,
+                plugins:'preview code lists',
+                toolbar:'undo redo | bold italic underline | numlist bullist | code preview',
                 menubar: false,
                 branding: false,
-                setup: function(editor) {
+                setup(editor){
                     templateEditor = editor;
+                    editor.on('init', ()=> {
+                        editor.setContent(data.template.HTML || '');
+                    });
                 }
             });
             
             // Custom Editor
             tinymce.init({
-                selector: '#customEditor',
-                height: 300,
-                plugins: 'lists code',
-                toolbar: 'bold italic underline | bullist numlist | code',
+                selector:'#customEditor',
+                height:220,
+                plugins:'code lists',
+                toolbar:'undo redo | bold italic underline | numlist bullist | code',
                 menubar: false,
                 branding: false,
-                setup: function(editor) {
-                    customEditor = editor;
+                setup(e){
+                    customEditor = e;
+                    e.on('init', ()=> {
+                        e.setContent(data.client.custom_html || '');
+                    });
                 }
             });
         }
@@ -102,16 +108,6 @@
                 
                 // Initialize TinyMCE editors after data is loaded
                 initializeEditors();
-                
-                // Set content when editors are ready
-                setTimeout(() => {
-                    if (templateEditor) {
-                        templateEditor.setContent(data.template.HTML || '');
-                    }
-                    if (customEditor) {
-                        customEditor.setContent(data.client.custom_html || '');
-                    }
-                }, 1000); // Wait for editors to be fully initialized
                 
                 // Status Select initial
                 document.getElementById('statusSelect').value = data.client.Status || 'draft';
