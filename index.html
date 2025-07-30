@@ -6,6 +6,35 @@
     <title>AI Cold Outreach System - Proposal Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
     <style>
+        /* SF Pro Font Import */
+        @font-face {
+            font-family: 'SF Pro';
+            src: url('./bilder/SF-Pro-Text-Regular.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro';
+            src: url('./bilder/SF-Pro-Text-Medium.otf') format('opentype');
+            font-weight: 500;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro';
+            src: url('./bilder/SF-Pro-Text-Bold.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro';
+            src: url('./bilder/SF-Pro-Text-Thin.otf') format('opentype');
+            font-weight: 300;
+            font-style: normal;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,12 +42,15 @@
         }
 
         body {
-            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: #1a1a1a;
-            background: #f0f2f5;
+            background: #fafbfc;
             margin: 0;
             padding: 0;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .dashboard-header {
@@ -103,60 +135,196 @@
         .proposal-content {
             flex: 1;
             max-width: 900px;
-            background: white;
-            box-shadow: 0 0 30px rgba(0,0,0,0.15), 0 0 60px rgba(0,0,0,0.1);
-            border-radius: 12px;
+            background: #ffffff;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.08);
+            border-radius: 20px;
             overflow: hidden;
-            padding: 0;
-            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            color: #1a1a1a;
+            padding: 4rem 3rem;
+            font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            color: #1d1d1f;
+            position: relative;
+            border: 1px solid rgba(0,0,0,0.04);
         }
         
-        /* Modern Proposal Styling */
+        /* Ultra Modern Proposal Styling */
         .proposal-content h1, .proposal-content h2, .proposal-content h3, .proposal-content h4 {
+            font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif;
             font-weight: 700;
             color: #000000;
-            margin-bottom: 1rem;
-            line-height: 1.3;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
         }
         
         .proposal-content h1 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             margin-bottom: 1.5rem;
-            letter-spacing: -0.02em;
+            font-weight: 700;
+            color: #1d1d1f;
+            position: relative;
+            text-align: left;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+        
+        .proposal-content h1::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #007AFF 0%, #5AC8FA 100%);
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
         }
         
         .proposal-content h2 {
             font-size: 2rem;
-            margin-bottom: 1.25rem;
-            letter-spacing: -0.01em;
+            margin-bottom: 1.2rem;
+            color: #1d1d1f;
+            position: relative;
+            text-align: left;
+            padding-left: 24px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        
+        .proposal-content h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 6px;
+            width: 5px;
+            height: calc(100% - 12px);
+            background: linear-gradient(180deg, #007AFF 0%, #5AC8FA 100%);
+            border-radius: 3px;
+            box-shadow: 0 1px 4px rgba(0, 122, 255, 0.2);
+        }
+        
+        .proposal-content h2::before {
+            display: none;
         }
         
         .proposal-content h3 {
             font-size: 1.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
+            color: #1d1d1f;
+            font-weight: 600;
+            text-align: left;
+            letter-spacing: -0.01em;
+            line-height: 1.3;
         }
         
         .proposal-content h4 {
-            font-size: 1.25rem;
-            margin-bottom: 0.75rem;
+            font-size: 1.3rem;
+            margin-bottom: 0.7rem;
+            color: #424245;
+            font-weight: 500;
+            text-align: left;
+            letter-spacing: -0.005em;
+            line-height: 1.3;
         }
         
         .proposal-content p {
             margin-bottom: 1rem;
-            font-size: 1rem;
-            color: #374151;
+            font-size: 1.05rem;
+            color: #424245;
+            line-height: 1.7;
+            font-weight: 400;
+            text-align: justify;
+            letter-spacing: -0.003em;
         }
         
         .proposal-content ul, .proposal-content ol {
-            margin-bottom: 1.5rem;
-            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+            padding-left: 0;
         }
         
         .proposal-content li {
-            margin-bottom: 0.5rem;
-            color: #374151;
+            margin-bottom: 0.4rem;
+            color: #424245;
+            font-size: 1.05rem;
+            position: relative;
+            padding-left: 24px;
+            line-height: 1.6;
+            letter-spacing: -0.003em;
+        }
+        
+        .proposal-content ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #007AFF;
+            font-weight: 600;
+            font-size: 1.3rem;
+            text-shadow: 0 1px 2px rgba(0, 122, 255, 0.2);
+        }
+        
+        /* Radikale Lösung: Alle Aufzählungszeichen entfernen und nur eigene verwenden */
+        .proposal-content ul,
+        .proposal-content ol {
+            list-style: none !important;
+        }
+        
+        .proposal-content li {
+            list-style: none !important;
+        }
+        
+        /* Nur erste Ebene bekommt unsere Custom-Bullets */
+        .proposal-content > div ul > li::before,
+        .proposal-content > section ul > li::before,
+        .proposal-content ul:not(ul ul) > li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #007AFF;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        /* Verschachtelte Listen ohne Bullets */
+        .proposal-content ul ul li::before,
+        .proposal-content ol ul li::before,
+        .proposal-content ul ol li::before,
+        .proposal-content ol ol li::before {
+            display: none !important;
+        }
+        
+        .proposal-content ul ul li,
+        .proposal-content ol ol li,
+        .proposal-content ul ol li,
+        .proposal-content ol ul li {
+            padding-left: 20px !important;
+        }
+        
+        /* Moderne Bild-Styling */
+        .proposal-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 2rem auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .proposal-content ol {
+            counter-reset: list-counter;
+        }
+        
+        .proposal-content ol li {
+            counter-increment: list-counter;
+        }
+        
+        .proposal-content ol li::before {
+            content: counter(list-counter) '.';
+            position: absolute;
+            left: 0;
+            color: #007AFF;
+            font-weight: 600;
+            font-size: 1rem;
         }
         
         .proposal-content strong {
@@ -165,53 +333,125 @@
         }
         
         .proposal-content blockquote {
-            border-left: 4px solid #66b3ff;
-            padding-left: 1.5rem;
+            border: none;
+            background: linear-gradient(135deg, rgba(0, 122, 255, 0.03) 0%, rgba(90, 200, 250, 0.02) 100%);
+            border-left: 4px solid #007AFF;
+            padding: 1.5rem;
             margin: 1.5rem 0;
-            font-style: italic;
-            color: #6b7280;
+            border-radius: 12px;
+            font-style: normal;
+            color: #1d1d1f;
+            font-size: 1.05rem;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.08);
+            border: 1px solid rgba(0, 122, 255, 0.1);
+        }
+        
+        .proposal-content blockquote::before {
+            content: '\201C';
+            font-size: 3rem;
+            color: #007AFF;
+            position: absolute;
+            top: 0.5rem;
+            left: 1rem;
+            opacity: 0.3;
         }
         
         .proposal-content table {
             width: 100%;
-            border-collapse: collapse;
             margin: 1.5rem 0;
-            background: white;
-            border-radius: 8px;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #ffffff;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.06);
+            border: 1px solid #f5f5f7;
         }
         
         .proposal-content th {
-            background: #f8f9fa;
-            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, #fbfbfd 0%, #f5f5f7 100%);
+            padding: 1rem 1.25rem;
             text-align: left;
             font-weight: 600;
-            color: #374151;
-            border-bottom: 1px solid #e5e7eb;
+            color: #1d1d1f;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            border-bottom: 1px solid #d2d2d7;
         }
         
         .proposal-content td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid #f3f4f6;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #f5f5f7;
+            font-size: 1rem;
+            color: #424245;
         }
         
         .proposal-content tr:last-child td {
             border-bottom: none;
         }
         
-        /* Modern section styling */
-        .proposal-content > div, .proposal-content > section {
-            padding: 2rem;
+        .proposal-content tr:hover {
+            background: rgba(0, 122, 255, 0.02);
         }
         
-        .proposal-content > div:first-child, .proposal-content > section:first-child {
-            padding-top: 3rem;
+        /* Apple-Style Proposal Header */
+        .proposal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 0 2rem 0;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid #d2d2d7;
+            position: relative;
+        }
+        
+        .proposal-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, #d2d2d7 20%, #d2d2d7 80%, transparent 100%);
+        }
+        
+        .proposal-logo img {
+            height: 2.8rem;
+            width: auto;
+            display: block;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+        }
+        
+        .proposal-company {
+            font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            letter-spacing: -0.02em;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        /* Kein zusätzliches Section-Padding - Container hat bereits Padding */
+        .proposal-content > div, .proposal-content > section {
+            padding: 0;
+            margin-bottom: 1.5rem;
         }
         
         .proposal-content > div:last-child, .proposal-content > section:last-child {
-            padding-bottom: 3rem;
+            margin-bottom: 0;
         }
+        
+        /* Subtle dividers between sections */
+        .proposal-content > div:not(:last-child), .proposal-content > section:not(:last-child) {
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        /* Alle Inhalte sind automatisch zentriert durch Container-Padding */
 
         .sidebar {
             width: 25vw;
@@ -579,11 +819,15 @@
         }
 
         .logo-main {
-            font-size: 3rem;
-            font-weight: 800;
-            color: #000;
             margin-bottom: 20px;
-            letter-spacing: -0.02em;
+            text-align: center;
+        }
+        
+        .logo-main img {
+            height: 3rem;
+            width: auto;
+            display: block;
+            margin: 0 auto;
         }
 
         .code-entry-form h1 {
@@ -690,8 +934,8 @@
                 padding: 40px 30px;
             }
             
-            .logo-main {
-                font-size: 2.5rem;
+            .logo-main img {
+                height: 2.5rem;
             }
             
             .code-entry-form h1 {
@@ -876,42 +1120,84 @@
           
           .dashboard-container{ padding:0 !important; }
 
-          /* Proposal Content für Print optimieren */
+          /* Apple-Style Print optimiert */
           .proposal-content {
             max-width: none !important;
             width: 100% !important;
             box-shadow: none !important;
             border-radius: 0 !important;
             margin: 0 !important;
-            padding: 0 !important;
-            background: white !important;
+            padding: 3rem 2rem !important;
+            background: #ffffff !important;
+            border: none !important;
+            color: #1d1d1f !important;
           }
           
-          /* Alle Styles beibehalten */
+          /* Alle modernen Styles für Print beibehalten */
           .proposal-content h1, .proposal-content h2, .proposal-content h3, .proposal-content h4 {
+            font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
             font-weight: 700 !important;
             color: #000000 !important;
             page-break-after: avoid;
           }
           
           .proposal-content h1 {
-            font-size: 2.2rem !important;
+            font-size: 2.3rem !important;
+            color: #1d1d1f !important;
+            text-align: left !important;
+            margin-bottom: 1.2rem !important;
+            letter-spacing: -0.03em !important;
+            line-height: 1.1 !important;
+          }
+          
+          .proposal-content h1::after {
+            display: none !important;
           }
           
           .proposal-content h2 {
-            font-size: 1.8rem !important;
+            font-size: 1.7rem !important;
+            padding-left: 24px !important;
+            text-align: left !important;
+            margin-bottom: 1rem !important;
+            color: #1d1d1f !important;
+            font-weight: 600 !important;
+            letter-spacing: -0.02em !important;
+          }
+          
+          .proposal-content h2::before {
+            background: #007AFF !important;
+          }
+          
+          .proposal-content img {
+            max-width: 100% !important;
+            height: auto !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
           }
           
           .proposal-content h3 {
-            font-size: 1.4rem !important;
+            font-size: 1.3rem !important;
+            text-align: left !important;
+            margin-bottom: 0.6rem !important;
+            color: #1d1d1f !important;
+            font-weight: 600 !important;
           }
           
           .proposal-content h4 {
             font-size: 1.2rem !important;
+            text-align: left !important;
+            margin-bottom: 0.5rem !important;
+            color: #424245 !important;
+            font-weight: 500 !important;
           }
           
           .proposal-content p {
-            color: #374151 !important;
+            color: #424245 !important;
+            font-size: 1rem !important;
+            text-align: justify !important;
+            margin-bottom: 0.8rem !important;
+            line-height: 1.6 !important;
+            letter-spacing: -0.003em !important;
           }
           
           .proposal-content strong {
@@ -919,26 +1205,98 @@
             color: #000000 !important;
           }
           
+          .proposal-content ul li::before {
+            color: #007AFF !important;
+          }
+          
+          .proposal-content ul,
+          .proposal-content ol {
+            list-style: none !important;
+          }
+          
+          .proposal-content ul ul li::before,
+          .proposal-content ol ul li::before,
+          .proposal-content ul ol li::before,
+          .proposal-content ol ol li::before {
+            display: none !important;
+          }
+          
+          .proposal-content ol li::before {
+            color: #007AFF !important;
+          }
+          
           .proposal-content blockquote {
-            border-left: 4px solid #66b3ff !important;
-            padding-left: 1.5rem !important;
-            color: #6b7280 !important;
+            background: rgba(0, 122, 255, 0.03) !important;
+            border-left: 4px solid #007AFF !important;
+            padding: 1.2rem !important;
+            color: #1d1d1f !important;
+            border-radius: 12px !important;
+            margin: 1.2rem 0 !important;
+            font-size: 1rem !important;
+            border: 1px solid rgba(0, 122, 255, 0.1) !important;
+          }
+          
+          .proposal-content blockquote::before {
+            color: #007AFF !important;
           }
           
           .proposal-content table {
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-            border-radius: 8px !important;
+            border-radius: 12px !important;
             overflow: hidden !important;
+            margin: 1.2rem 0 !important;
+            border: 1px solid #f5f5f7 !important;
+            background: #ffffff !important;
           }
           
           .proposal-content th {
-            background: #f8f9fa !important;
-            color: #374151 !important;
+            padding: 0.8rem 1rem !important;
+            font-size: 0.9rem !important;
+            background: linear-gradient(135deg, #fbfbfd 0%, #f5f5f7 100%) !important;
+            color: #1d1d1f !important;
+            border-bottom: 1px solid #d2d2d7 !important;
+          }
+          
+          .proposal-content td {
+            padding: 0.8rem 1rem !important;
+            font-size: 0.95rem !important;
+            color: #424245 !important;
+            border-bottom: 1px solid #f5f5f7 !important;
+          }
+          
+          .proposal-content th {
+            background: linear-gradient(135deg, #f8faff 0%, #f0f7ff 100%) !important;
+            color: #1a1a1a !important;
             font-weight: 600 !important;
           }
           
+          .proposal-header {
+            padding: 0 0 1.5rem 0 !important;
+            margin-bottom: 2rem !important;
+            border-bottom: 1px solid #d2d2d7 !important;
+          }
+          
+          .proposal-header::after {
+            background: #d2d2d7 !important;
+          }
+          
+          .proposal-logo img {
+            height: 2rem !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+          }
+          
+          .proposal-company {
+            font-size: 1.5rem !important;
+          }
+          
           .proposal-content > div, .proposal-content > section {
-            padding: 1.5rem !important;
+            padding: 0 !important;
+            margin-bottom: 1rem !important;
+          }
+          
+          .proposal-content > div:not(:last-child), .proposal-content > section:not(:last-child) {
+            border-bottom: 1px solid #f1f5f9 !important;
           }
 
           /* Keine hässlichen Umbrüche in Karten */
@@ -963,7 +1321,9 @@
     <!-- Code Entry Screen -->
     <div id="codeEntryScreen" class="code-entry-container">
         <div class="code-entry-form">
-            <div class="logo-main">option.ai</div>
+            <div class="logo-main">
+                <img src="./bilder/option Logo Colour.png" alt="option.ai" />
+            </div>
             <h1>Angebot-Code eingeben</h1>
             <p>Geben Sie Ihren Code ein, um das Dokument zu laden.</p>
             
@@ -1003,7 +1363,7 @@
                     <img src="./bilder/option Logo White.png" alt="option.ai" />
                 </div>
                 <div class="dashboard-actions">
-                    <a href="/login.html" class="btn btn-secondary">🔐 Admin Login</a>
+                    <a href="/login.html" class="btn btn-secondary">🔐 Login</a>
                 </div>
             </div>
         </header>
@@ -1014,8 +1374,8 @@
                 <!-- Main Proposal Content -->
                 <div class="proposal-content" id="proposal-content">
                     <div style="padding: 100px; text-align: center; color: #666;">
-                        <h2>Proposal wird geladen...</h2>
-                        <p>Bitte warten Sie, während das Proposal aus der Datenbank geladen wird.</p>
+                        <h2>Angebot wird geladen...</h2>
+                        <p>Bitte warten Sie, während das Angebot aus der Datenbank geladen wird.</p>
                     </div>
                 </div>
 
@@ -1041,7 +1401,7 @@
 
                     <div class="action-buttons">
                         <button class="btn btn-primary" onclick="openSignatureModal()" style="width: 100%;">
-                            ✍️ Proposal Unterschreiben
+                            ✍️ Angebot Unterschreiben
                         </button>
                         <button class="btn btn-secondary" onclick="downloadPDF()" style="width: 100%;">
                             🖨️ Als PDF drucken/speichern
@@ -1053,7 +1413,7 @@
                 <div class="status-card" style="margin-top: 20px;">
                     <h4 style="margin-bottom: 15px; color: #000;">Nächste Schritte</h4>
                     <ul class="benefits-list" style="font-size: 0.9rem;">
-                        <li>Proposal prüfen und unterschreiben</li>
+                        <li>Angebot prüfen und unterschreiben</li>
                         <li>Kick-Off Call vereinbaren</li>
                         <li>Projektstart innerhalb 48h</li>
                     </ul>
@@ -1066,10 +1426,10 @@
     <div id="signatureModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeSignatureModal()">&times;</span>
-            <h3 style="margin-bottom: 20px; color: #000;">Proposal Unterschreiben</h3>
+            <h3 style="margin-bottom: 20px; color: #000;">Angebot Unterschreiben</h3>
             
             <p style="margin-bottom: 20px; color: #666;">
-                Bitte unterschreiben Sie unten, um das Proposal zu akzeptieren:
+                Bitte unterschreiben Sie unten, um das Angebot zu akzeptieren:
             </p>
             
             <div class="signature-pad-container">
@@ -1257,7 +1617,18 @@
                             el.removeAttribute('class');
                         });
                         
-                        proposalContentElement.innerHTML = tempDiv.innerHTML;
+                        // Create proposal header with logo and company name
+                        const companyName = client?.Company || 'FF Office';
+                        const proposalHeader = `
+                            <div class="proposal-header">
+                                <div class="proposal-logo">
+                                    <img src="./bilder/option Logo Colour.png" alt="Company Logo" />
+                                </div>
+                                <div class="proposal-company">${companyName}</div>
+                            </div>
+                        `;
+                        
+                        proposalContentElement.innerHTML = proposalHeader + tempDiv.innerHTML;
                     } else {
                         console.error('❌ No HTML content found in N8n response');
                         console.log('Available client fields:', client ? Object.keys(client) : 'No client');
