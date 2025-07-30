@@ -41,10 +41,13 @@
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
             flex-shrink: 0;
+        }
+        
+        .logo img {
+            height: 1.8rem;
+            width: auto;
+            display: block;
         }
 
         .dashboard-actions {
@@ -93,35 +96,128 @@
         }
 
         .dashboard-container {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
             min-height: calc(100vh - 100px);
-            padding: 120px 50px 50px 50px;
-            padding-right: calc(25vw + 100px);
-            position: relative;
+            padding: 50px 20px;
         }
 
         .proposal-content {
-            width: 100%;
+            flex: 1;
             max-width: 900px;
             background: white;
             box-shadow: 0 0 30px rgba(0,0,0,0.15), 0 0 60px rgba(0,0,0,0.1);
             border-radius: 12px;
             overflow: hidden;
-            padding: 40px;
+            padding: 0;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+        }
+        
+        /* Modern Proposal Styling */
+        .proposal-content h1, .proposal-content h2, .proposal-content h3, .proposal-content h4 {
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        
+        .proposal-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+        
+        .proposal-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.01em;
+        }
+        
+        .proposal-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .proposal-content h4 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .proposal-content p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            color: #374151;
+        }
+        
+        .proposal-content ul, .proposal-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+        
+        .proposal-content li {
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+        
+        .proposal-content strong {
+            font-weight: 600;
+            color: #000000;
+        }
+        
+        .proposal-content blockquote {
+            border-left: 4px solid #66b3ff;
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: #6b7280;
+        }
+        
+        .proposal-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .proposal-content th {
+            background: #f8f9fa;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .proposal-content td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .proposal-content tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Modern section styling */
+        .proposal-content > div, .proposal-content > section {
+            padding: 2rem;
+        }
+        
+        .proposal-content > div:first-child, .proposal-content > section:first-child {
+            padding-top: 3rem;
+        }
+        
+        .proposal-content > div:last-child, .proposal-content > section:last-child {
+            padding-bottom: 3rem;
         }
 
         .sidebar {
-            position: fixed;
-            right: 50px;
-            top: 120px;
-            bottom: 50px;
             width: 25vw;
             min-width: 300px;
             max-width: 400px;
             background: transparent;
-            z-index: 1000;
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -682,22 +778,14 @@
         }
 
         @media (max-width: 1200px) {
-            .dashboard-container {
-                padding: 100px 20px 30px 20px;
-                padding-right: calc(30vw + 60px);
-            }
-            
-            .proposal-content {
-                padding: 30px;
-            }
-            
             .sidebar {
                 width: 30vw;
                 min-width: 280px;
                 max-width: 350px;
-                right: 30px;
-                top: 100px;
-                bottom: 30px;
+            }
+            
+            .proposal-content {
+                padding: 30px;
             }
         }
 
@@ -706,42 +794,42 @@
                 width: 35vw;
                 min-width: 260px;
                 max-width: 320px;
-                right: 20px;
-                top: 100px;
-                bottom: 30px;
             }
             
-            .dashboard-container {
-                padding: 100px 20px 30px 20px;
-                padding-right: calc(35vw + 40px);
+            #page-wrapper {
+                gap: 20px;
             }
         }
         
         @media (max-width: 900px) {
-            .dashboard-container {
+            #page-wrapper {
                 flex-direction: column;
                 align-items: center;
-                padding: 120px 15px 20px 15px;
-                padding-right: 15px;
+                gap: 30px;
             }
 
             .proposal-content {
                 width: 100%;
-                min-width: auto;
-                margin-bottom: 30px;
+                max-width: 900px;
             }
             
             .sidebar {
-                position: relative;
-                top: auto;
-                bottom: auto;
-                transform: none;
-                right: auto;
                 width: 100%;
                 max-width: 500px;
             }
         }
         
+        /* --- Flex‑Layout für Proposal + Sidebar ------------------------ */
+        #page-wrapper{
+          display: flex;
+          justify-content: center;   /* Proposal mittig */
+          align-items: flex-start;   /* Oberkante bündig */
+          gap: 32px;
+          max-width: 1400px;
+          margin: 0 auto;
+          width: 100%;
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 padding: 0 20px;
@@ -758,6 +846,10 @@
             .btn {
                 width: 100%;
             }
+            
+            .dashboard-container {
+                padding: 30px 15px;
+            }
 
             .proposal-content {
                 padding: 20px;
@@ -766,6 +858,104 @@
             .status-card {
                 padding: 20px;
             }
+        }
+
+        @media print{
+          @page{ size:A4; margin:20mm; }
+
+          body{ background:white !important; font-size:0.95rem; }
+
+          /* Sidebar komplett ausblenden */
+          .sidebar, .sidebar-container{ display:none !important; }
+
+          /* Header ausblenden */
+          .dashboard-header{ display:none !important; }
+
+          /* Wrapper ohne Flex-Lücken */
+          #page-wrapper{ display:block !important; }
+          
+          .dashboard-container{ padding:0 !important; }
+
+          /* Proposal Content für Print optimieren */
+          .proposal-content {
+            max-width: none !important;
+            width: 100% !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
+          }
+          
+          /* Alle Styles beibehalten */
+          .proposal-content h1, .proposal-content h2, .proposal-content h3, .proposal-content h4 {
+            font-weight: 700 !important;
+            color: #000000 !important;
+            page-break-after: avoid;
+          }
+          
+          .proposal-content h1 {
+            font-size: 2.2rem !important;
+          }
+          
+          .proposal-content h2 {
+            font-size: 1.8rem !important;
+          }
+          
+          .proposal-content h3 {
+            font-size: 1.4rem !important;
+          }
+          
+          .proposal-content h4 {
+            font-size: 1.2rem !important;
+          }
+          
+          .proposal-content p {
+            color: #374151 !important;
+          }
+          
+          .proposal-content strong {
+            font-weight: 600 !important;
+            color: #000000 !important;
+          }
+          
+          .proposal-content blockquote {
+            border-left: 4px solid #66b3ff !important;
+            padding-left: 1.5rem !important;
+            color: #6b7280 !important;
+          }
+          
+          .proposal-content table {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+          }
+          
+          .proposal-content th {
+            background: #f8f9fa !important;
+            color: #374151 !important;
+            font-weight: 600 !important;
+          }
+          
+          .proposal-content > div, .proposal-content > section {
+            padding: 1.5rem !important;
+          }
+
+          /* Keine hässlichen Umbrüche in Karten */
+          .feature-card,
+          .timeline-item,
+          .pricing-highlight,
+          .proposal-content table,
+          .proposal-content blockquote{ 
+            break-inside: avoid !important; 
+            page-break-inside: avoid !important; 
+          }
+
+          /* Buttons & interaktive Elemente verstecken */
+          button, .signature-pad, .download-btn{ display:none !important; }
+
+          /* Links neutralisieren */
+          a{ color:inherit !important; text-decoration:none !important; }
         }
     </style>
 </head>
@@ -809,7 +999,9 @@
         <!-- Dashboard Header -->
         <header class="dashboard-header">
             <div class="header-content">
-                <div class="logo">option.ai</div>
+                <div class="logo">
+                    <img src="./bilder/option Logo White.png" alt="option.ai" />
+                </div>
                 <div class="dashboard-actions">
                     <a href="/login.html" class="btn btn-secondary">🔐 Admin Login</a>
                 </div>
@@ -818,16 +1010,17 @@
 
         <!-- Dashboard Container -->
         <div class="dashboard-container">
-            <!-- Main Proposal Content -->
-            <div class="proposal-content" id="proposal-content">
-                <div style="padding: 100px; text-align: center; color: #666;">
-                    <h2>Proposal wird geladen...</h2>
-                    <p>Bitte warten Sie, während das Proposal aus der Datenbank geladen wird.</p>
+            <div id="page-wrapper">
+                <!-- Main Proposal Content -->
+                <div class="proposal-content" id="proposal-content">
+                    <div style="padding: 100px; text-align: center; color: #666;">
+                        <h2>Proposal wird geladen...</h2>
+                        <p>Bitte warten Sie, während das Proposal aus der Datenbank geladen wird.</p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Sidebar -->
-            <div class="sidebar">
+                <!-- Sidebar -->
+                <div class="sidebar">
                 <!-- Erste Karte: Kundendaten & Actions -->
                 <div class="status-card">
                     <div class="status-header">
@@ -866,6 +1059,7 @@
                     </ul>
                 </div>
             </div>
+        </div>
     </div>
 
     <!-- Signature Modal -->
@@ -1027,7 +1221,7 @@
                         const c = client;
                         document.getElementById('sidebarName').textContent    = c["Full Name"] || '';
                         document.getElementById('sidebarCompany').textContent = c.Company      || '';
-                        document.getElementById('sidebarAddress').textContent = c.Address      || '';
+                        document.getElementById('sidebarAddress').textContent = c.Adress       || '';
                         document.getElementById('sidebarCountry').textContent = c.Country      || '';
 
                         // Erstelldatum (ISO‑String → deutsches Datum)
