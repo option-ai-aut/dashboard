@@ -1786,19 +1786,25 @@
                 modal.style.display = 'flex';
                 loadPdfForSigning();
                 
-                // Initialize with draw tab active
+                // Initialize with draw tab active after a delay
                 setTimeout(() => {
+                    console.log('Initializing modal with draw tab');
                     switchSignatureMethod('draw');
-                }, 200);
+                }, 300);
             } else {
                 console.error('Signing modal not found');
             }
         }
 
         function closeSigningModal() {
+            console.log('Closing signing modal');
             document.getElementById('signingModal').style.display = 'none';
+            
+            // Clean up signature pad
             if (signaturePad) {
                 signaturePad.clear();
+                signaturePad = null; // Reset to allow recreation
+                console.log('SignaturePad cleaned up');
             }
         }
 
@@ -1871,14 +1877,41 @@
                 console.error('Tab not found:', method + 'Tab');
             }
             
-            if (method === 'draw' && !signaturePad) {
-                setTimeout(() => initializeSignaturePad(), 100);
+            if (method === 'draw') {
+                setTimeout(() => {
+                    console.log('Initializing signature pad for draw method');
+                    initializeSignaturePad();
+                }, 150);
             }
         }
 
         function initializeSignaturePad() {
+            console.log('Initializing signature pad...');
             const canvas = document.getElementById('signatureCanvas');
-            if (canvas && !signaturePad) {
+            
+            if (!canvas) {
+                console.error('Signature canvas not found');
+                return;
+            }
+            
+            if (signaturePad) {
+                console.log('SignaturePad already exists, clearing it');
+                signaturePad.clear();
+                return;
+            }
+            
+            try {
+                console.log('Creating new SignaturePad instance');
+                
+                // Set canvas dimensions first
+                const rect = canvas.getBoundingClientRect();
+                const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                
+                canvas.width = rect.width * ratio;
+                canvas.height = rect.height * ratio;
+                canvas.getContext('2d').scale(ratio, ratio);
+                
+                // Create signature pad
                 signaturePad = new SignaturePad(canvas, {
                     backgroundColor: 'rgba(255, 255, 255, 0)',
                     penColor: 'rgb(0, 0, 0)',
@@ -1886,16 +1919,10 @@
                     maxWidth: 4
                 });
                 
-                // Resize canvas
-                function resizeCanvas() {
-                    const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                    canvas.width = canvas.offsetWidth * ratio;
-                    canvas.height = canvas.offsetHeight * ratio;
-                    canvas.getContext("2d").scale(ratio, ratio);
-                    signaturePad.clear();
-                }
-                resizeCanvas();
-                window.addEventListener("resize", resizeCanvas);
+                console.log('SignaturePad created successfully');
+                
+            } catch (error) {
+                console.error('Error creating SignaturePad:', error);
             }
         }
 
@@ -1928,7 +1955,18 @@
             }, 2000);
         }
 
+        // Flag to prevent multiple simultaneous signature processing
+        let isSignatureProcessing = false;
+
         async function finalizeSignature() {
+            // Prevent multiple simultaneous calls
+            if (isSignatureProcessing) {
+                console.warn('Signature processing already in progress');
+                return;
+            }
+            
+            isSignatureProcessing = true;
+            
             const submitBtn = document.getElementById('submitSignatureBtn');
             const originalText = submitBtn.innerHTML;
             
@@ -1936,37 +1974,49 @@
             submitBtn.innerHTML = '⏳ Wird verarbeitet...';
 
             try {
+                console.log('=== SIGNATURE FINALIZATION START ===');
+                console.log('Current auth method:', currentAuthMethod);
+                
                 let signatureDataUrl = null;
 
                 // Get signature based on method
                 switch (currentAuthMethod) {
                     case 'draw':
-                        if (!signaturePad || signaturePad.isEmpty()) {
+                        console.log('Processing draw signature...');
+                        if (!signaturePad) {
+                            throw new Error('SignaturePad nicht initialisiert');
+                        }
+                        if (signaturePad.isEmpty()) {
                             throw new Error('Bitte zeichnen Sie zuerst eine Unterschrift');
                         }
                         signatureDataUrl = signaturePad.toDataURL('image/png');
+                        console.log('Draw signature captured, length:', signatureDataUrl.length);
                         break;
                         
                     case 'upload':
+                        console.log('Processing upload signature...');
                         const uploadPreview = document.getElementById('uploadPreview');
                         const img = uploadPreview.querySelector('img');
                         if (!img) {
                             throw new Error('Bitte laden Sie zuerst ein Bild hoch');
                         }
                         signatureDataUrl = img.src;
+                        console.log('Upload signature captured');
                         break;
                         
                     case 'idAT':
+                        console.log('Processing ID-Austria signature...');
                         const status = document.getElementById('idAustriaStatus');
                         if (!status.innerHTML.includes('erfolgreich')) {
                             throw new Error('Bitte authentifizieren Sie sich zuerst mit ID-Austria');
                         }
-                        // For ID-Austria, we would get signature from OAuth response
-                        signatureDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='; // Dummy
+                        signatureDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+                        console.log('ID-Austria signature processed');
                         break;
                 }
 
-                // Embed signature in PDF (simplified - would use PDF-lib in real implementation)
+                // Skip DOM embedding to avoid recursion - only process PDF and webhook
+                console.log('Processing PDF and webhook...');
                 const signedPdfBase64 = await embedSignatureInPdf(currentPdfBytes, signatureDataUrl);
 
                 // Send to webhook
@@ -1979,6 +2029,8 @@
                     "signed_pdf": signedPdfBase64
                 };
 
+                console.log('Sending webhook payload:', webhookPayload);
+
                 const response = await fetch('https://optionai.optionai.at/webhook/save-sign', {
                     method: 'POST',
                     headers: {
@@ -1988,9 +2040,24 @@
                     body: JSON.stringify(webhookPayload)
                 });
 
+                console.log('Webhook response status:', response.status);
+
                 if (response.ok) {
+                    // First show success toast
                     showToast('Unterschrift erfolgreich gespeichert!', 'success');
+                    
+                    // Then close modal
                     closeSigningModal();
+                    
+                    // Finally add signature to document AFTER modal is closed
+                    setTimeout(() => {
+                        try {
+                            addSignatureToDocument(signatureDataUrl);
+                        } catch (docError) {
+                            console.error('Error adding signature to document:', docError);
+                            // Don't fail the whole process if document update fails
+                        }
+                    }, 500);
                     
                     // Show success message
                     setTimeout(() => {
@@ -2001,19 +2068,75 @@
                                 <p style="color: #6b7280; font-size: 1.1rem;">Ihr Angebot wurde erfolgreich unterschrieben und gespeichert.</p>
                             </div>
                         `;
-                    }, 1000);
+                    }, 2000);
                 } else {
-                    throw new Error(`Server Error: ${response.status}`);
+                    const errorText = await response.text();
+                    console.error('Webhook error response:', errorText);
+                    throw new Error(`Server Error: ${response.status} - ${errorText}`);
                 }
 
             } catch (error) {
-                console.error('Signing error:', error);
+                console.error('=== SIGNATURE FINALIZATION ERROR ===');
+                console.error('Error:', error);
                 showToast(error.message || 'Fehler beim Unterschreiben', 'error');
                 
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
+            } finally {
+                // Always reset the processing flag
+                isSignatureProcessing = false;
             }
         }
+
+        // Separate function for adding signature to document (called after modal closes)
+        function addSignatureToDocument(signatureDataUrl) {
+            console.log('Adding signature to document...');
+            
+            // Find or create UNTERSCHRIFTEN section
+            let signatureSection = document.querySelector('.unterschriften-section');
+            
+            if (!signatureSection) {
+                const proposalContent = document.querySelector('.proposal-content');
+                if (proposalContent) {
+                    signatureSection = document.createElement('div');
+                    signatureSection.className = 'unterschriften-section';
+                    
+                    const sectionHTML = document.createElement('div');
+                    sectionHTML.innerHTML = `
+                        <h3 style="margin-top: 40px; margin-bottom: 20px; color: #1d1d1f; font-weight: 600; border-bottom: 2px solid #1d1d1f; padding-bottom: 8px;">UNTERSCHRIFTEN</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px;">
+                            <div style="width: 45%;">
+                                <div class="client-signature-area" style="min-height: 80px; border-bottom: 1px solid #666; margin-bottom: 8px; display: flex; align-items: flex-end; padding-bottom: 5px;"></div>
+                                <p style="font-size: 0.9rem; color: #666; margin: 0;">Kunde</p>
+                            </div>
+                            <div style="width: 45%;">
+                                <div class="company-signature-area" style="min-height: 80px; border-bottom: 1px solid #666; margin-bottom: 8px; display: flex; align-items: flex-end; padding-bottom: 5px;"></div>
+                                <p style="font-size: 0.9rem; color: #666; margin: 0;">option.ai</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    signatureSection.appendChild(sectionHTML);
+                    proposalContent.appendChild(signatureSection);
+                    console.log('UNTERSCHRIFTEN section created');
+                }
+            }
+            
+            // Add client signature
+            const clientSignatureArea = document.querySelector('.client-signature-area');
+            if (clientSignatureArea && signatureDataUrl) {
+                const signatureImg = document.createElement('img');
+                signatureImg.src = signatureDataUrl;
+                signatureImg.style.maxHeight = '60px';
+                signatureImg.style.maxWidth = '200px';
+                signatureImg.style.objectFit = 'contain';
+                
+                clientSignatureArea.innerHTML = '';
+                clientSignatureArea.appendChild(signatureImg);
+                console.log('Client signature added to document');
+            }
+        }
+
 
         async function embedSignatureInPdf(pdfBytes, signatureDataUrl) {
             // Simplified implementation - would use PDF-lib for proper PDF manipulation
