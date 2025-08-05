@@ -2317,9 +2317,56 @@
                 // Wait for DOM to update
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
-                // For webhook, we'll create a simple base64 representation since we don't need the actual PDF
-                // The main goal is to store the signature data, not generate a perfect PDF for the webhook
-                const signedPdfBase64 = btoa(`Signed proposal ${window.proposalCode} with ${currentAuthMethod} signature`);
+                // Generate the actual signed PDF for webhook using html2pdf
+                console.log('Generating signed PDF for webhook...');
+                const proposalContent = document.querySelector('.proposal-content');
+                if (!proposalContent) {
+                    throw new Error('Proposal content not found for PDF generation');
+                }
+                
+                const pdfOptions = {
+                    margin: [15, 15],
+                    filename: `signed-proposal-${window.proposalCode}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { 
+                        scale: 2, 
+                        useCORS: true,
+                        allowTaint: true,
+                        backgroundColor: '#ffffff'
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                };
+
+                let signedPdfBase64 = '';
+                try {
+                    const pdfBlob = await html2pdf().from(proposalContent).set(pdfOptions).outputPdf('blob');
+                    
+                    if (!pdfBlob || pdfBlob.size === 0) {
+                        throw new Error('PDF generation failed - empty blob');
+                    }
+                    
+                    console.log('PDF generated successfully for webhook, size:', pdfBlob.size);
+                    
+                    // Convert to base64 in chunks
+                    const pdfBytes = await pdfBlob.arrayBuffer();
+                    const uint8Array = new Uint8Array(pdfBytes);
+                    let binaryString = '';
+                    const chunkSize = 8192;
+                    
+                    for (let i = 0; i < uint8Array.length; i += chunkSize) {
+                        const chunk = uint8Array.subarray(i, i + chunkSize);
+                        binaryString += String.fromCharCode(...chunk);
+                    }
+                    
+                    signedPdfBase64 = btoa(binaryString);
+                    console.log('PDF converted to base64 for webhook, length:', signedPdfBase64.length);
+                    
+                } catch (pdfError) {
+                    console.error('PDF generation for webhook failed:', pdfError);
+                    // Fallback to simple signature data
+                    signedPdfBase64 = btoa(`Signed proposal ${window.proposalCode} with ${currentAuthMethod} signature - PDF generation failed`);
+                }
 
                 // Send to webhook
                 const clientData = window.clientData || {};

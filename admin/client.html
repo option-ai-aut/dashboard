@@ -191,30 +191,7 @@
             box-shadow: 0 0 0 4px rgba(102, 179, 255, 0.15);
         }
 
-        .action-section {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-            padding: 30px;
-            text-align: center;
-        }
 
-        .edit-btn {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            padding: 15px 40px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .edit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
-        }
 
         .toast {
             position: fixed;
@@ -348,12 +325,6 @@
             </div>
         </div>
 
-        <!-- Action Section -->
-        <div class="action-section">
-            <button id="editBtn" class="edit-btn">
-                ✏️ Client Bearbeiten
-            </button>
-        </div>
     </div>
 
     <!-- Toast Notification -->
@@ -447,9 +418,6 @@
             showToast('Status gespeichert ✅');
         };
 
-        document.getElementById('editBtn').onclick = () => {
-            console.log('Bearbeiten-Button geklickt');
-        };
     </script>
 </body>
 </html>
