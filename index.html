@@ -2387,11 +2387,16 @@
                             statusText.style.color = '#10b981';
                         }
                         
-                        // Disable sign button
+                        // Change sign button to calendar booking
                         if (signButton) {
-                            signButton.disabled = true;
-                            signButton.style.opacity = '0.5';
-                            signButton.textContent = '✓ Unterschrieben';
+                            signButton.disabled = false;
+                            signButton.style.opacity = '1';
+                            signButton.innerHTML = '📅 Kick-Off Call buchen';
+                            signButton.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                            signButton.style.color = 'white';
+                            signButton.onclick = () => {
+                                window.open('https://calendly.com/option-ai/30min', '_blank');
+                            };
                         }
                     }, 1500);
                 } else {
