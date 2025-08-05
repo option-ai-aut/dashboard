@@ -391,15 +391,18 @@
         function fillEditors(){
             tinymce.get('templateEditor').setContent(clientData.template.HTML || '');
             tinymce.get('customEditor').setContent(clientData.client["Custom HTML"] || '');
-            const status = clientData.client.Status || 'draft';
+            const status = clientData.client["Status Proposal"] || clientData.client.Status || 'draft';
             document.getElementById('statusSelect').value = status;
             
             // Show/hide signed PDF section based on status
             const signedPdfSection = document.getElementById('signedPdfSection');
+            console.log('Client status:', status); // Debug
             if (status === 'signed') {
                 signedPdfSection.style.display = 'block';
+                console.log('Showing signed PDF section');
             } else {
                 signedPdfSection.style.display = 'none';
+                console.log('Hiding signed PDF section');
             }
         }
 
