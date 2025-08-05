@@ -2317,28 +2317,12 @@
                 // Wait for DOM to update
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
-                // Generate PDF using the exact same method as the print function (@media print CSS)
-                console.log('Generating signed PDF for webhook using print CSS...');
+                // Generate PDF using direct DOM manipulation with print styles
+                console.log('Generating signed PDF for webhook with direct print styles...');
                 
                 let signedPdfBase64 = '';
                 try {
-                    // Create a temporary iframe that replicates the print environment
-                    const printFrame = document.createElement('iframe');
-                    printFrame.style.display = 'none';
-                    printFrame.style.position = 'absolute';
-                    printFrame.style.left = '-9999px';
-                    document.body.appendChild(printFrame);
-                    
-                    // Extract all CSS from the current document
-                    const allStyles = Array.from(document.styleSheets).map(sheet => {
-                        try {
-                            return Array.from(sheet.cssRules).map(rule => rule.cssText).join('\n');
-                        } catch (e) {
-                            return '';
-                        }
-                    }).join('\n');
-                    
-                    // Get the signed content
+                    // Get the content that needs to be in the PDF
                     const proposalContent = document.querySelector('.proposal-content');
                     const pageWrapper = document.querySelector('#page-wrapper');
                     
@@ -2346,135 +2330,142 @@
                         throw new Error('Required content elements not found');
                     }
                     
-                    // Write the iframe document with print-optimized CSS
-                    printFrame.contentDocument.write(\`
-                        <!DOCTYPE html>
-                        <html>
-                        <head>
-                            <title>Signed Proposal \${window.proposalCode}</title>
-                            <style>
-                                \${allStyles}
-                                
-                                /* Apply print media styles for consistent PDF */
-                                @media screen {
-                                    body { 
-                                        background: white !important; 
-                                        font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
-                                        margin: 0 !important;
-                                        padding: 0 !important;
-                                    }
-                                    .dashboard-header,
-                                    .sidebar,
-                                    .sidebar-container,
-                                    button,
-                                    .modal { display: none !important; }
-                                    
-                                    .dashboard-container { 
-                                        padding: 0 !important; 
-                                        margin: 0 !important; 
-                                    }
-                                    
-                                    #page-wrapper { 
-                                        display: block !important; 
-                                        max-width: none !important; 
-                                        margin: 0 !important; 
-                                    }
-                                    
-                                    .proposal-content {
-                                        width: 100% !important;
-                                        max-width: none !important;
-                                        margin: 0 auto !important;
-                                        padding: 2rem !important;
-                                        background: #ffffff !important;
-                                        border: none !important;
-                                        color: #1d1d1f !important;
-                                        transform: none !important;
-                                        overflow: visible !important;
-                                        font-size: 1.1rem !important;
-                                        box-shadow: none !important;
-                                        border-radius: 0 !important;
-                                    }
-                                    
-                                    /* Apply all print-specific styles */
-                                    .proposal-content h1, 
-                                    .proposal-content h2, 
-                                    .proposal-content h3, 
-                                    .proposal-content h4 {
-                                        font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
-                                        font-weight: 700 !important;
-                                        color: #000000 !important;
-                                        page-break-after: avoid;
-                                    }
-                                    
-                                    .page-break {
-                                        page-break-before: always !important;
-                                        break-before: page !important;
-                                        height: 0 !important;
-                                        margin: 0 !important;
-                                        padding: 0 !important;
-                                        display: block !important;
-                                    }
-                                }
-                            </style>
-                        </head>
-                        <body>
-                            <div class="dashboard-container">
-                                \${pageWrapper.outerHTML}
-                            </div>
-                        </body>
-                        </html>
-                    \`);
-                    printFrame.contentDocument.close();
+                    // Clone the page wrapper to avoid modifying the original
+                    const clonedWrapper = pageWrapper.cloneNode(true);
                     
-                    // Wait for iframe content to load completely
-                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    // Create a temporary container with print styles applied directly
+                    const tempContainer = document.createElement('div');
+                    tempContainer.style.cssText = `
+                        position: absolute !important;
+                        left: -9999px !important;
+                        top: 0 !important;
+                        width: 210mm !important;
+                        background: white !important;
+                        font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
+                        padding: 0 !important;
+                        margin: 0 !important;
+                    `;
                     
-                    // Generate PDF from the iframe content using html2pdf
-                    const iframeBody = printFrame.contentDocument.body;
+                    // Apply print styles directly to the cloned content
+                    const clonedProposalContent = clonedWrapper.querySelector('.proposal-content');
+                    if (clonedProposalContent) {
+                        clonedProposalContent.style.cssText = `
+                            width: 100% !important;
+                            max-width: none !important;
+                            margin: 0 auto !important;
+                            padding: 2rem !important;
+                            background: #ffffff !important;
+                            border: none !important;
+                            color: #1d1d1f !important;
+                            transform: none !important;
+                            overflow: visible !important;
+                            font-size: 1.1rem !important;
+                            box-shadow: none !important;
+                            border-radius: 0 !important;
+                            line-height: 1.6 !important;
+                        `;
+                        
+                        // Apply styles to all headings
+                        const headings = clonedProposalContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+                        headings.forEach(heading => {
+                            heading.style.cssText = `
+                                font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
+                                font-weight: 700 !important;
+                                color: #000000 !important;
+                                page-break-after: avoid !important;
+                            `;
+                        });
+                        
+                        // Apply styles to signature images to prevent cutoff
+                        const signatureImages = clonedProposalContent.querySelectorAll('img[src*="signature"], .signature-image, img[alt*="Signature"], img[alt*="signature"]');
+                        signatureImages.forEach(img => {
+                            img.style.cssText = `
+                                max-width: 300px !important;
+                                max-height: 150px !important;
+                                width: auto !important;
+                                height: auto !important;
+                                border: none !important;
+                                border-radius: 0 !important;
+                                box-shadow: none !important;
+                                display: block !important;
+                                margin: 10px 0 !important;
+                            `;
+                        });
+                        
+                        // Handle page breaks
+                        const pageBreaks = clonedWrapper.querySelectorAll('.page-break');
+                        pageBreaks.forEach(pageBreak => {
+                            pageBreak.style.cssText = `
+                                page-break-before: always !important;
+                                break-before: page !important;
+                                height: 0 !important;
+                                margin: 0 !important;
+                                padding: 0 !important;
+                                display: block !important;
+                            `;
+                        });
+                    }
+                    
+                    // Remove any unwanted elements
+                    const unwantedElements = clonedWrapper.querySelectorAll('.dashboard-header, .sidebar, .sidebar-container, button, .modal');
+                    unwantedElements.forEach(el => el.remove());
+                    
+                    tempContainer.appendChild(clonedWrapper);
+                    document.body.appendChild(tempContainer);
+                    
+                    // Wait for any fonts/images to load
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Generate PDF directly from the styled content
+                    if (typeof html2pdf === 'undefined') {
+                        throw new Error('html2pdf library not loaded');
+                    }
+                    
                     const pdfBlob = await html2pdf()
-                        .from(iframeBody)
+                        .from(clonedWrapper)
                         .set({
-                            margin: [15, 15],
-                            filename: \`signed-proposal-\${window.proposalCode}.pdf\`,
+                            margin: [15, 15, 15, 15],
+                            filename: `signed-proposal-${window.proposalCode}.pdf`,
                             image: { type: 'jpeg', quality: 0.98 },
                             html2canvas: { 
                                 scale: 2, 
                                 useCORS: true,
                                 allowTaint: true,
-                                backgroundColor: '#ffffff'
+                                backgroundColor: '#ffffff',
+                                letterRendering: true,
+                                logging: false
                             },
                             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                             pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
                         })
                         .outputPdf('blob');
                     
-                    // Clean up iframe
-                    document.body.removeChild(printFrame);
+                    // Clean up temporary container
+                    document.body.removeChild(tempContainer);
                     
                     if (!pdfBlob || pdfBlob.size === 0) {
                         throw new Error('PDF generation failed - empty blob');
                     }
                     
-                    console.log('Print-optimized PDF generated successfully for webhook, size:', pdfBlob.size);
+                    console.log('Direct styled PDF generated successfully for webhook, size:', pdfBlob.size);
                     
-                    // Convert to base64 in chunks
-                    const pdfBytes = await pdfBlob.arrayBuffer();
-                    const uint8Array = new Uint8Array(pdfBytes);
-                    let binaryString = '';
-                    const chunkSize = 8192;
+                    // Convert to base64
+                    const reader = new FileReader();
+                    signedPdfBase64 = await new Promise((resolve, reject) => {
+                        reader.onload = () => {
+                            const base64 = reader.result.split(',')[1];
+                            resolve(base64);
+                        };
+                        reader.onerror = reject;
+                        reader.readAsDataURL(pdfBlob);
+                    });
                     
-                    for (let i = 0; i < uint8Array.length; i += chunkSize) {
-                        const chunk = uint8Array.subarray(i, i + chunkSize);
-                        binaryString += String.fromCharCode(...chunk);
-                    }
-                    
-                    signedPdfBase64 = btoa(binaryString);
-                    console.log('Print-optimized PDF converted to base64 for webhook, length:', signedPdfBase64.length);
+                    console.log('Direct styled PDF converted to base64 for webhook, length:', signedPdfBase64.length);
                     
                 } catch (pdfError) {
-                    console.error('Print-optimized PDF generation for webhook failed:', pdfError);
+                    console.error('Direct styled PDF generation for webhook failed:', pdfError);
                     // Fallback to simple signature data
-                    signedPdfBase64 = btoa(\`Signed proposal \${window.proposalCode} with \${currentAuthMethod} signature - PDF generation failed\`);
+                    signedPdfBase64 = btoa(`Signed proposal ${window.proposalCode} with ${currentAuthMethod} signature - PDF generation failed`);
                 }
 
                 // Send to webhook
@@ -2752,7 +2743,6 @@
     </div>
 
     <!-- Required Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/3.0.0-beta.3/signature_pad.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
