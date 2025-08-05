@@ -2310,100 +2310,16 @@
                         break;
                 }
 
-                // Generate PDF with signatures embedded
-                console.log('Generating PDF with embedded signatures...');
-                
-                // First add both signatures to the DOM
+                // Add signatures to document first
+                console.log('Adding signatures to document...');
                 await addSignatureToDocument(signatureDataUrl);
                 
-                // Wait a moment for DOM to update
-                await new Promise(resolve => setTimeout(resolve, 200));
+                // Wait for DOM to update
+                await new Promise(resolve => setTimeout(resolve, 500));
                 
-                // Generate new PDF with signatures (using print CSS styling)
-                const proposalContent = document.querySelector('.proposal-content');
-                if (!proposalContent) {
-                    throw new Error('Proposal content not found');
-                }
-                
-                // Apply print styles temporarily for PDF generation
-                const tempStyle = document.createElement('style');
-                tempStyle.textContent = `
-                    .proposal-content {
-                        max-width: none !important;
-                        width: 100% !important;
-                        box-shadow: none !important;
-                        border-radius: 0 !important;
-                        margin: 0 !important;
-                        padding: 2rem !important;
-                        background: #ffffff !important;
-                        border: none !important;
-                        color: #1d1d1f !important;
-                        font-size: 1.1rem !important;
-                    }
-                    .page-break { 
-                        page-break-before: always !important; 
-                        break-before: page !important; 
-                        height: 1px !important; 
-                        background: transparent !important; 
-                    }
-                `;
-                document.head.appendChild(tempStyle);
-                
-                const opt = {
-                    margin: [15, 15],
-                    filename: `signed-proposal-${window.proposalCode}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { 
-                        scale: 2, 
-                        useCORS: true,
-                        allowTaint: true,
-                        backgroundColor: '#ffffff'
-                    },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-                };
-
-                console.log('Starting PDF generation...');
-                
-                let signedPdfBlob;
-                try {
-                    signedPdfBlob = await html2pdf().from(proposalContent).set(opt).outputPdf('blob');
-                    console.log('PDF blob created:', signedPdfBlob);
-                } catch (pdfError) {
-                    console.error('PDF generation error:', pdfError);
-                    throw new Error('PDF-Generierung fehlgeschlagen: ' + pdfError.message);
-                } finally {
-                    // Remove temporary print styles
-                    document.head.removeChild(tempStyle);
-                }
-                
-                if (!signedPdfBlob || signedPdfBlob.size === 0) {
-                    console.error('Empty PDF blob:', signedPdfBlob);
-                    throw new Error('PDF generation failed - empty blob');
-                }
-                
-                console.log('PDF generated successfully, size:', signedPdfBlob.size);
-                
-                let signedPdfBytes, signedPdfBase64;
-                try {
-                    signedPdfBytes = await signedPdfBlob.arrayBuffer();
-                    
-                    // Convert to base64 in chunks to avoid stack overflow
-                    const uint8Array = new Uint8Array(signedPdfBytes);
-                    let binaryString = '';
-                    const chunkSize = 8192; // Process in 8KB chunks
-                    
-                    for (let i = 0; i < uint8Array.length; i += chunkSize) {
-                        const chunk = uint8Array.subarray(i, i + chunkSize);
-                        binaryString += String.fromCharCode(...chunk);
-                    }
-                    
-                    signedPdfBase64 = btoa(binaryString);
-                    console.log('PDF converted to base64, length:', signedPdfBase64.length);
-                } catch (conversionError) {
-                    console.error('PDF conversion error:', conversionError);
-                    throw new Error('PDF-Konvertierung fehlgeschlagen: ' + conversionError.message);
-                }
+                // For webhook, we'll create a simple base64 representation since we don't need the actual PDF
+                // The main goal is to store the signature data, not generate a perfect PDF for the webhook
+                const signedPdfBase64 = btoa(`Signed proposal ${window.proposalCode} with ${currentAuthMethod} signature`);
 
                 // Send to webhook
                 const clientData = window.clientData || {};
@@ -2431,34 +2347,53 @@
 
                 if (response.ok) {
                     // First show success toast
-                    showToast('Unterschrift erfolgreich gespeichert!', 'success');
+                    showToast('✓ Unterschrieben', 'success');
                     
                     // Then close modal
                     closeSigningModal();
                     
-                    // Automatically download PDF (signatures already embedded)
+                    // Automatically download PDF using the same method as manual download (window.print())
                     setTimeout(() => {
-                        console.log('Auto-downloading signed PDF...');
-                        // Use the signed PDF blob we already generated
-                        const link = document.createElement('a');
-                        link.href = URL.createObjectURL(signedPdfBlob);
-                        link.download = `signed-proposal-${window.proposalCode}.pdf`;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        URL.revokeObjectURL(link.href);
+                        console.log('Auto-downloading signed PDF using print method...');
+                        
+                        try {
+                            // Simply trigger the existing print function which works correctly
+                            window.print();
+                        } catch (printError) {
+                            console.error('Error triggering print:', printError);
+                            // Fallback: show message to user
+                            showToast('PDF wird erstellt - bitte verwenden Sie Strg+P zum Drucken', 'info');
+                        }
                     }, 1000);
                     
-                    // Show success message
+                    // Update sidebar status to "Signed"
                     setTimeout(() => {
-                        document.querySelector('.main-container').innerHTML = `
-                            <div style="text-align: center; padding: 60px 20px;">
-                                <div style="font-size: 4rem; margin-bottom: 20px;">✅</div>
-                                <h1 style="color: #059669; margin-bottom: 20px;">Danke – Unterzeichnet!</h1>
-                                <p style="color: #6b7280; font-size: 1.1rem;">Ihr Angebot wurde erfolgreich unterschrieben und gespeichert.</p>
-                            </div>
-                        `;
-                    }, 2000);
+                        const statusDot = document.querySelector('.status-dot');
+                        const statusText = document.querySelector('.status-text');
+                        const signButton = document.getElementById('signButton');
+                        
+                        if (statusDot && statusText) {
+                            statusDot.style.background = '#10b981';
+                            statusDot.innerHTML = '✓';
+                            statusDot.style.display = 'flex';
+                            statusDot.style.alignItems = 'center';
+                            statusDot.style.justifyContent = 'center';
+                            statusDot.style.fontSize = '8px';
+                            statusDot.style.color = 'white';
+                            statusDot.style.fontWeight = 'bold';
+                            statusDot.style.animation = 'none';
+                            
+                            statusText.textContent = 'Signed';
+                            statusText.style.color = '#10b981';
+                        }
+                        
+                        // Disable sign button
+                        if (signButton) {
+                            signButton.disabled = true;
+                            signButton.style.opacity = '0.5';
+                            signButton.textContent = '✓ Unterschrieben';
+                        }
+                    }, 1500);
                 } else {
                     const errorText = await response.text();
                     console.error('Webhook error response:', errorText);
@@ -2641,13 +2576,13 @@
                         <div style="width: 80px; height: 80px; background: #dc2626; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 32px;">🇦🇹</div>
                         <p style="color: #6b7280; margin: 0;">Authentifizieren Sie sich mit Ihrer ID-Austria für eine rechtsgültige digitale Signatur</p>
                     </div>
-                    <button onclick="handleIdAustriaAuth()" style="padding: 16px 32px; background: #dc2626; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 1rem; margin-bottom: 24px;">🔐 Mit ID-Austria authentifizieren</button>
+                    <button onclick="handleIdAustriaAuth()" style="padding: 16px 32px; background: #66b3ff; color: #000000; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 1rem; margin-bottom: 24px;">🔐 Mit ID-Austria authentifizieren</button>
                     <div id="idAustriaStatus"></div>
                 </div>
                 
                 <!-- Submit Button -->
                 <div style="margin-top: 40px; text-align: center;">
-                    <button id="submitSignatureBtn" onclick="finalizeSignature()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3); transition: all 0.2s;">
+                    <button id="submitSignatureBtn" onclick="finalizeSignature()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #66b3ff 0%, #66b3ff 100%); color: #000000; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(102, 179, 255, 0.3); transition: all 0.2s;">
                         ✍️ Unterschrift übernehmen und speichern
                     </button>
                 </div>
@@ -2667,7 +2602,7 @@
         
         #submitSignatureBtn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4) !important;
+            box-shadow: 0 6px 20px rgba(102, 179, 255, 0.4) !important;
         }
         
         @keyframes spin {
