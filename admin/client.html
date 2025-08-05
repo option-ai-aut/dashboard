@@ -325,6 +325,21 @@
             </div>
         </div>
 
+        <!-- Signed PDF Section (only visible when status is signed) -->
+        <div id="signedPdfSection" class="status-section" style="display: none;">
+            <div class="card-header">
+                <h2 class="card-title">📄 Signed PDF</h2>
+                <button id="generateSignedPdfBtn" class="save-btn">
+                    📄 PDF generieren
+                </button>
+            </div>
+            <div class="status-controls">
+                <p style="color: #666; margin: 0;">
+                    Generiert das gleiche PDF wie der Kunde beim Unterschreiben erhalten hat.
+                </p>
+            </div>
+        </div>
+
     </div>
 
     <!-- Toast Notification -->
@@ -376,7 +391,16 @@
         function fillEditors(){
             tinymce.get('templateEditor').setContent(clientData.template.HTML || '');
             tinymce.get('customEditor').setContent(clientData.client["Custom HTML"] || '');
-            document.getElementById('statusSelect').value = clientData.client.Status || 'draft';
+            const status = clientData.client.Status || 'draft';
+            document.getElementById('statusSelect').value = status;
+            
+            // Show/hide signed PDF section based on status
+            const signedPdfSection = document.getElementById('signedPdfSection');
+            if (status === 'signed') {
+                signedPdfSection.style.display = 'block';
+            } else {
+                signedPdfSection.style.display = 'none';
+            }
         }
 
         /** 3. Speichern ************************************************/
@@ -416,6 +440,43 @@
                 })
             });
             showToast('Status gespeichert ✅');
+            
+            // Update signed PDF section visibility
+            const signedPdfSection = document.getElementById('signedPdfSection');
+            if (status === 'signed') {
+                signedPdfSection.style.display = 'block';
+            } else {
+                signedPdfSection.style.display = 'none';
+            }
+        };
+
+        // Generate signed PDF button
+        document.getElementById('generateSignedPdfBtn').onclick = async () => {
+            const proposalCode = clientData.client["Proposal Code"];
+            if (!proposalCode) {
+                showToast('Proposal Code nicht gefunden', 'error');
+                return;
+            }
+            
+            // Open the client's proposal in a new window and trigger print
+            const clientUrl = `${window.location.origin}/?code=${encodeURIComponent(proposalCode)}`;
+            const newWindow = window.open(clientUrl, '_blank');
+            
+            if (newWindow) {
+                // Wait for the page to load, then trigger print
+                setTimeout(() => {
+                    try {
+                        newWindow.print();
+                    } catch (e) {
+                        console.error('Could not trigger print:', e);
+                        showToast('PDF-Fenster geöffnet - bitte manuell drucken/speichern', 'info');
+                    }
+                }, 3000);
+                
+                showToast('PDF wird generiert...', 'success');
+            } else {
+                showToast('Popup blockiert - bitte erlauben Sie Popups', 'error');
+            }
         };
 
     </script>
