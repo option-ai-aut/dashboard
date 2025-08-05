@@ -2448,19 +2448,23 @@
                 // Wait for DOM to update
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
-                // Generate PDF once - use for both download and webhook to ensure exact match
-                console.log('Generating single PDF for both download and webhook...');
+                // Show print dialog to customer (original behavior)
+                console.log('Opening print dialog for customer...');
+                setTimeout(() => {
+                    window.print(); // Original behavior - customer gets print popup
+                }, 1000);
                 
-                let signedPdfBlob = null;
+                // Generate PDF for webhook in parallel (same styling as print)
+                console.log('Generating PDF for webhook (same as print version)...');
                 let signedPdfBase64 = '';
                 try {
-                    signedPdfBlob = await generateSignedPDF();
+                    const signedPdfBlob = await generateSignedPDF();
                     
                     if (!signedPdfBlob || signedPdfBlob.size === 0) {
                         throw new Error('PDF generation failed - empty blob');
                     }
                     
-                    console.log('Single PDF generated successfully, size:', signedPdfBlob.size);
+                    console.log('PDF generated for webhook, size:', signedPdfBlob.size);
                     
                     // Convert to base64 for webhook
                     const reader = new FileReader();
@@ -2475,20 +2479,8 @@
                     
                     console.log('PDF converted to base64 for webhook, length:', signedPdfBase64.length);
                     
-                    // Automatically download the same PDF for the customer
-                    const url = URL.createObjectURL(signedPdfBlob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `signed-proposal-${window.proposalCode}.pdf`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    
-                    console.log('Same PDF downloaded for customer');
-                    
                 } catch (pdfError) {
-                    console.error('PDF generation failed:', pdfError);
+                    console.error('PDF generation for webhook failed:', pdfError);
                     // Fallback to simple signature data
                     signedPdfBase64 = btoa(`Signed proposal ${window.proposalCode} with ${currentAuthMethod} signature - PDF generation failed`);
                 }
