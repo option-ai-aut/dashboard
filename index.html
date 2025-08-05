@@ -2251,6 +2251,137 @@
         // Flag to prevent multiple simultaneous signature processing
         let isSignatureProcessing = false;
 
+        // Generate PDF using print-optimized styles (same as what customer sees when printing)
+        async function generateSignedPDF() {
+            console.log('Generating signed PDF with print-optimized styles...');
+            
+            // Get the content that needs to be in the PDF
+            const proposalContent = document.querySelector('.proposal-content');
+            const pageWrapper = document.querySelector('#page-wrapper');
+            
+            if (!proposalContent || !pageWrapper) {
+                throw new Error('Required content elements not found');
+            }
+            
+            // Clone the page wrapper to avoid modifying the original
+            const clonedWrapper = pageWrapper.cloneNode(true);
+            
+            // Create a temporary container with print styles applied directly
+            const tempContainer = document.createElement('div');
+            tempContainer.style.cssText = `
+                position: absolute !important;
+                left: -9999px !important;
+                top: 0 !important;
+                width: 210mm !important;
+                background: white !important;
+                font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            `;
+            
+            // Apply print styles directly to the cloned content
+            const clonedProposalContent = clonedWrapper.querySelector('.proposal-content');
+            if (clonedProposalContent) {
+                clonedProposalContent.style.cssText = `
+                    width: 100% !important;
+                    max-width: none !important;
+                    margin: 0 auto !important;
+                    padding: 2rem !important;
+                    background: #ffffff !important;
+                    border: none !important;
+                    color: #1d1d1f !important;
+                    transform: none !important;
+                    overflow: visible !important;
+                    font-size: 1.1rem !important;
+                    box-shadow: none !important;
+                    border-radius: 0 !important;
+                    line-height: 1.6 !important;
+                `;
+                
+                // Apply styles to all headings
+                const headings = clonedProposalContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+                headings.forEach(heading => {
+                    heading.style.cssText = `
+                        font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
+                        font-weight: 700 !important;
+                        color: #000000 !important;
+                        page-break-after: avoid !important;
+                    `;
+                });
+                
+                // Apply styles to signature images to prevent cutoff
+                const signatureImages = clonedProposalContent.querySelectorAll('img[src*="signature"], .signature-image, img[alt*="Signature"], img[alt*="signature"]');
+                signatureImages.forEach(img => {
+                    img.style.cssText = `
+                        max-width: 300px !important;
+                        max-height: 150px !important;
+                        width: auto !important;
+                        height: auto !important;
+                        border: none !important;
+                        border-radius: 0 !important;
+                        box-shadow: none !important;
+                        display: block !important;
+                        margin: 10px 0 !important;
+                    `;
+                });
+                
+                // Handle page breaks
+                const pageBreaks = clonedWrapper.querySelectorAll('.page-break');
+                pageBreaks.forEach(pageBreak => {
+                    pageBreak.style.cssText = `
+                        page-break-before: always !important;
+                        break-before: page !important;
+                        height: 0 !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        display: block !important;
+                    `;
+                });
+            }
+            
+            // Remove any unwanted elements
+            const unwantedElements = clonedWrapper.querySelectorAll('.dashboard-header, .sidebar, .sidebar-container, button, .modal');
+            unwantedElements.forEach(el => el.remove());
+            
+            tempContainer.appendChild(clonedWrapper);
+            document.body.appendChild(tempContainer);
+            
+            try {
+                // Wait for any fonts/images to load
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Generate PDF directly from the styled content
+                if (typeof html2pdf === 'undefined') {
+                    throw new Error('html2pdf library not loaded');
+                }
+                
+                const pdfBlob = await html2pdf()
+                    .from(clonedWrapper)
+                    .set({
+                        margin: [15, 15, 15, 15],
+                        filename: `signed-proposal-${window.proposalCode}.pdf`,
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { 
+                            scale: 2, 
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: '#ffffff',
+                            letterRendering: true,
+                            logging: false
+                        },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                    })
+                    .outputPdf('blob');
+                
+                return pdfBlob;
+                
+            } finally {
+                // Clean up temporary container
+                document.body.removeChild(tempContainer);
+            }
+        }
+
         async function finalizeSignature() {
             // Prevent multiple simultaneous calls
             if (isSignatureProcessing) {
@@ -2317,139 +2448,21 @@
                 // Wait for DOM to update
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
-                // Generate PDF using direct DOM manipulation with print styles
-                console.log('Generating signed PDF for webhook with direct print styles...');
+                // Generate PDF once - use for both download and webhook to ensure exact match
+                console.log('Generating single PDF for both download and webhook...');
                 
+                let signedPdfBlob = null;
                 let signedPdfBase64 = '';
                 try {
-                    // Get the content that needs to be in the PDF
-                    const proposalContent = document.querySelector('.proposal-content');
-                    const pageWrapper = document.querySelector('#page-wrapper');
+                    signedPdfBlob = await generateSignedPDF();
                     
-                    if (!proposalContent || !pageWrapper) {
-                        throw new Error('Required content elements not found');
-                    }
-                    
-                    // Clone the page wrapper to avoid modifying the original
-                    const clonedWrapper = pageWrapper.cloneNode(true);
-                    
-                    // Create a temporary container with print styles applied directly
-                    const tempContainer = document.createElement('div');
-                    tempContainer.style.cssText = `
-                        position: absolute !important;
-                        left: -9999px !important;
-                        top: 0 !important;
-                        width: 210mm !important;
-                        background: white !important;
-                        font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
-                        padding: 0 !important;
-                        margin: 0 !important;
-                    `;
-                    
-                    // Apply print styles directly to the cloned content
-                    const clonedProposalContent = clonedWrapper.querySelector('.proposal-content');
-                    if (clonedProposalContent) {
-                        clonedProposalContent.style.cssText = `
-                            width: 100% !important;
-                            max-width: none !important;
-                            margin: 0 auto !important;
-                            padding: 2rem !important;
-                            background: #ffffff !important;
-                            border: none !important;
-                            color: #1d1d1f !important;
-                            transform: none !important;
-                            overflow: visible !important;
-                            font-size: 1.1rem !important;
-                            box-shadow: none !important;
-                            border-radius: 0 !important;
-                            line-height: 1.6 !important;
-                        `;
-                        
-                        // Apply styles to all headings
-                        const headings = clonedProposalContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
-                        headings.forEach(heading => {
-                            heading.style.cssText = `
-                                font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
-                                font-weight: 700 !important;
-                                color: #000000 !important;
-                                page-break-after: avoid !important;
-                            `;
-                        });
-                        
-                        // Apply styles to signature images to prevent cutoff
-                        const signatureImages = clonedProposalContent.querySelectorAll('img[src*="signature"], .signature-image, img[alt*="Signature"], img[alt*="signature"]');
-                        signatureImages.forEach(img => {
-                            img.style.cssText = `
-                                max-width: 300px !important;
-                                max-height: 150px !important;
-                                width: auto !important;
-                                height: auto !important;
-                                border: none !important;
-                                border-radius: 0 !important;
-                                box-shadow: none !important;
-                                display: block !important;
-                                margin: 10px 0 !important;
-                            `;
-                        });
-                        
-                        // Handle page breaks
-                        const pageBreaks = clonedWrapper.querySelectorAll('.page-break');
-                        pageBreaks.forEach(pageBreak => {
-                            pageBreak.style.cssText = `
-                                page-break-before: always !important;
-                                break-before: page !important;
-                                height: 0 !important;
-                                margin: 0 !important;
-                                padding: 0 !important;
-                                display: block !important;
-                            `;
-                        });
-                    }
-                    
-                    // Remove any unwanted elements
-                    const unwantedElements = clonedWrapper.querySelectorAll('.dashboard-header, .sidebar, .sidebar-container, button, .modal');
-                    unwantedElements.forEach(el => el.remove());
-                    
-                    tempContainer.appendChild(clonedWrapper);
-                    document.body.appendChild(tempContainer);
-                    
-                    // Wait for any fonts/images to load
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    
-                    // Generate PDF directly from the styled content
-                    if (typeof html2pdf === 'undefined') {
-                        throw new Error('html2pdf library not loaded');
-                    }
-                    
-                    const pdfBlob = await html2pdf()
-                        .from(clonedWrapper)
-                        .set({
-                            margin: [15, 15, 15, 15],
-                            filename: `signed-proposal-${window.proposalCode}.pdf`,
-                            image: { type: 'jpeg', quality: 0.98 },
-                            html2canvas: { 
-                                scale: 2, 
-                                useCORS: true,
-                                allowTaint: true,
-                                backgroundColor: '#ffffff',
-                                letterRendering: true,
-                                logging: false
-                            },
-                            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-                        })
-                        .outputPdf('blob');
-                    
-                    // Clean up temporary container
-                    document.body.removeChild(tempContainer);
-                    
-                    if (!pdfBlob || pdfBlob.size === 0) {
+                    if (!signedPdfBlob || signedPdfBlob.size === 0) {
                         throw new Error('PDF generation failed - empty blob');
                     }
                     
-                    console.log('Direct styled PDF generated successfully for webhook, size:', pdfBlob.size);
+                    console.log('Single PDF generated successfully, size:', signedPdfBlob.size);
                     
-                    // Convert to base64
+                    // Convert to base64 for webhook
                     const reader = new FileReader();
                     signedPdfBase64 = await new Promise((resolve, reject) => {
                         reader.onload = () => {
@@ -2457,13 +2470,25 @@
                             resolve(base64);
                         };
                         reader.onerror = reject;
-                        reader.readAsDataURL(pdfBlob);
+                        reader.readAsDataURL(signedPdfBlob);
                     });
                     
-                    console.log('Direct styled PDF converted to base64 for webhook, length:', signedPdfBase64.length);
+                    console.log('PDF converted to base64 for webhook, length:', signedPdfBase64.length);
+                    
+                    // Automatically download the same PDF for the customer
+                    const url = URL.createObjectURL(signedPdfBlob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `signed-proposal-${window.proposalCode}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    console.log('Same PDF downloaded for customer');
                     
                 } catch (pdfError) {
-                    console.error('Direct styled PDF generation for webhook failed:', pdfError);
+                    console.error('PDF generation failed:', pdfError);
                     // Fallback to simple signature data
                     signedPdfBase64 = btoa(`Signed proposal ${window.proposalCode} with ${currentAuthMethod} signature - PDF generation failed`);
                 }
