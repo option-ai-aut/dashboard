@@ -2251,64 +2251,133 @@
         // Flag to prevent multiple simultaneous signature processing
         let isSignatureProcessing = false;
 
-        // Simple fallback PDF generation for webhook (just send signature confirmation)
+        // Generate PDF for webhook using same content as print version
         async function generateSignedPDF() {
-            console.log('Creating signed PDF confirmation for webhook...');
+            console.log('Generating signed PDF for webhook...');
             
-            // Since html2pdf.js cannot properly replicate browser print CSS,
-            // we create a simple fallback document for the webhook
-            const fallbackContent = `
-                <div style="padding: 40px; font-family: Arial, sans-serif;">
-                    <h1>Proposal Signed - ${window.proposalCode}</h1>
-                    <p><strong>Date:</strong> ${new Date().toLocaleDateString('de-DE')}</p>
-                    <p><strong>Time:</strong> ${new Date().toLocaleTimeString('de-DE')}</p>
-                    <p><strong>Client:</strong> ${window.clientData?.["Full Name"] || 'Unknown'}</p>
-                    <p><strong>Authentication Method:</strong> ${window.currentAuthMethod || 'Unknown'}</p>
-                    <br>
-                    <p>This document confirms that the client has digitally signed the proposal.</p>
-                    <p>The actual signed PDF was generated using the browser's print function and downloaded by the client.</p>
-                    <br>
-                    <p><em>Note: For the complete signed proposal PDF, please check the client's downloaded file or use the browser print function.</em></p>
-                </div>
+            // Get the actual proposal content that will be printed
+            const proposalContent = document.querySelector('.proposal-content');
+            const pageWrapper = document.querySelector('#page-wrapper');
+            
+            if (!proposalContent || !pageWrapper) {
+                throw new Error('Required content elements not found');
+            }
+            
+            // Clone the page wrapper to avoid modifying the original
+            const clonedWrapper = pageWrapper.cloneNode(true);
+            
+            // Create a temporary container for PDF generation
+            const tempContainer = document.createElement('div');
+            tempContainer.style.cssText = `
+                position: absolute !important;
+                left: -9999px !important;
+                top: 0 !important;
+                width: 210mm !important;
+                background: white !important;
+                font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
+                padding: 0 !important;
+                margin: 0 !important;
             `;
             
-            // Create a temporary element for PDF generation
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = fallbackContent;
-            tempDiv.style.cssText = `
-                position: absolute;
-                left: -9999px;
-                background: white;
-                width: 210mm;
-                padding: 0;
-                margin: 0;
-            `;
+            // Apply print-like styles to the cloned content
+            const clonedProposalContent = clonedWrapper.querySelector('.proposal-content');
+            if (clonedProposalContent) {
+                clonedProposalContent.style.cssText = `
+                    width: 100% !important;
+                    max-width: none !important;
+                    margin: 0 auto !important;
+                    padding: 2rem !important;
+                    background: #ffffff !important;
+                    border: none !important;
+                    color: #1d1d1f !important;
+                    transform: none !important;
+                    overflow: visible !important;
+                    font-size: 1.1rem !important;
+                    box-shadow: none !important;
+                    border-radius: 0 !important;
+                    line-height: 1.6 !important;
+                `;
+                
+                // Apply styles to headings
+                const headings = clonedProposalContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+                headings.forEach(heading => {
+                    heading.style.cssText = `
+                        font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
+                        font-weight: 700 !important;
+                        color: #000000 !important;
+                        page-break-after: avoid !important;
+                    `;
+                });
+                
+                // Apply styles to signature images
+                const signatureImages = clonedProposalContent.querySelectorAll('img[src*="signature"], .signature-image, img[alt*="Signature"], img[alt*="signature"]');
+                signatureImages.forEach(img => {
+                    img.style.cssText = `
+                        max-width: 300px !important;
+                        max-height: 150px !important;
+                        width: auto !important;
+                        height: auto !important;
+                        border: none !important;
+                        border-radius: 0 !important;
+                        box-shadow: none !important;
+                        display: block !important;
+                        margin: 10px 0 !important;
+                    `;
+                });
+                
+                // Handle page breaks
+                const pageBreaks = clonedWrapper.querySelectorAll('.page-break');
+                pageBreaks.forEach(pageBreak => {
+                    pageBreak.style.cssText = `
+                        page-break-before: always !important;
+                        break-before: page !important;
+                        height: 0 !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        display: block !important;
+                    `;
+                });
+            }
             
-            document.body.appendChild(tempDiv);
+            // Remove unwanted elements
+            const unwantedElements = clonedWrapper.querySelectorAll('.dashboard-header, .sidebar, .sidebar-container, button, .modal');
+            unwantedElements.forEach(el => el.remove());
+            
+            tempContainer.appendChild(clonedWrapper);
+            document.body.appendChild(tempContainer);
             
             try {
+                // Wait for fonts/images to load
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
                 if (typeof html2pdf === 'undefined') {
                     throw new Error('html2pdf library not loaded');
                 }
                 
                 const pdfBlob = await html2pdf()
-                    .from(tempDiv)
+                    .from(clonedWrapper)
                     .set({
-                        margin: [20, 20, 20, 20],
-                        filename: `signature-confirmation-${window.proposalCode}.pdf`,
+                        margin: [15, 15, 15, 15],
+                        filename: `signed-proposal-${window.proposalCode}.pdf`,
                         image: { type: 'jpeg', quality: 0.98 },
                         html2canvas: { 
-                            scale: 1, 
-                            backgroundColor: '#ffffff'
+                            scale: 2, 
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: '#ffffff',
+                            letterRendering: true,
+                            logging: false
                         },
-                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
                     })
                     .outputPdf('blob');
                 
                 return pdfBlob;
                 
             } finally {
-                document.body.removeChild(tempDiv);
+                // Clean up
+                document.body.removeChild(tempContainer);
             }
         }
 
