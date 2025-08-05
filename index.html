@@ -309,6 +309,16 @@
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
+
+        /* Unterschriften-Bilder ohne Styling */
+        .client-signature-area img,
+        .company-signature-area img {
+            margin: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            border: none !important;
+        }
         
         .proposal-content ol {
             counter-reset: list-counter;
@@ -452,6 +462,44 @@
         }
         
         /* Alle Inhalte sind automatisch zentriert durch Container-Padding */
+
+        /* Universelle Page-Break Regeln für alle PDF-Generierungen */
+        .proposal-content h1, 
+        .proposal-content h2, 
+        .proposal-content h3, 
+        .proposal-content h4,
+        .proposal-content p,
+        .proposal-content blockquote,
+        .feature-card,
+        .timeline-item,
+        .pricing-highlight,
+        .proposal-content table,
+        .proposal-content li {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .proposal-content h1:not(:first-child) {
+            page-break-before: auto;
+        }
+
+        .proposal-content h1:first-child {
+            page-break-before: avoid;
+        }
+
+        .proposal-content h2 {
+            page-break-before: avoid;
+            page-break-after: avoid;
+        }
+
+        /* UNTERSCHRIFTEN Section auf neuer Seite - simple approach */
+        .page-break {
+            page-break-before: always !important;
+            break-before: page !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
 
         .sidebar {
             width: 25vw;
@@ -804,23 +852,60 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #f0f2f5 0%, #e8ecf1 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background particles */
+        .code-entry-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"><animate attributeName="cy" values="20;80;20" dur="3s" repeatCount="indefinite"/></circle><circle cx="50" cy="50" r="1.5" fill="rgba(255,255,255,0.08)"><animate attributeName="cy" values="50;10;50" dur="4s" repeatCount="indefinite"/></circle><circle cx="80" cy="30" r="1" fill="rgba(255,255,255,0.06)"><animate attributeName="cy" values="30;90;30" dur="5s" repeatCount="indefinite"/></circle></svg>') repeat;
+            animation: float 20s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-100px); }
         }
 
         .code-entry-form {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
             padding: 60px;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border-radius: 24px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.15);
             text-align: center;
             max-width: 600px;
             width: 100%;
+            position: relative;
+            z-index: 10;
+            animation: slideInUp 0.8s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes slideInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .logo-main {
             margin-bottom: 20px;
             text-align: center;
+            animation: fadeInDown 0.8s ease-out 0.2s both;
         }
         
         .logo-main img {
@@ -828,6 +913,22 @@
             width: auto;
             display: block;
             margin: 0 auto;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-main img:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .code-entry-form h1 {
@@ -836,6 +937,7 @@
             font-size: 2.2rem;
             font-weight: 700;
             letter-spacing: -0.01em;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
         }
 
         .code-entry-form p {
@@ -843,6 +945,18 @@
             margin-bottom: 40px;
             font-size: 1.1rem;
             line-height: 1.6;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .code-form {
@@ -851,44 +965,88 @@
 
         .input-group {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             align-items: stretch;
+            animation: fadeInScale 0.8s ease-out 0.8s both;
+        }
+
+        @keyframes fadeInScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         .code-input {
             flex: 1;
-            padding: 18px 24px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 500;
+            padding: 20px 28px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            font-size: 1.2rem;
+            font-weight: 600;
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-sizing: border-box;
             text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: #1a1a1a;
         }
 
         .code-input:focus {
             outline: none;
-            border-color: #66b3ff;
-            box-shadow: 0 0 0 4px rgba(102, 179, 255, 0.15);
-            transform: translateY(-1px);
+            border-color: rgba(102, 126, 234, 0.6);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15), 0 8px 32px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .code-input::placeholder {
-            color: #aaa;
+            color: rgba(26, 26, 26, 0.5);
             font-weight: 400;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
 
         .input-group .btn {
-            padding: 18px 32px;
+            padding: 20px 36px;
             font-size: 1.1rem;
-            font-weight: 600;
+            font-weight: 700;
             white-space: nowrap;
-            min-width: 160px;
+            min-width: 180px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-group .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .input-group .btn:hover::before {
+            left: 100%;
+        }
+
+        .input-group .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.5);
         }
 
         .error-message {
@@ -902,26 +1060,44 @@
         }
 
         .loading-message {
-            background: #f0f9ff;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
             color: #1e40af;
-            padding: 20px 24px;
-            border-radius: 8px;
-            margin-top: 20px;
-            border-left: 4px solid #3b82f6;
-            font-weight: 500;
+            padding: 24px 30px;
+            border-radius: 16px;
+            margin-top: 24px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 16px;
+            animation: slideIn 0.3s ease-out;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .loading-spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #e5e7eb;
-            border-top: 2px solid #3b82f6;
+            width: 28px;
+            height: 28px;
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-top: 3px solid #3b82f6;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: modernSpin 1s linear infinite;
+        }
+
+        @keyframes modernSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         @keyframes spin {
@@ -958,156 +1134,16 @@
             margin: 20mm;
         }
         
-        @media print {
-            /* Hide non-content elements */
-            .dashboard-header,
-            .sidebar,
-            .modal {
-                display: none !important;
-            }
-            
-            /* Reset layout for print */
-            body {
-                background: white !important;
-                margin: 0;
-                padding: 0;
-            }
-            
-            .dashboard-container {
-                display: block !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                gap: 0 !important;
-            }
-            
-            .proposal-content {
-                width: 100% !important;
-                max-width: 210mm !important; /* A4 width */
-                box-shadow: none !important;
-                margin: 0 auto !important;
-                padding: 0 !important;
-            }
-            
-            /* Disable animations and transitions */
-            * {
-                animation: none !important;
-                transition: none !important;
-                transform: none !important;
-            }
-            
-            /* Keep all colors and layouts exactly as browser */
-            .cover-section {
-                background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%) !important;
-                color: white !important;
-            }
-            
-            .section-title::before {
-                background: linear-gradient(135deg, #66b3ff 0%, #66b3ff 100%) !important;
-            }
-            
-            .guarantee-badge {
-                background: linear-gradient(135deg, #66b3ff 0%, #66b3ff 100%) !important;
-                color: #000000 !important;
-            }
-            
-            .pricing-highlight {
-                background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%) !important;
-                color: white !important;
-            }
-            
-            .feature-card:hover,
-            .btn:hover {
-                transform: none !important;
-            }
-        }
-
-        @media (max-width: 1200px) {
-            .sidebar {
-                width: 30vw;
-                min-width: 280px;
-                max-width: 350px;
-            }
-            
-            .proposal-content {
-                padding: 30px;
-            }
-        }
-
-        @media (max-width: 1000px) {
-            .sidebar {
-                width: 35vw;
-                min-width: 260px;
-                max-width: 320px;
-            }
-            
-            #page-wrapper {
-                gap: 20px;
-            }
-        }
-        
-        @media (max-width: 900px) {
-            #page-wrapper {
-                flex-direction: column;
-                align-items: center;
-                gap: 30px;
-            }
-
-            .proposal-content {
-                width: 100%;
-                max-width: 900px;
-            }
-            
-            .sidebar {
-                width: 100%;
-                max-width: 500px;
-            }
-        }
-        
-        /* --- Flex‑Layout für Proposal + Sidebar ------------------------ */
-        #page-wrapper{
-          display: flex;
-          justify-content: center;   /* Proposal mittig */
-          align-items: flex-start;   /* Oberkante bündig */
-          gap: 32px;
-          max-width: 1400px;
-          margin: 0 auto;
-          width: 100%;
-        }
-
-        @media (max-width: 768px) {
-            .header-content {
-                padding: 0 20px;
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .dashboard-actions {
-                flex-direction: column;
-                width: 100%;
-                gap: 15px;
-            }
-            
-            .btn {
-                width: 100%;
-            }
-            
-            .dashboard-container {
-                padding: 30px 15px;
-            }
-
-            .proposal-content {
-                padding: 20px;
-            }
-            
-            .status-card {
-                padding: 20px;
-            }
-        }
-
         @media print{
-          @page{ size:A4; margin:20mm; }
+          @page{ 
+            size: A4; 
+            margin: 15mm; 
+          }
 
-          body{ background:white !important; font-size:0.95rem; }
+          body{ 
+            background:white !important; 
+            font-size: 1rem !important;
+          }
 
           /* Sidebar komplett ausblenden */
           .sidebar, .sidebar-container{ display:none !important; }
@@ -1126,11 +1162,14 @@
             width: 100% !important;
             box-shadow: none !important;
             border-radius: 0 !important;
-            margin: 0 !important;
-            padding: 3rem 2rem !important;
+            margin: 0 auto !important;
+            padding: 2rem !important;
             background: #ffffff !important;
             border: none !important;
             color: #1d1d1f !important;
+            transform: none !important;
+            overflow: visible !important;
+            font-size: 1.1rem !important;
           }
           
           /* Alle modernen Styles für Print beibehalten */
@@ -1142,12 +1181,12 @@
           }
           
           .proposal-content h1 {
-            font-size: 2.3rem !important;
+            font-size: 2.2rem !important;
             color: #1d1d1f !important;
             text-align: left !important;
-            margin-bottom: 1.2rem !important;
+            margin-bottom: 1.5rem !important;
             letter-spacing: -0.03em !important;
-            line-height: 1.1 !important;
+            line-height: 1.2 !important;
           }
           
           .proposal-content h1::after {
@@ -1155,7 +1194,7 @@
           }
           
           .proposal-content h2 {
-            font-size: 1.7rem !important;
+            font-size: 1.6rem !important;
             padding-left: 24px !important;
             text-align: left !important;
             margin-bottom: 1rem !important;
@@ -1173,6 +1212,16 @@
             height: auto !important;
             border-radius: 12px !important;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+          }
+
+          /* Unterschriften-Bilder ohne Styling im Print */
+          .client-signature-area img,
+          .company-signature-area img {
+            margin: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            border: none !important;
           }
           
           .proposal-content h3 {
@@ -1195,7 +1244,7 @@
             color: #424245 !important;
             font-size: 1rem !important;
             text-align: justify !important;
-            margin-bottom: 0.8rem !important;
+            margin-bottom: 1rem !important;
             line-height: 1.6 !important;
             letter-spacing: -0.003em !important;
           }
@@ -1299,14 +1348,44 @@
             border-bottom: 1px solid #f1f5f9 !important;
           }
 
-          /* Keine hässlichen Umbrüche in Karten */
-          .feature-card,
-          .timeline-item,
-          .pricing-highlight,
+          /* Saubere Seitenumbrüche für A4 Print */
+          .proposal-content h1, 
+          .proposal-content h2, 
+          .proposal-content h3, 
+          .proposal-content h4,
+          .proposal-content p,
+          .proposal-content blockquote,
+          .proposal-content .feature-card,
+          .proposal-content .timeline-item,
+          .proposal-content .pricing-highlight,
           .proposal-content table,
-          .proposal-content blockquote{ 
-            break-inside: avoid !important; 
-            page-break-inside: avoid !important; 
+          .proposal-content li {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+
+          /* Intelligente Seitenumbrüche */
+          .proposal-content h1:not(:first-child) {
+            page-break-before: auto !important;
+          }
+
+          .proposal-content h1:first-child {
+            page-break-before: avoid !important;
+          }
+
+          .proposal-content h2 {
+            page-break-before: avoid !important;
+            page-break-after: avoid !important;
+          }
+
+          /* UNTERSCHRIFTEN Section auf neuer Seite - simple approach */
+          .page-break {
+            page-break-before: always !important;
+            break-before: page !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: block !important;
           }
 
           /* Buttons & interaktive Elemente verstecken */
@@ -1314,6 +1393,183 @@
 
           /* Links neutralisieren */
           a{ color:inherit !important; text-decoration:none !important; }
+        }
+
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 30vw;
+                min-width: 280px;
+                max-width: 350px;
+            }
+            
+            .proposal-content {
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .sidebar {
+                width: 35vw;
+                min-width: 260px;
+                max-width: 320px;
+            }
+            
+            #page-wrapper {
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            #page-wrapper {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+            }
+
+            .proposal-content {
+                width: 100%;
+                max-width: 900px;
+            }
+            
+            .sidebar {
+                width: 100%;
+                max-width: 500px;
+            }
+        }
+        
+        /* --- Flex‑Layout für Proposal + Sidebar ------------------------ */
+        #page-wrapper{
+          display: flex;
+          justify-content: center;   /* Proposal mittig */
+          align-items: flex-start;   /* Oberkante bündig */
+          gap: 32px;
+          max-width: 1400px;
+          margin: 0 auto;
+          width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 20px;
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .dashboard-actions {
+                flex-direction: column;
+                width: 100%;
+                gap: 15px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .dashboard-container {
+                padding: 30px 15px;
+            }
+
+            .proposal-content {
+                padding: 20px;
+            }
+            
+            .status-card {
+                padding: 20px;
+            }
+        }
+
+        @media print {
+          @page { 
+            size: A4; 
+            margin: 20mm; 
+          }
+
+          /* Hide non-essential elements */
+          .dashboard-header,
+          .sidebar,
+          .sidebar-container,
+          button,
+          .modal {
+            display: none !important;
+          }
+
+          /* Reset layout for print */
+          body {
+            background: white !important;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
+          }
+
+          .dashboard-container {
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+
+          #page-wrapper {
+            display: block !important;
+            max-width: none !important;
+            margin: 0 !important;
+          }
+
+          /* Keep all original styling for print */
+          .proposal-content {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 4rem 3rem !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            border: none !important;
+            /* Preserve all other styles exactly as screen */
+          }
+
+          /* Preserve all visual elements */
+          .proposal-content h1::after {
+            content: '' !important;
+            background: linear-gradient(90deg, #007AFF 0%, #5AC8FA 100%) !important;
+          }
+
+          .proposal-content h2::before {
+            content: '' !important;
+            background: linear-gradient(180deg, #007AFF 0%, #5AC8FA 100%) !important;
+          }
+
+          .section-title::before {
+            background: linear-gradient(135deg, #66b3ff 0%, #66b3ff 100%) !important;
+          }
+
+          .guarantee-badge {
+            background: linear-gradient(135deg, #66b3ff 0%, #66b3ff 100%) !important;
+            color: #000000 !important;
+          }
+
+          .pricing-highlight {
+            background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%) !important;
+            color: white !important;
+          }
+
+          .cover-section {
+            background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%) !important;
+            color: white !important;
+          }
+
+          /* Prevent page breaks in critical elements */
+          .feature-card,
+          .timeline-item,
+          .pricing-highlight,
+          .proposal-content table,
+          .proposal-content blockquote {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+
+          /* Disable animations and transitions */
+          * {
+            animation: none !important;
+            transition: none !important;
+            transform: none !important;
+          }
         }
     </style>
 </head>
@@ -1590,11 +1846,17 @@
                         const tempDiv = document.createElement('div');
                         tempDiv.innerHTML = html;
                         
-                        // Strip all style attributes and classes
+                        // Strip all style attributes and classes (except page-break)
                         const allElements = tempDiv.querySelectorAll('*');
                         allElements.forEach(el => {
                             el.removeAttribute('style');
-                            el.removeAttribute('class');
+                            // Keep page-break and other important classes
+                            const currentClass = el.getAttribute('class');
+                            if (currentClass && (currentClass.includes('page-break') || currentClass.includes('unterschriften-section'))) {
+                                // Keep these classes
+                            } else {
+                                el.removeAttribute('class');
+                            }
                         });
                         
                         // Create proposal header with logo and company name
@@ -1624,6 +1886,9 @@
                     
                     // Track proposal view
                     setTimeout(() => trackProposalView(code), 1000);
+                    
+                    // UNTERSCHRIFTEN page breaks handled by CSS only
+                    
                     
                 } else {
                     // Handle HTTP errors
@@ -1710,9 +1975,15 @@
         }
         
         
-        // PDF Download using browser's native print functionality
+        // UNTERSCHRIFTEN page breaks handled purely by CSS .page-break class
+
+
+        // PDF Download using browser's native print functionality - optimized for A4 printing
         function downloadPDF() {
-            // Use browser's native print dialog which can save as PDF
+            // Don't mark UNTERSCHRIFTEN sections - they should already be configured in custom HTML
+            // markUnterschriftenSections(); // DISABLED - causes duplicate page breaks
+            
+            // Use browser's native print dialog which applies @media print CSS
             window.print();
         }
         
@@ -1784,13 +2055,12 @@
             const modal = document.getElementById('signingModal');
             if (modal) {
                 modal.style.display = 'flex';
-                loadPdfForSigning();
                 
-                // Initialize with draw tab active after a delay
+                // Initialize with draw tab active
                 setTimeout(() => {
                     console.log('Initializing modal with draw tab');
                     switchSignatureMethod('draw');
-                }, 300);
+                }, 100);
             } else {
                 console.error('Signing modal not found');
             }
@@ -1808,56 +2078,24 @@
             }
         }
 
-        async function loadPdfForSigning() {
-            const loadingDiv = document.getElementById('pdfLoadingState');
-            const pdfViewer = document.getElementById('pdfViewer');
-            const signatureSection = document.getElementById('signatureSection');
-            
-            loadingDiv.style.display = 'block';
-            pdfViewer.style.display = 'none';
-            signatureSection.style.display = 'none';
-
-            try {
-                // Generate PDF from current content
-                const proposalContent = document.querySelector('.proposal-content');
-                const opt = {
-                    margin: [20, 20],
-                    filename: `proposal-${window.proposalCode}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
-
-                const pdfBlob = await html2pdf().from(proposalContent).set(opt).outputPdf('blob');
-                currentPdfBytes = await pdfBlob.arrayBuffer();
-
-                // Display PDF
-                const pdfUrl = URL.createObjectURL(pdfBlob);
-                pdfViewer.src = pdfUrl;
-                
-                loadingDiv.style.display = 'none';
-                pdfViewer.style.display = 'block';
-                signatureSection.style.display = 'flex';
-
-                // Initialize signature pad for draw tab
-                initializeSignaturePad();
-
-            } catch (error) {
-                console.error('Error loading PDF:', error);
-                showToast('Fehler beim Laden des PDFs', 'error');
-                loadingDiv.innerHTML = '<p style="color: #dc2626;">Fehler beim Laden des PDFs</p>';
-            }
-        }
+        // PDF generation removed - modal now works without PDF preview
 
         function switchSignatureMethod(method) {
             console.log('Switching to signature method:', method);
             currentAuthMethod = method;
             
             // Update tab buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.style.background = 'transparent';
+                btn.style.color = '#6b7280';
+                btn.style.boxShadow = 'none';
+            });
+            
             const activeButton = document.querySelector(`[onclick="switchSignatureMethod('${method}')"]`);
             if (activeButton) {
-                activeButton.classList.add('active');
+                activeButton.style.background = 'white';
+                activeButton.style.color = '#374151';
+                activeButton.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
             }
             
             // Show/hide content
@@ -1866,15 +2104,9 @@
             });
             
             const activeTab = document.getElementById(`${method}Tab`);
-            console.log('Active tab element:', activeTab);
-            
             if (activeTab) {
-                activeTab.style.display = 'flex';
-                activeTab.style.flexDirection = 'column';
-                activeTab.style.flex = '1';
+                activeTab.style.display = 'block';
                 console.log('Tab displayed:', method);
-            } else {
-                console.error('Tab not found:', method + 'Tab');
             }
             
             if (method === 'draw') {
@@ -1970,7 +2202,9 @@
             const submitBtn = document.getElementById('submitSignatureBtn');
             const originalText = submitBtn.innerHTML;
             
+            // Prevent multiple clicks
             submitBtn.disabled = true;
+            submitBtn.onclick = null;
             submitBtn.innerHTML = '⏳ Wird verarbeitet...';
 
             try {
@@ -2015,9 +2249,100 @@
                         break;
                 }
 
-                // Skip DOM embedding to avoid recursion - only process PDF and webhook
-                console.log('Processing PDF and webhook...');
-                const signedPdfBase64 = await embedSignatureInPdf(currentPdfBytes, signatureDataUrl);
+                // Generate PDF with signatures embedded
+                console.log('Generating PDF with embedded signatures...');
+                
+                // First add both signatures to the DOM
+                await addSignatureToDocument(signatureDataUrl);
+                
+                // Wait a moment for DOM to update
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                // Generate new PDF with signatures (using print CSS styling)
+                const proposalContent = document.querySelector('.proposal-content');
+                if (!proposalContent) {
+                    throw new Error('Proposal content not found');
+                }
+                
+                // Apply print styles temporarily for PDF generation
+                const tempStyle = document.createElement('style');
+                tempStyle.textContent = `
+                    .proposal-content {
+                        max-width: none !important;
+                        width: 100% !important;
+                        box-shadow: none !important;
+                        border-radius: 0 !important;
+                        margin: 0 !important;
+                        padding: 2rem !important;
+                        background: #ffffff !important;
+                        border: none !important;
+                        color: #1d1d1f !important;
+                        font-size: 1.1rem !important;
+                    }
+                    .page-break { 
+                        page-break-before: always !important; 
+                        break-before: page !important; 
+                        height: 1px !important; 
+                        background: transparent !important; 
+                    }
+                `;
+                document.head.appendChild(tempStyle);
+                
+                const opt = {
+                    margin: [15, 15],
+                    filename: `signed-proposal-${window.proposalCode}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { 
+                        scale: 2, 
+                        useCORS: true,
+                        allowTaint: true,
+                        backgroundColor: '#ffffff'
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                };
+
+                console.log('Starting PDF generation...');
+                
+                let signedPdfBlob;
+                try {
+                    signedPdfBlob = await html2pdf().from(proposalContent).set(opt).outputPdf('blob');
+                    console.log('PDF blob created:', signedPdfBlob);
+                } catch (pdfError) {
+                    console.error('PDF generation error:', pdfError);
+                    throw new Error('PDF-Generierung fehlgeschlagen: ' + pdfError.message);
+                } finally {
+                    // Remove temporary print styles
+                    document.head.removeChild(tempStyle);
+                }
+                
+                if (!signedPdfBlob || signedPdfBlob.size === 0) {
+                    console.error('Empty PDF blob:', signedPdfBlob);
+                    throw new Error('PDF generation failed - empty blob');
+                }
+                
+                console.log('PDF generated successfully, size:', signedPdfBlob.size);
+                
+                let signedPdfBytes, signedPdfBase64;
+                try {
+                    signedPdfBytes = await signedPdfBlob.arrayBuffer();
+                    
+                    // Convert to base64 in chunks to avoid stack overflow
+                    const uint8Array = new Uint8Array(signedPdfBytes);
+                    let binaryString = '';
+                    const chunkSize = 8192; // Process in 8KB chunks
+                    
+                    for (let i = 0; i < uint8Array.length; i += chunkSize) {
+                        const chunk = uint8Array.subarray(i, i + chunkSize);
+                        binaryString += String.fromCharCode(...chunk);
+                    }
+                    
+                    signedPdfBase64 = btoa(binaryString);
+                    console.log('PDF converted to base64, length:', signedPdfBase64.length);
+                } catch (conversionError) {
+                    console.error('PDF conversion error:', conversionError);
+                    throw new Error('PDF-Konvertierung fehlgeschlagen: ' + conversionError.message);
+                }
 
                 // Send to webhook
                 const clientData = window.clientData || {};
@@ -2025,6 +2350,7 @@
                     "Full Name": clientData["Full Name"] || '',
                     "Email Address": clientData["Email Address"] || '',
                     "record_id": clientData["record_id"] || clientData["id"] || '',
+                    "proposal_code": window.proposalCode || '',
                     "auth_method": currentAuthMethod,
                     "signed_pdf": signedPdfBase64
                 };
@@ -2049,15 +2375,18 @@
                     // Then close modal
                     closeSigningModal();
                     
-                    // Finally add signature to document AFTER modal is closed
+                    // Automatically download PDF (signatures already embedded)
                     setTimeout(() => {
-                        try {
-                            addSignatureToDocument(signatureDataUrl);
-                        } catch (docError) {
-                            console.error('Error adding signature to document:', docError);
-                            // Don't fail the whole process if document update fails
-                        }
-                    }, 500);
+                        console.log('Auto-downloading signed PDF...');
+                        // Use the signed PDF blob we already generated
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(signedPdfBlob);
+                        link.download = `signed-proposal-${window.proposalCode}.pdf`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(link.href);
+                    }, 1000);
                     
                     // Show success message
                     setTimeout(() => {
@@ -2082,6 +2411,7 @@
                 
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
+                submitBtn.onclick = finalizeSignature; // Restore onclick handler
             } finally {
                 // Always reset the processing flag
                 isSignatureProcessing = false;
@@ -2089,7 +2419,7 @@
         }
 
         // Separate function for adding signature to document (called after modal closes)
-        function addSignatureToDocument(signatureDataUrl) {
+        async function addSignatureToDocument(signatureDataUrl) {
             console.log('Adding signature to document...');
             
             // Find or create UNTERSCHRIFTEN section
@@ -2103,15 +2433,16 @@
                     
                     const sectionHTML = document.createElement('div');
                     sectionHTML.innerHTML = `
-                        <h3 style="margin-top: 40px; margin-bottom: 20px; color: #1d1d1f; font-weight: 600; border-bottom: 2px solid #1d1d1f; padding-bottom: 8px;">UNTERSCHRIFTEN</h3>
-                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px;">
                             <div style="width: 45%;">
                                 <div class="client-signature-area" style="min-height: 80px; border-bottom: 1px solid #666; margin-bottom: 8px; display: flex; align-items: flex-end; padding-bottom: 5px;"></div>
-                                <p style="font-size: 0.9rem; color: #666; margin: 0;">Kunde</p>
+                                <p class="client-name-label" style="font-size: 0.9rem; color: #666; margin: 0; font-weight: 600;">Kunde</p>
+                                <p class="client-company-label" style="font-size: 0.8rem; color: #999; margin: 0;">Unternehmen</p>
                             </div>
                             <div style="width: 45%;">
                                 <div class="company-signature-area" style="min-height: 80px; border-bottom: 1px solid #666; margin-bottom: 8px; display: flex; align-items: flex-end; padding-bottom: 5px;"></div>
-                                <p style="font-size: 0.9rem; color: #666; margin: 0;">option.ai</p>
+                                <p style="font-size: 0.9rem; color: #666; margin: 0; font-weight: 600;">Dennis Kral</p>
+                                <p style="font-size: 0.8rem; color: #999; margin: 0;">option.ai</p>
                             </div>
                         </div>
                     `;
@@ -2130,10 +2461,47 @@
                 signatureImg.style.maxHeight = '60px';
                 signatureImg.style.maxWidth = '200px';
                 signatureImg.style.objectFit = 'contain';
+                signatureImg.style.boxShadow = 'none';
+                signatureImg.style.border = 'none';
+                signatureImg.style.borderRadius = '0';
+                signatureImg.style.background = 'transparent';
                 
                 clientSignatureArea.innerHTML = '';
                 clientSignatureArea.appendChild(signatureImg);
+                
+                // Update client name labels with actual client data
+                const clientData = window.clientData;
+                if (clientData) {
+                    const clientNameLabel = document.querySelector('.client-name-label');
+                    const clientCompanyLabel = document.querySelector('.client-company-label');
+                    
+                    if (clientNameLabel && clientData["Full Name"]) {
+                        clientNameLabel.textContent = clientData["Full Name"];
+                    }
+                    if (clientCompanyLabel && clientData.Company) {
+                        clientCompanyLabel.textContent = clientData.Company;
+                    }
+                }
+                
                 console.log('Client signature added to document');
+            }
+
+            // Add company signature automatically
+            const companySignatureArea = document.querySelector('.company-signature-area');
+            if (companySignatureArea) {
+                const companySignImg = document.createElement('img');
+                companySignImg.src = './bilder/Sign.png';
+                companySignImg.style.maxHeight = '60px';
+                companySignImg.style.maxWidth = '200px';
+                companySignImg.style.objectFit = 'contain';
+                companySignImg.style.boxShadow = 'none';
+                companySignImg.style.border = 'none';
+                companySignImg.style.borderRadius = '0';
+                companySignImg.style.background = 'transparent';
+                
+                companySignatureArea.innerHTML = '';
+                companySignatureArea.appendChild(companySignImg);
+                console.log('Company signature added to document');
             }
         }
 
@@ -2164,65 +2532,62 @@
 
     <!-- Signing Modal -->
     <div id="signingModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
-        <div style="background: white; border-radius: 16px; width: 90%; max-width: 1200px; height: 90%; max-height: 800px; display: flex; flex-direction: column;">
+        <div style="background: white; border-radius: 20px; width: 90%; max-width: 600px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); overflow: hidden;">
             
             <!-- Modal Header -->
-            <div style="padding: 24px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="font-size: 1.5rem; font-weight: 700; color: #1f2937; margin: 0;">Angebot Unterschreiben</h2>
-                <button onclick="closeSigningModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280;">×</button>
+            <div style="background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%); padding: 32px; text-align: center; position: relative;">
+                <button onclick="closeSigningModal()" style="position: absolute; top: 16px; right: 20px; background: rgba(255,255,255,0.1); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center;">×</button>
+                <div style="width: 60px; height: 60px; background: #66b3ff; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 24px;">✍️</div>
+                <h2 style="color: white; margin: 0; font-size: 1.8rem; font-weight: 700; margin-bottom: 8px;">Angebot Unterschreiben</h2>
+                <p style="color: rgba(255,255,255,0.8); margin: 0; font-size: 1rem;">Wählen Sie Ihre bevorzugte Unterschriftsmethode</p>
             </div>
             
             <!-- Modal Content -->
-            <div style="flex: 1; display: flex; gap: 24px; padding: 24px; overflow: hidden;">
+            <div style="padding: 40px;">
                 
-                <!-- PDF Viewer Section (Left) -->
-                <div style="flex: 1; display: flex; flex-direction: column;">
-                    <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; color: #374151;">PDF Vorschau</h3>
-                    
-                    <!-- PDF Loading State -->
-                    <div id="pdfLoadingState" style="display: none; text-align: center; padding: 40px; border: 2px dashed #d1d5db; border-radius: 8px;">
-                        <div style="width: 40px; height: 40px; border: 3px solid #f3f4f6; border-top: 3px solid #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
-                        <p style="color: #6b7280;">PDF wird geladen...</p>
-                    </div>
-                    
-                    <!-- PDF Viewer -->
-                    <iframe id="pdfViewer" style="display: none; width: 100%; flex: 1; border: 1px solid #d1d5db; border-radius: 8px;"></iframe>
+                <!-- Signature Method Tabs -->
+                <div style="display: flex; margin-bottom: 30px; background: #f8f9fa; border-radius: 12px; padding: 4px;">
+                    <button class="tab-btn active" onclick="switchSignatureMethod('draw')" style="flex: 1; padding: 12px 16px; border: none; background: white; font-weight: 600; color: #374151; border-radius: 8px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s;">✏️ Zeichnen</button>
+                    <button class="tab-btn" onclick="switchSignatureMethod('upload')" style="flex: 1; padding: 12px 16px; border: none; background: transparent; font-weight: 600; color: #6b7280; border-radius: 8px; cursor: pointer; transition: all 0.2s;">📁 Hochladen</button>
+                    <button class="tab-btn" onclick="switchSignatureMethod('idAT')" style="flex: 1; padding: 12px 16px; border: none; background: transparent; font-weight: 600; color: #6b7280; border-radius: 8px; cursor: pointer; transition: all 0.2s;">🇦🇹 ID-Austria</button>
                 </div>
                 
-                <!-- Signature Section (Right) -->
-                <div id="signatureSection" style="display: none; width: 400px; flex-direction: column;">
-                    <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; color: #374151;">Unterschrift</h3>
-                    
-                    <!-- Signature Method Tabs -->
-                    <div style="display: flex; margin-bottom: 20px; border-bottom: 1px solid #e5e7eb;">
-                        <button class="tab-btn active" onclick="switchSignatureMethod('draw')" style="flex: 1; padding: 12px; border: none; background: none; font-weight: 600; color: #6b7280; border-bottom: 2px solid transparent; cursor: pointer;">Zeichnen</button>
-                        <button class="tab-btn" onclick="switchSignatureMethod('upload')" style="flex: 1; padding: 12px; border: none; background: none; font-weight: 600; color: #6b7280; border-bottom: 2px solid transparent; cursor: pointer;">Hochladen</button>
-                        <button class="tab-btn" onclick="switchSignatureMethod('idAT')" style="flex: 1; padding: 12px; border: none; background: none; font-weight: 600; color: #6b7280; border-bottom: 2px solid transparent; cursor: pointer;">ID-Austria</button>
+                <!-- Draw Tab -->
+                <div id="drawTab" class="tab-content" style="display: block;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <p style="color: #6b7280; margin: 0;">Zeichnen Sie Ihre Unterschrift in das Feld unten</p>
                     </div>
-                    
-                    <!-- Draw Tab -->
-                    <div id="drawTab" class="tab-content" style="flex: 1; display: flex; flex-direction: column;">
-                        <canvas id="signatureCanvas" style="border: 2px solid #d1d5db; border-radius: 8px; cursor: crosshair; flex: 1; min-height: 200px;"></canvas>
-                        <button onclick="clearSignature()" style="margin-top: 12px; padding: 8px 16px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">Löschen</button>
+                    <canvas id="signatureCanvas" style="border: 2px solid #e5e7eb; border-radius: 12px; cursor: crosshair; width: 100%; height: 200px; background: #fafafa;"></canvas>
+                    <div style="text-align: center; margin-top: 16px;">
+                        <button onclick="clearSignature()" style="padding: 8px 20px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px; cursor: pointer; color: #374151; font-weight: 500;">🗑️ Löschen</button>
                     </div>
-                    
-                    <!-- Upload Tab -->
-                    <div id="uploadTab" class="tab-content" style="display: none; flex: 1; flex-direction: column;">
-                        <input type="file" accept="image/png,image/jpeg" onchange="handleImageUpload(event)" style="margin-bottom: 16px; padding: 12px; border: 2px dashed #d1d5db; border-radius: 8px; cursor: pointer;">
-                        <div id="uploadPreview" style="flex: 1; text-align: center; padding: 20px; border: 2px dashed #d1d5db; border-radius: 8px; color: #6b7280;">
-                            Vorschau erscheint hier
-                        </div>
+                </div>
+                
+                <!-- Upload Tab -->
+                <div id="uploadTab" class="tab-content" style="display: none;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <p style="color: #6b7280; margin: 0;">Laden Sie ein Bild Ihrer Unterschrift hoch (PNG/JPEG)</p>
                     </div>
-                    
-                    <!-- ID-Austria Tab -->
-                    <div id="idATTab" class="tab-content" style="display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center;">
-                        <button onclick="handleIdAustriaAuth()" style="padding: 16px 32px; background: #dc2626; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-bottom: 20px;">🇦🇹 Mit ID-Austria authentifizieren</button>
-                        <div id="idAustriaStatus" style="text-align: center;"></div>
+                    <input type="file" accept="image/png,image/jpeg" onchange="handleImageUpload(event)" style="width: 100%; padding: 20px; border: 2px dashed #d1d5db; border-radius: 12px; cursor: pointer; text-align: center; background: #fafafa; margin-bottom: 20px;">
+                    <div id="uploadPreview" style="min-height: 120px; text-align: center; padding: 40px 20px; border: 2px dashed #e5e7eb; border-radius: 12px; color: #9ca3af; background: #fafafa;">
+                        📄 Vorschau erscheint hier nach dem Upload
                     </div>
-                    
-                    <!-- Submit Button -->
-                    <button id="submitSignatureBtn" onclick="finalizeSignature()" style="margin-top: 20px; padding: 16px; background: #059669; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem;">
-                        ✍️ Unterschrift übernehmen
+                </div>
+                
+                <!-- ID-Austria Tab -->
+                <div id="idATTab" class="tab-content" style="display: none; text-align: center; padding: 40px 0;">
+                    <div style="margin-bottom: 30px;">
+                        <div style="width: 80px; height: 80px; background: #dc2626; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 32px;">🇦🇹</div>
+                        <p style="color: #6b7280; margin: 0;">Authentifizieren Sie sich mit Ihrer ID-Austria für eine rechtsgültige digitale Signatur</p>
+                    </div>
+                    <button onclick="handleIdAustriaAuth()" style="padding: 16px 32px; background: #dc2626; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 1rem; margin-bottom: 24px;">🔐 Mit ID-Austria authentifizieren</button>
+                    <div id="idAustriaStatus"></div>
+                </div>
+                
+                <!-- Submit Button -->
+                <div style="margin-top: 40px; text-align: center;">
+                    <button id="submitSignatureBtn" onclick="finalizeSignature()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3); transition: all 0.2s;">
+                        ✍️ Unterschrift übernehmen und speichern
                     </button>
                 </div>
             </div>
@@ -2234,9 +2599,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        .tab-btn.active {
-            color: #059669 !important;
-            border-bottom-color: #059669 !important;
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.8) !important;
+            color: #374151 !important;
+        }
+        
+        #submitSignatureBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4) !important;
         }
         
         @keyframes spin {
