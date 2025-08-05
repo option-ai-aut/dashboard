@@ -2317,36 +2317,145 @@
                 // Wait for DOM to update
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
-                // Generate the actual signed PDF for webhook using html2pdf
-                console.log('Generating signed PDF for webhook...');
-                const proposalContent = document.querySelector('.proposal-content');
-                if (!proposalContent) {
-                    throw new Error('Proposal content not found for PDF generation');
-                }
+                // Generate PDF using the exact same method as the print function (@media print CSS)
+                console.log('Generating signed PDF for webhook using print CSS...');
                 
-                const pdfOptions = {
-                    margin: [15, 15],
-                    filename: `signed-proposal-${window.proposalCode}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { 
-                        scale: 2, 
-                        useCORS: true,
-                        allowTaint: true,
-                        backgroundColor: '#ffffff'
-                    },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-                };
-
                 let signedPdfBase64 = '';
                 try {
-                    const pdfBlob = await html2pdf().from(proposalContent).set(pdfOptions).outputPdf('blob');
+                    // Create a temporary iframe that replicates the print environment
+                    const printFrame = document.createElement('iframe');
+                    printFrame.style.display = 'none';
+                    printFrame.style.position = 'absolute';
+                    printFrame.style.left = '-9999px';
+                    document.body.appendChild(printFrame);
+                    
+                    // Extract all CSS from the current document
+                    const allStyles = Array.from(document.styleSheets).map(sheet => {
+                        try {
+                            return Array.from(sheet.cssRules).map(rule => rule.cssText).join('\n');
+                        } catch (e) {
+                            return '';
+                        }
+                    }).join('\n');
+                    
+                    // Get the signed content
+                    const proposalContent = document.querySelector('.proposal-content');
+                    const pageWrapper = document.querySelector('#page-wrapper');
+                    
+                    if (!proposalContent || !pageWrapper) {
+                        throw new Error('Required content elements not found');
+                    }
+                    
+                    // Write the iframe document with print-optimized CSS
+                    printFrame.contentDocument.write(\`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <title>Signed Proposal \${window.proposalCode}</title>
+                            <style>
+                                \${allStyles}
+                                
+                                /* Apply print media styles for consistent PDF */
+                                @media screen {
+                                    body { 
+                                        background: white !important; 
+                                        font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
+                                        margin: 0 !important;
+                                        padding: 0 !important;
+                                    }
+                                    .dashboard-header,
+                                    .sidebar,
+                                    .sidebar-container,
+                                    button,
+                                    .modal { display: none !important; }
+                                    
+                                    .dashboard-container { 
+                                        padding: 0 !important; 
+                                        margin: 0 !important; 
+                                    }
+                                    
+                                    #page-wrapper { 
+                                        display: block !important; 
+                                        max-width: none !important; 
+                                        margin: 0 !important; 
+                                    }
+                                    
+                                    .proposal-content {
+                                        width: 100% !important;
+                                        max-width: none !important;
+                                        margin: 0 auto !important;
+                                        padding: 2rem !important;
+                                        background: #ffffff !important;
+                                        border: none !important;
+                                        color: #1d1d1f !important;
+                                        transform: none !important;
+                                        overflow: visible !important;
+                                        font-size: 1.1rem !important;
+                                        box-shadow: none !important;
+                                        border-radius: 0 !important;
+                                    }
+                                    
+                                    /* Apply all print-specific styles */
+                                    .proposal-content h1, 
+                                    .proposal-content h2, 
+                                    .proposal-content h3, 
+                                    .proposal-content h4 {
+                                        font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
+                                        font-weight: 700 !important;
+                                        color: #000000 !important;
+                                        page-break-after: avoid;
+                                    }
+                                    
+                                    .page-break {
+                                        page-break-before: always !important;
+                                        break-before: page !important;
+                                        height: 0 !important;
+                                        margin: 0 !important;
+                                        padding: 0 !important;
+                                        display: block !important;
+                                    }
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="dashboard-container">
+                                \${pageWrapper.outerHTML}
+                            </div>
+                        </body>
+                        </html>
+                    \`);
+                    printFrame.contentDocument.close();
+                    
+                    // Wait for iframe content to load completely
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // Generate PDF from the iframe content using html2pdf
+                    const iframeBody = printFrame.contentDocument.body;
+                    const pdfBlob = await html2pdf()
+                        .from(iframeBody)
+                        .set({
+                            margin: [15, 15],
+                            filename: \`signed-proposal-\${window.proposalCode}.pdf\`,
+                            image: { type: 'jpeg', quality: 0.98 },
+                            html2canvas: { 
+                                scale: 2, 
+                                useCORS: true,
+                                allowTaint: true,
+                                backgroundColor: '#ffffff'
+                            },
+                            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                        })
+                        .outputPdf('blob');
+                    
+                    // Clean up iframe
+                    document.body.removeChild(printFrame);
                     
                     if (!pdfBlob || pdfBlob.size === 0) {
                         throw new Error('PDF generation failed - empty blob');
                     }
                     
-                    console.log('PDF generated successfully for webhook, size:', pdfBlob.size);
+                    console.log('Print-optimized PDF generated successfully for webhook, size:', pdfBlob.size);
                     
                     // Convert to base64 in chunks
                     const pdfBytes = await pdfBlob.arrayBuffer();
@@ -2360,12 +2469,12 @@
                     }
                     
                     signedPdfBase64 = btoa(binaryString);
-                    console.log('PDF converted to base64 for webhook, length:', signedPdfBase64.length);
+                    console.log('Print-optimized PDF converted to base64 for webhook, length:', signedPdfBase64.length);
                     
                 } catch (pdfError) {
-                    console.error('PDF generation for webhook failed:', pdfError);
+                    console.error('Print-optimized PDF generation for webhook failed:', pdfError);
                     // Fallback to simple signature data
-                    signedPdfBase64 = btoa(`Signed proposal ${window.proposalCode} with ${currentAuthMethod} signature - PDF generation failed`);
+                    signedPdfBase64 = btoa(\`Signed proposal \${window.proposalCode} with \${currentAuthMethod} signature - PDF generation failed\`);
                 }
 
                 // Send to webhook
