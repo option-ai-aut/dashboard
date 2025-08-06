@@ -1758,10 +1758,17 @@
             }
             
             const codeInput = document.getElementById('proposalCodeInput');
-            const code = codeInput.value.trim().toUpperCase();
             const errorDiv = document.getElementById('errorMessage');
             const loadingDiv = document.getElementById('loadingMessage');
             const loadButton = document.getElementById('loadButton');
+            
+            // Check if required elements exist
+            if (!codeInput || !errorDiv || !loadingDiv || !loadButton) {
+                console.error('Required form elements not found');
+                return;
+            }
+            
+            const code = codeInput.value.trim().toUpperCase();
             
             // Validate input
             if (!code) {
@@ -1876,15 +1883,21 @@
                     if (client) {
                         // Seitenleiste füllen
                         const c = client;
-                        document.getElementById('sidebarName').textContent    = c["Full Name"] || '';
-                        document.getElementById('sidebarCompany').textContent = c.Company      || '';
-                        document.getElementById('sidebarAddress').textContent = c.Adress       || '';
-                        document.getElementById('sidebarCountry').textContent = c.Country      || '';
+                        const sidebarName = document.getElementById('sidebarName');
+                        const sidebarCompany = document.getElementById('sidebarCompany');
+                        const sidebarAddress = document.getElementById('sidebarAddress');
+                        const sidebarCountry = document.getElementById('sidebarCountry');
+                        const createdDate = document.getElementById('createdDate');
+
+                        if (sidebarName) sidebarName.textContent = c["Full Name"] || '';
+                        if (sidebarCompany) sidebarCompany.textContent = c.Company || '';
+                        if (sidebarAddress) sidebarAddress.textContent = c.Adress || '';
+                        if (sidebarCountry) sidebarCountry.textContent = c.Country || '';
 
                         // Erstelldatum (ISO‑String → deutsches Datum)
-                        if (c.createdTime){
+                        if (c.createdTime && createdDate){
                             const d = new Date(c.createdTime);
-                            document.getElementById('createdDate').textContent = d.toLocaleDateString('de-DE');
+                            createdDate.textContent = d.toLocaleDateString('de-DE');
                         }
                         
                         console.log('Client data filled:', {
@@ -1896,12 +1909,15 @@
                     }
                     
                     // Show proposal dashboard first
-                    document.getElementById('codeEntryScreen').style.display = 'none';
-                    document.getElementById('proposalDashboard').style.display = 'block';
+                    const codeEntryScreen = document.getElementById('codeEntryScreen');
+                    const proposalDashboard = document.getElementById('proposalDashboard');
+                    
+                    if (codeEntryScreen) codeEntryScreen.style.display = 'none';
+                    if (proposalDashboard) proposalDashboard.style.display = 'block';
                     
                     // Replace proposal content with HTML from N8n
                     const proposalContentElement = document.getElementById('proposal-content');
-                    if (html && html.trim().length > 0) {
+                    if (proposalContentElement && html && html.trim().length > 0) {
                         console.log('✅ Replacing proposal content with HTML from N8n');
                         // Remove all styles and classes from the HTML
                         const tempDiv = document.createElement('div');
@@ -2196,13 +2212,23 @@
             try {
                 console.log('Creating new SignaturePad instance');
                 
+                // Check if SignaturePad library is available
+                if (typeof SignaturePad === 'undefined') {
+                    throw new Error('SignaturePad library not loaded');
+                }
+                
                 // Set canvas dimensions first
                 const rect = canvas.getBoundingClientRect();
                 const ratio = Math.max(window.devicePixelRatio || 1, 1);
                 
                 canvas.width = rect.width * ratio;
                 canvas.height = rect.height * ratio;
-                canvas.getContext('2d').scale(ratio, ratio);
+                
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    throw new Error('Cannot get canvas 2D context');
+                }
+                ctx.scale(ratio, ratio);
                 
                 // Create signature pad
                 signaturePad = new SignaturePad(canvas, {
@@ -2216,6 +2242,7 @@
                 
             } catch (error) {
                 console.error('Error creating SignaturePad:', error);
+                showToast('Fehler beim Laden der Unterschrift-Funktion', 'error');
             }
         }
 
@@ -2251,190 +2278,6 @@
         // Flag to prevent multiple simultaneous signature processing
         let isSignatureProcessing = false;
 
-        // Generate PDF for webhook - complete content like print but without complex page breaks
-        async function generateSignedPDF() {
-            console.log('Generating complete PDF for webhook...');
-            
-            // Get the complete proposal wrapper
-            const pageWrapper = document.querySelector('#page-wrapper');
-            const proposalContent = document.querySelector('.proposal-content');
-            
-            if (!pageWrapper || !proposalContent) {
-                throw new Error('Required content elements not found');
-            }
-            
-            // Clone the complete wrapper to preserve all content including signatures
-            const clonedWrapper = pageWrapper.cloneNode(true);
-            
-            // Create container for PDF - MUST BE VISIBLE for html2pdf to work
-            const tempContainer = document.createElement('div');
-            tempContainer.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 800px;
-                min-height: 1000px;
-                background: white;
-                font-family: Arial, sans-serif;
-                padding: 40px;
-                margin: 0;
-                z-index: 10000;
-                opacity: 1;
-                overflow: visible;
-                visibility: visible;
-                display: block;
-                color: black;
-                font-size: 16px;
-                line-height: 1.4;
-            `;
-            
-            // Style the cloned content to look like print version
-            const clonedProposalContent = clonedWrapper.querySelector('.proposal-content');
-            if (clonedProposalContent) {
-                clonedProposalContent.style.cssText = `
-                    width: 100%;
-                    max-width: none;
-                    margin: 0 auto;
-                    padding: 2rem;
-                    background: #ffffff;
-                    border: none;
-                    color: #1d1d1f;
-                    transform: none;
-                    overflow: visible;
-                    font-size: 1.1rem;
-                    box-shadow: none;
-                    border-radius: 0;
-                    line-height: 1.6;
-                `;
-                
-                // Style headings
-                const headings = clonedProposalContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
-                headings.forEach(heading => {
-                    heading.style.cssText = `
-                        font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif;
-                        font-weight: 700;
-                        color: #000000;
-                    `;
-                });
-                
-                // Style signature images to show properly
-                const signatureImages = clonedProposalContent.querySelectorAll('img[src*="signature"], .signature-image, img[alt*="Signature"], img[alt*="signature"]');
-                signatureImages.forEach(img => {
-                    img.style.cssText = `
-                        max-width: 300px;
-                        max-height: 150px;
-                        width: auto;
-                        height: auto;
-                        border: none;
-                        border-radius: 0;
-                        box-shadow: none;
-                        display: block;
-                        margin: 10px 0;
-                    `;
-                });
-                
-                // REMOVE page break elements completely to avoid content hiding
-                const pageBreaks = clonedWrapper.querySelectorAll('.page-break');
-                pageBreaks.forEach(pageBreak => {
-                    pageBreak.remove(); // Completely remove page breaks, keep following content visible
-                });
-                
-                console.log('Removed', pageBreaks.length, 'page breaks to ensure all content is visible');
-            }
-            
-            // Remove unwanted UI elements
-            const unwantedElements = clonedWrapper.querySelectorAll('.dashboard-header, .sidebar, .sidebar-container, button, .modal');
-            unwantedElements.forEach(el => el.remove());
-            
-            tempContainer.appendChild(clonedWrapper);
-            document.body.appendChild(tempContainer);
-            
-            try {
-                // DEBUG: Check what content we actually have
-                console.log('=== PDF GENERATION DEBUG ===');
-                console.log('clonedWrapper innerHTML length:', clonedWrapper.innerHTML.length);
-                console.log('clonedWrapper first 500 chars:', clonedWrapper.innerHTML.substring(0, 500));
-                
-                // Check for signature images
-                const signatureImgs = clonedWrapper.querySelectorAll('img[src*="signature"], img[alt*="signature"]');
-                console.log('Found signature images:', signatureImgs.length);
-                signatureImgs.forEach((img, i) => {
-                    console.log(`Signature ${i+1}:`, img.src ? img.src.substring(0, 100) + '...' : 'NO SRC');
-                });
-                
-                // Check for UNTERSCHRIFTEN content
-                const unterschriftenContent = clonedWrapper.innerHTML.toLowerCase();
-                const hasUnterschriften = unterschriftenContent.includes('unterschrift');
-                console.log('Contains "unterschrift" text:', hasUnterschriften);
-                
-                // Wait longer for images to load properly
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
-                // DEBUG: Check if container has measurable dimensions
-                const containerRect = tempContainer.getBoundingClientRect();
-                const wrapperRect = clonedWrapper.getBoundingClientRect();
-                console.log('tempContainer dimensions:', containerRect.width, 'x', containerRect.height);
-                console.log('clonedWrapper dimensions:', wrapperRect.width, 'x', wrapperRect.height);
-                console.log('tempContainer computed style:', window.getComputedStyle(tempContainer).display);
-                
-                if (typeof html2pdf === 'undefined') {
-                    throw new Error('html2pdf library not loaded');
-                }
-                
-                console.log('Starting html2pdf generation...');
-                
-                // Make container temporarily more visible for html2pdf (but still invisible to user)
-                tempContainer.style.opacity = '0.1';
-                tempContainer.style.transform = 'scale(1)';
-                
-                // Wait for DOM to fully render before PDF generation
-                await new Promise(resolve => setTimeout(resolve, 200));
-                
-                // Generate PDF with settings optimized for content flow
-                const pdfBlob = await html2pdf()
-                    .from(tempContainer)
-                    .set({
-                        margin: [15, 15, 15, 15],
-                        filename: `signed-proposal-${window.proposalCode}.pdf`,
-                        image: { type: 'jpeg', quality: 0.95 },
-                        html2canvas: { 
-                            scale: 2,
-                            useCORS: true,
-                            allowTaint: true,
-                            backgroundColor: '#ffffff',
-                            letterRendering: true,
-                            logging: true, // Enable logging to see what's happening
-                            height: null, // Let it calculate height automatically
-                            width: null   // Let it calculate width automatically
-                        },
-                        jsPDF: { 
-                            unit: 'mm', 
-                            format: 'a4', 
-                            orientation: 'portrait'
-                        }
-                        // No pagebreak settings - natural flow
-                    })
-                    .outputPdf('blob');
-                
-                // Immediately hide container again
-                tempContainer.style.opacity = '0.01';
-                tempContainer.style.transform = 'scale(0.01)';
-                
-                console.log('html2pdf completed, blob size:', pdfBlob.size);
-                console.log('=== END DEBUG ===');
-                
-                return pdfBlob;
-                
-            } finally {
-                // Clean up - hide first then remove
-                tempContainer.style.display = 'none';
-                setTimeout(() => {
-                    if (tempContainer.parentNode) {
-                        document.body.removeChild(tempContainer);
-                    }
-                }, 500);
-            }
-        }
 
         async function finalizeSignature() {
             // Prevent multiple simultaneous calls
@@ -2446,6 +2289,12 @@
             isSignatureProcessing = true;
             
             const submitBtn = document.getElementById('submitSignatureBtn');
+            if (!submitBtn) {
+                console.error('Submit button not found');
+                isSignatureProcessing = false;
+                return;
+            }
+            
             const originalText = submitBtn.innerHTML;
             
             // Prevent multiple clicks
@@ -2499,74 +2348,125 @@
                 console.log('Adding signatures to document...');
                 await addSignatureToDocument(signatureDataUrl);
                 
-                // Wait for DOM to fully update with signature
+                // Wait for signature to be added to DOM
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Generate PDF for webhook - use complete proposal content
+                console.log('🚀 Starting webhook PDF generation...');
+                
+                // Get the main proposal content container
+                const proposalContent = document.querySelector('.proposal-content, #page-wrapper, .main-content');
+                if (!proposalContent) {
+                    throw new Error('❌ Proposal content not found');
+                }
+                
+                console.log('📄 Found proposal content, generating PDF...');
+                
+                // Create a clean copy for PDF generation
+                const tempContainer = document.createElement('div');
+                tempContainer.innerHTML = proposalContent.innerHTML;
+                
+                // Apply clean PDF styles
+                tempContainer.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 50px;
+                    width: 794px;
+                    padding: 40px;
+                    background: white;
+                    font-family: 'Times New Roman', serif;
+                    font-size: 14px;
+                    line-height: 1.6;
+                    color: #000;
+                    visibility: visible;
+                    opacity: 1;
+                    z-index: 9999;
+                    overflow: visible;
+                `;
+                
+                // Remove any unwanted elements from the copy
+                const unwantedElements = tempContainer.querySelectorAll(
+                    '.sidebar, .sidebar-container, .dashboard-header, button:not(.signature-btn), .modal, .toast, .overlay, .page-break'
+                );
+                unwantedElements.forEach(el => el.remove());
+                
+                // Ensure signature images are properly styled
+                const signatureImages = tempContainer.querySelectorAll('img[src*="signature"], .signature-image');
+                signatureImages.forEach(img => {
+                    img.style.cssText = `
+                        max-width: 300px;
+                        max-height: 120px;
+                        width: auto;
+                        height: auto;
+                        display: block;
+                        margin: 10px 0;
+                        border: none;
+                        box-shadow: none;
+                        background: none;
+                    `;
+                });
+                
+                // Add to DOM temporarily
+                document.body.appendChild(tempContainer);
+                
+                // Wait for any images to load
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
-                // Generate PDF AFTER signature is in DOM
-                console.log('Generating PDF for webhook with signature...');
-                let signedPdfBlob = null;
-                let signedPdfBase64 = '';
+                // Check if html2pdf library is available
+                if (typeof html2pdf === 'undefined') {
+                    throw new Error('html2pdf library not loaded');
+                }
                 
-                try {
-                    signedPdfBlob = await generateSignedPDF();
-                    
-                    if (!signedPdfBlob || signedPdfBlob.size === 0) {
-                        throw new Error('PDF generation failed - empty blob');
-                    }
-                    
-                    console.log('PDF generated for webhook, size:', signedPdfBlob.size);
-                    
-                    // Convert to base64
+                // Generate PDF with optimized settings
+                const pdfBlob = await html2pdf()
+                    .from(tempContainer)
+                    .set({
+                        margin: [20, 20, 20, 20],
+                        filename: `proposal-${window.proposalCode}-signed.pdf`,
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: {
+                            scale: 1.5,
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: '#ffffff',
+                            width: tempContainer.scrollWidth,
+                            height: tempContainer.scrollHeight
+                        },
+                        jsPDF: {
+                            unit: 'mm',
+                            format: 'a4',
+                            orientation: 'portrait'
+                        }
+                    })
+                    .outputPdf('blob');
+                
+                console.log('✅ PDF blob generated, size:', pdfBlob.size, 'bytes');
+                console.log('Container height before cleanup:', tempContainer.offsetHeight);
+                
+                // Clean up immediately
+                document.body.removeChild(tempContainer);
+                
+                // Convert to base64
+                const signedPdfBase64 = await new Promise((resolve, reject) => {
                     const reader = new FileReader();
-                    signedPdfBase64 = await new Promise((resolve, reject) => {
-                        reader.onload = () => {
-                            const base64 = reader.result.split(',')[1];
-                            resolve(base64);
-                        };
-                        reader.onerror = reject;
-                        reader.readAsDataURL(signedPdfBlob);
-                    });
-                    
-                    console.log('PDF converted to base64, length:', signedPdfBase64.length);
-                    
-                } catch (pdfError) {
-                    console.error('PDF generation for webhook failed:', pdfError);
-                    console.error('Full error details:', pdfError.stack || pdfError);
-                    
-                    // Try to generate a simple fallback PDF instead of just text
-                    try {
-                        console.log('Attempting fallback PDF generation...');
-                        const fallbackHtml = `
-                            <div style="padding: 20px; font-family: Arial;">
-                                <h1>Signed Proposal</h1>
-                                <p>Proposal Code: ${window.proposalCode}</p>
-                                <p>Signature Method: ${currentAuthMethod}</p>
-                                <p>Signed on: ${new Date().toLocaleString()}</p>
-                                <p>Note: Full PDF generation failed, this is a fallback document.</p>
-                            </div>
-                        `;
-                        
-                        const fallbackContainer = document.createElement('div');
-                        fallbackContainer.innerHTML = fallbackHtml;
-                        fallbackContainer.style.cssText = 'position: absolute; top: -5000px; width: 210mm; background: white; padding: 20px;';
-                        document.body.appendChild(fallbackContainer);
-                        
-                        const fallbackBlob = await html2pdf().from(fallbackContainer).outputPdf('blob');
-                        document.body.removeChild(fallbackContainer);
-                        
-                        const reader = new FileReader();
-                        signedPdfBase64 = await new Promise((resolve, reject) => {
-                            reader.onload = () => resolve(reader.result.split(',')[1]);
-                            reader.onerror = reject;
-                            reader.readAsDataURL(fallbackBlob);
-                        });
-                        
-                        console.log('Fallback PDF generated, base64 length:', signedPdfBase64.length);
-                        
-                    } catch (fallbackError) {
-                        console.error('Even fallback PDF failed:', fallbackError);
-                        signedPdfBase64 = btoa(`Signed proposal ${window.proposalCode} with ${currentAuthMethod} signature - PDF generation completely failed`);
-                    }
+                    reader.onload = () => {
+                        const base64String = reader.result.split(',')[1];
+                        console.log('🔢 Base64 length:', base64String.length);
+                        resolve(base64String);
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(pdfBlob);
+                });
+                
+                console.log('🎯 PDF generation completed successfully!');
+                console.log('🎯 Final base64 to send:', signedPdfBase64.substring(0, 100) + '...');
+                
+                // DEBUG: Check if this is the empty PDF pattern
+                if (signedPdfBase64.includes('JVBERi0xLjMKJbrfrOAKMyAwIG9iag')) {
+                    console.warn('⚠️ Detected empty PDF pattern - this may indicate content rendering issues');
+                    console.warn('PDF size was:', pdfBlob.size);
+                } else {
+                    console.log('✅ PDF contains content - generation successful!');
                 }
                 
                 // Close modal first
@@ -2611,6 +2511,7 @@
 
                 console.log('Sending webhook with PDF, payload size:', JSON.stringify(webhookPayload).length);
                 console.log('signed_pdf base64 length:', signedPdfBase64.length);
+                console.log('🔥🔥🔥 NEUE VERSION LÄUFT - TIMESTAMP:', new Date().toISOString());
 
                 const response = await fetch('https://optionai.optionai.at/webhook/save-sign', {
                     method: 'POST',
@@ -2632,9 +2533,11 @@
                 console.error('Error:', error);
                 showToast(error.message || 'Fehler beim Unterschreiben', 'error');
                 
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
-                submitBtn.onclick = finalizeSignature; // Restore onclick handler
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.onclick = finalizeSignature; // Restore onclick handler
+                }
             } finally {
                 // Always reset the processing flag
                 isSignatureProcessing = false;
