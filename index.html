@@ -2269,19 +2269,21 @@
             // Create container for PDF - MUST BE VISIBLE for html2pdf to work
             const tempContainer = document.createElement('div');
             tempContainer.style.cssText = `
-                position: fixed;
-                top: -10000px;
+                position: absolute;
+                top: 0;
                 left: 0;
-                width: 800px;
-                min-height: 1000px;
+                width: 210mm;
+                min-height: 297mm;
                 background: white;
                 font-family: Arial, sans-serif;
                 padding: 20px;
                 margin: 0;
-                z-index: -1000;
-                opacity: 0;
+                z-index: 9999;
+                opacity: 0.01;
                 pointer-events: none;
                 overflow: visible;
+                transform: scale(0.01);
+                transform-origin: top left;
             `;
             
             // Style the cloned content to look like print version
@@ -2363,8 +2365,8 @@
                 const hasUnterschriften = unterschriftenContent.includes('unterschrift');
                 console.log('Contains "unterschrift" text:', hasUnterschriften);
                 
-                // Wait for images to load
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                // Wait longer for images to load properly
+                await new Promise(resolve => setTimeout(resolve, 2000));
                 
                 // DEBUG: Check if container has measurable dimensions
                 const containerRect = tempContainer.getBoundingClientRect();
@@ -2378,6 +2380,10 @@
                 }
                 
                 console.log('Starting html2pdf generation...');
+                
+                // Make container temporarily more visible for html2pdf (but still invisible to user)
+                tempContainer.style.opacity = '0.1';
+                tempContainer.style.transform = 'scale(1)';
                 
                 // Generate PDF with settings optimized for content flow
                 const pdfBlob = await html2pdf()
@@ -2404,6 +2410,10 @@
                         // No pagebreak settings - natural flow
                     })
                     .outputPdf('blob');
+                
+                // Immediately hide container again
+                tempContainer.style.opacity = '0.01';
+                tempContainer.style.transform = 'scale(0.01)';
                 
                 console.log('html2pdf completed, blob size:', pdfBlob.size);
                 console.log('=== END DEBUG ===');
@@ -2514,17 +2524,17 @@
                     signedPdfBase64 = btoa(`Signed proposal ${window.proposalCode} with ${currentAuthMethod} signature - PDF generation failed`);
                 }
                 
-                // Show print dialog after PDF is generated
-                setTimeout(() => {
-                    console.log('Opening print dialog...');
-                    window.print();
-                }, 500);
+                // Close modal first
+                closeSigningModal();
                 
                 // Show success toast
                 showToast('✓ Unterschrieben', 'success');
                 
-                // Close modal
-                closeSigningModal();
+                // Show print dialog immediately (0.5s after signature, as requested)
+                setTimeout(() => {
+                    console.log('Opening print dialog...');
+                    window.print();
+                }, 500);
                 
                 // Update sidebar status to "Signed"
                 const statusDot = document.querySelector('.status-dot');
