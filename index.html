@@ -2266,17 +2266,22 @@
             // Clone the complete wrapper to preserve all content including signatures
             const clonedWrapper = pageWrapper.cloneNode(true);
             
-            // Create container for PDF
+            // Create container for PDF - MUST BE VISIBLE for html2pdf to work
             const tempContainer = document.createElement('div');
             tempContainer.style.cssText = `
-                position: absolute;
-                left: -9999px;
-                top: 0;
-                width: 210mm;
+                position: fixed;
+                top: -10000px;
+                left: 0;
+                width: 800px;
+                min-height: 1000px;
                 background: white;
-                font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif;
-                padding: 0;
+                font-family: Arial, sans-serif;
+                padding: 20px;
                 margin: 0;
+                z-index: -1000;
+                opacity: 0;
+                pointer-events: none;
+                overflow: visible;
             `;
             
             // Style the cloned content to look like print version
@@ -2361,6 +2366,13 @@
                 // Wait for images to load
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
+                // DEBUG: Check if container has measurable dimensions
+                const containerRect = tempContainer.getBoundingClientRect();
+                const wrapperRect = clonedWrapper.getBoundingClientRect();
+                console.log('tempContainer dimensions:', containerRect.width, 'x', containerRect.height);
+                console.log('clonedWrapper dimensions:', wrapperRect.width, 'x', wrapperRect.height);
+                console.log('tempContainer computed style:', window.getComputedStyle(tempContainer).display);
+                
                 if (typeof html2pdf === 'undefined') {
                     throw new Error('html2pdf library not loaded');
                 }
@@ -2369,7 +2381,7 @@
                 
                 // Generate PDF with settings optimized for content flow
                 const pdfBlob = await html2pdf()
-                    .from(clonedWrapper)
+                    .from(tempContainer)
                     .set({
                         margin: [15, 15, 15, 15],
                         filename: `signed-proposal-${window.proposalCode}.pdf`,
