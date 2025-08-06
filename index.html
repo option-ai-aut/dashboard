@@ -2351,14 +2351,18 @@
                 // Wait for signature to be added to DOM
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
-                // Close modal first to show signed proposal in dashboard
+                // Show "Bitte warten" in submit button
+                submitBtn.innerHTML = '⏳ Bitte warten...';
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Close modal
                 closeSigningModal();
                 
-                // Show success toast
-                showToast('✓ Unterschrieben', 'success');
-                
                 // Wait for modal to close and dashboard to show the signed proposal
-                await new Promise(resolve => setTimeout(resolve, 300));
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                // Show full-screen Apple-style success animation
+                await showAppleStyleSuccess();
                 
                 // NOW capture the exact HTML that the user sees in the dashboard
                 console.log('🚀 Capturing visible signed proposal HTML...');
@@ -2439,11 +2443,9 @@
                 console.log('🎯 HTML capture completed successfully!');
                 console.log('🎯 Final base64 to send:', signedPdfBase64.substring(0, 100) + '...');
                 
-                // Show print dialog immediately after capturing HTML
-                setTimeout(() => {
-                    console.log('Opening print dialog...');
-                    window.print();
-                }, 100);
+                // Print dialog opens immediately after animation completes
+                console.log('Opening print dialog...');
+                window.print();
                 
                 // Update sidebar status to "Signed"
                 const statusDot = document.querySelector('.status-dot');
@@ -2606,9 +2608,11 @@
         function showToast(message, type = 'info') {
             const toast = document.createElement('div');
             toast.style.cssText = `
-                position: fixed; top: 20px; right: 20px; z-index: 10000;
+                position: fixed; top: -100px; right: 20px; z-index: 10000;
                 padding: 16px 24px; border-radius: 8px; font-weight: 600;
                 max-width: 400px; word-wrap: break-word;
+                transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                box-shadow: 0 8px 32px rgba(0,0,0,0.12);
                 ${type === 'success' ? 'background: #10b981; color: white;' : ''}
                 ${type === 'error' ? 'background: #ef4444; color: white;' : ''}
                 ${type === 'info' ? 'background: #3b82f6; color: white;' : ''}
@@ -2616,7 +2620,119 @@
             toast.textContent = message;
             document.body.appendChild(toast);
             
-            setTimeout(() => toast.remove(), 4000);
+            // Animate in from top
+            setTimeout(() => {
+                toast.style.top = '20px';
+            }, 50);
+            
+            // Animate out to top after 3.5 seconds
+            setTimeout(() => {
+                toast.style.top = '-100px';
+                toast.style.opacity = '0';
+                
+                // Remove after animation completes
+                setTimeout(() => toast.remove(), 500);
+            }, 3500);
+        }
+
+        // Apple-Style Full-Screen Success Animation
+        async function showAppleStyleSuccess() {
+            return new Promise((resolve) => {
+                // Create full-screen overlay
+                const overlay = document.createElement('div');
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(135deg, #66b3ff 0%, #4a90e2 100%);
+                    z-index: 99999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-direction: column;
+                    opacity: 0;
+                    transition: all 0.3s ease-out;
+                `;
+                
+                // Create checkmark container
+                const checkContainer = document.createElement('div');
+                checkContainer.style.cssText = `
+                    width: 120px;
+                    height: 120px;
+                    background: white;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: 40px;
+                    transform: scale(0);
+                    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                `;
+                
+                // Create animated checkmark
+                const checkmark = document.createElement('div');
+                checkmark.innerHTML = '✓';
+                checkmark.style.cssText = `
+                    font-size: 60px;
+                    color: #10b981;
+                    font-weight: 900;
+                    transform: scale(0);
+                    transition: all 0.4s ease-out;
+                `;
+                
+                // Create success text
+                const successText = document.createElement('div');
+                successText.innerHTML = 'Erfolgreich unterschrieben!';
+                successText.style.cssText = `
+                    color: white;
+                    font-size: 32px;
+                    font-weight: 300;
+                    text-align: center;
+                    opacity: 0;
+                    transform: translateY(20px);
+                    transition: all 0.5s ease-out;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                `;
+                
+                // Assemble elements
+                checkContainer.appendChild(checkmark);
+                overlay.appendChild(checkContainer);
+                overlay.appendChild(successText);
+                document.body.appendChild(overlay);
+                
+                // Animation sequence
+                setTimeout(() => {
+                    overlay.style.opacity = '1';
+                }, 50);
+                
+                setTimeout(() => {
+                    checkContainer.style.transform = 'scale(1)';
+                }, 200);
+                
+                setTimeout(() => {
+                    checkmark.style.transform = 'scale(1)';
+                }, 500);
+                
+                setTimeout(() => {
+                    successText.style.opacity = '1';
+                    successText.style.transform = 'translateY(0)';
+                }, 800);
+                
+                // Start fade out after 1.5 seconds
+                setTimeout(() => {
+                    overlay.style.opacity = '0';
+                    overlay.style.transform = 'scale(0.95)';
+                    
+                    // Remove after fade completes
+                    setTimeout(() => {
+                        overlay.remove();
+                        resolve(); // Animation complete
+                    }, 300);
+                }, 1500);
+            });
         }
     </script>
 
