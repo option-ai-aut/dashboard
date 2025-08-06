@@ -2379,6 +2379,19 @@
                     throw new Error('html2pdf library not loaded');
                 }
                 
+                // Temporarily remove box-shadow and border-radius for clean PDF
+                const originalStyles = {
+                    boxShadow: visibleProposal.style.boxShadow,
+                    borderRadius: visibleProposal.style.borderRadius,
+                    border: visibleProposal.style.border,
+                    transform: visibleProposal.style.transform
+                };
+                
+                visibleProposal.style.boxShadow = 'none';
+                visibleProposal.style.borderRadius = '0';
+                visibleProposal.style.border = 'none';
+                visibleProposal.style.transform = 'none';
+                
                 // Convert the visible HTML to actual PDF
                 console.log('Converting visible HTML to PDF...');
                 const pdfBlob = await html2pdf()
@@ -2400,6 +2413,12 @@
                         }
                     })
                     .outputPdf('blob');
+                
+                // Restore original styles immediately
+                visibleProposal.style.boxShadow = originalStyles.boxShadow || '';
+                visibleProposal.style.borderRadius = originalStyles.borderRadius || '';
+                visibleProposal.style.border = originalStyles.border || '';
+                visibleProposal.style.transform = originalStyles.transform || '';
                 
                 console.log('✅ PDF generated from visible content, size:', pdfBlob.size, 'bytes');
                 
