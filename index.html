@@ -2351,86 +2351,47 @@
                 // Wait for signature to be added to DOM
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
-                // Generate PDF for webhook - use complete proposal content
-                console.log('🚀 Starting webhook PDF generation...');
+                // Close modal first to show signed proposal in dashboard
+                closeSigningModal();
                 
-                // Get the main proposal content container
-                const proposalContent = document.querySelector('.proposal-content, #page-wrapper, .main-content');
-                if (!proposalContent) {
-                    throw new Error('❌ Proposal content not found');
+                // Show success toast
+                showToast('✓ Unterschrieben', 'success');
+                
+                // Wait for modal to close and dashboard to show the signed proposal
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // NOW capture the exact HTML that the user sees in the dashboard
+                console.log('🚀 Capturing visible signed proposal HTML...');
+                
+                // Get the proposal content that the user is currently viewing
+                const visibleProposal = document.querySelector('.proposal-content');
+                if (!visibleProposal) {
+                    throw new Error('❌ Visible proposal content not found');
                 }
                 
-                console.log('📄 Found proposal content, generating PDF...');
-                
-                // Create a clean copy for PDF generation
-                const tempContainer = document.createElement('div');
-                tempContainer.innerHTML = proposalContent.innerHTML;
-                
-                // Apply clean PDF styles
-                tempContainer.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 50px;
-                    width: 794px;
-                    padding: 40px;
-                    background: white;
-                    font-family: 'Times New Roman', serif;
-                    font-size: 14px;
-                    line-height: 1.6;
-                    color: #000;
-                    visibility: visible;
-                    opacity: 1;
-                    z-index: 9999;
-                    overflow: visible;
-                `;
-                
-                // Remove any unwanted elements from the copy
-                const unwantedElements = tempContainer.querySelectorAll(
-                    '.sidebar, .sidebar-container, .dashboard-header, button:not(.signature-btn), .modal, .toast, .overlay, .page-break'
-                );
-                unwantedElements.forEach(el => el.remove());
-                
-                // Ensure signature images are properly styled
-                const signatureImages = tempContainer.querySelectorAll('img[src*="signature"], .signature-image');
-                signatureImages.forEach(img => {
-                    img.style.cssText = `
-                        max-width: 300px;
-                        max-height: 120px;
-                        width: auto;
-                        height: auto;
-                        display: block;
-                        margin: 10px 0;
-                        border: none;
-                        box-shadow: none;
-                        background: none;
-                    `;
-                });
-                
-                // Add to DOM temporarily
-                document.body.appendChild(tempContainer);
-                
-                // Wait for any images to load
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                // Get the EXACT HTML that user sees with signature
+                const signedHtml = visibleProposal.outerHTML;
+                console.log('📄 Captured signed HTML, length:', signedHtml.length);
+                console.log('📄 HTML preview:', signedHtml.substring(0, 200) + '...');
                 
                 // Check if html2pdf library is available
                 if (typeof html2pdf === 'undefined') {
                     throw new Error('html2pdf library not loaded');
                 }
                 
-                // Generate PDF with optimized settings
+                // Convert the visible HTML to actual PDF
+                console.log('Converting visible HTML to PDF...');
                 const pdfBlob = await html2pdf()
-                    .from(tempContainer)
+                    .from(visibleProposal)
                     .set({
-                        margin: [20, 20, 20, 20],
+                        margin: [15, 15, 15, 15],
                         filename: `proposal-${window.proposalCode}-signed.pdf`,
-                        image: { type: 'jpeg', quality: 0.98 },
+                        image: { type: 'jpeg', quality: 0.95 },
                         html2canvas: {
                             scale: 1.5,
                             useCORS: true,
                             allowTaint: true,
-                            backgroundColor: '#ffffff',
-                            width: tempContainer.scrollWidth,
-                            height: tempContainer.scrollHeight
+                            backgroundColor: '#ffffff'
                         },
                         jsPDF: {
                             unit: 'mm',
@@ -2440,42 +2401,26 @@
                     })
                     .outputPdf('blob');
                 
-                console.log('✅ PDF blob generated, size:', pdfBlob.size, 'bytes');
-                console.log('Container height before cleanup:', tempContainer.offsetHeight);
+                console.log('✅ PDF generated from visible content, size:', pdfBlob.size, 'bytes');
                 
-                // Clean up immediately
-                document.body.removeChild(tempContainer);
-                
-                // Convert to base64
+                // Convert PDF blob to base64
                 const signedPdfBase64 = await new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.onload = () => {
                         const base64String = reader.result.split(',')[1];
-                        console.log('🔢 Base64 length:', base64String.length);
+                        console.log('📄 PDF Base64 length:', base64String.length);
                         resolve(base64String);
                     };
                     reader.onerror = reject;
                     reader.readAsDataURL(pdfBlob);
                 });
                 
-                console.log('🎯 PDF generation completed successfully!');
+                console.log('✅ Real PDF converted to base64, length:', signedPdfBase64.length);
+                
+                console.log('🎯 HTML capture completed successfully!');
                 console.log('🎯 Final base64 to send:', signedPdfBase64.substring(0, 100) + '...');
                 
-                // DEBUG: Check if this is the empty PDF pattern
-                if (signedPdfBase64.includes('JVBERi0xLjMKJbrfrOAKMyAwIG9iag')) {
-                    console.warn('⚠️ Detected empty PDF pattern - this may indicate content rendering issues');
-                    console.warn('PDF size was:', pdfBlob.size);
-                } else {
-                    console.log('✅ PDF contains content - generation successful!');
-                }
-                
-                // Close modal first
-                closeSigningModal();
-                
-                // Show success toast
-                showToast('✓ Unterschrieben', 'success');
-                
-                // Show print dialog immediately after modal closes
+                // Show print dialog immediately after capturing HTML
                 setTimeout(() => {
                     console.log('Opening print dialog...');
                     window.print();
