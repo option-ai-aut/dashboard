@@ -2324,11 +2324,13 @@
                     `;
                 });
                 
-                // Remove page break elements but keep content flowing
+                // REMOVE page break elements completely to avoid content hiding
                 const pageBreaks = clonedWrapper.querySelectorAll('.page-break');
                 pageBreaks.forEach(pageBreak => {
-                    pageBreak.style.display = 'none'; // Hide page breaks, don't remove content
+                    pageBreak.remove(); // Completely remove page breaks, keep following content visible
                 });
+                
+                console.log('Removed', pageBreaks.length, 'page breaks to ensure all content is visible');
             }
             
             // Remove unwanted UI elements
@@ -2339,12 +2341,31 @@
             document.body.appendChild(tempContainer);
             
             try {
+                // DEBUG: Check what content we actually have
+                console.log('=== PDF GENERATION DEBUG ===');
+                console.log('clonedWrapper innerHTML length:', clonedWrapper.innerHTML.length);
+                console.log('clonedWrapper first 500 chars:', clonedWrapper.innerHTML.substring(0, 500));
+                
+                // Check for signature images
+                const signatureImgs = clonedWrapper.querySelectorAll('img[src*="signature"], img[alt*="signature"]');
+                console.log('Found signature images:', signatureImgs.length);
+                signatureImgs.forEach((img, i) => {
+                    console.log(`Signature ${i+1}:`, img.src ? img.src.substring(0, 100) + '...' : 'NO SRC');
+                });
+                
+                // Check for UNTERSCHRIFTEN content
+                const unterschriftenContent = clonedWrapper.innerHTML.toLowerCase();
+                const hasUnterschriften = unterschriftenContent.includes('unterschrift');
+                console.log('Contains "unterschrift" text:', hasUnterschriften);
+                
                 // Wait for images to load
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
                 if (typeof html2pdf === 'undefined') {
                     throw new Error('html2pdf library not loaded');
                 }
+                
+                console.log('Starting html2pdf generation...');
                 
                 // Generate PDF with settings optimized for content flow
                 const pdfBlob = await html2pdf()
@@ -2359,7 +2380,7 @@
                             allowTaint: true,
                             backgroundColor: '#ffffff',
                             letterRendering: true,
-                            logging: false,
+                            logging: true, // Enable logging to see what's happening
                             height: null, // Let it calculate height automatically
                             width: null   // Let it calculate width automatically
                         },
@@ -2371,6 +2392,9 @@
                         // No pagebreak settings - natural flow
                     })
                     .outputPdf('blob');
+                
+                console.log('html2pdf completed, blob size:', pdfBlob.size);
+                console.log('=== END DEBUG ===');
                 
                 return pdfBlob;
                 
@@ -2443,19 +2467,51 @@
                 console.log('Adding signatures to document...');
                 await addSignatureToDocument(signatureDataUrl);
                 
-                // Wait for DOM to update
-                await new Promise(resolve => setTimeout(resolve, 500));
+                // Wait for DOM to fully update with signature
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 
-                // Show print dialog immediately after signature is added
+                // Generate PDF AFTER signature is in DOM
+                console.log('Generating PDF for webhook with signature...');
+                let signedPdfBlob = null;
+                let signedPdfBase64 = '';
+                
+                try {
+                    signedPdfBlob = await generateSignedPDF();
+                    
+                    if (!signedPdfBlob || signedPdfBlob.size === 0) {
+                        throw new Error('PDF generation failed - empty blob');
+                    }
+                    
+                    console.log('PDF generated for webhook, size:', signedPdfBlob.size);
+                    
+                    // Convert to base64
+                    const reader = new FileReader();
+                    signedPdfBase64 = await new Promise((resolve, reject) => {
+                        reader.onload = () => {
+                            const base64 = reader.result.split(',')[1];
+                            resolve(base64);
+                        };
+                        reader.onerror = reject;
+                        reader.readAsDataURL(signedPdfBlob);
+                    });
+                    
+                    console.log('PDF converted to base64, length:', signedPdfBase64.length);
+                    
+                } catch (pdfError) {
+                    console.error('PDF generation for webhook failed:', pdfError);
+                    signedPdfBase64 = btoa(`Signed proposal ${window.proposalCode} with ${currentAuthMethod} signature - PDF generation failed`);
+                }
+                
+                // Show print dialog after PDF is generated
                 setTimeout(() => {
                     console.log('Opening print dialog...');
                     window.print();
                 }, 500);
                 
-                // First show success toast
+                // Show success toast
                 showToast('✓ Unterschrieben', 'success');
                 
-                // Then close modal immediately
+                // Close modal
                 closeSigningModal();
                 
                 // Update sidebar status to "Signed"
@@ -2475,90 +2531,33 @@
                     signButton.onclick = () => window.open('https://calendly.com/dennis-mueller-963/erstberatung', '_blank');
                 }
                 
-                // Generate PDF for webhook in background (don't wait for it)
-                (async () => {
-                    try {
-                        console.log('Generating PDF for webhook in background...');
-                        const signedPdfBlob = await generateSignedPDF();
-                        
-                        if (!signedPdfBlob || signedPdfBlob.size === 0) {
-                            throw new Error('PDF generation failed - empty blob');
-                        }
-                        
-                        console.log('PDF generated for webhook, size:', signedPdfBlob.size);
-                        
-                        // Convert to base64 for webhook
-                        const reader = new FileReader();
-                        const signedPdfBase64 = await new Promise((resolve, reject) => {
-                            reader.onload = () => {
-                                const base64 = reader.result.split(',')[1];
-                                resolve(base64);
-                            };
-                            reader.onerror = reject;
-                            reader.readAsDataURL(signedPdfBlob);
-                        });
-                        
-                        console.log('PDF converted to base64 for webhook, length:', signedPdfBase64.length);
-                        
-                        // Send to webhook
-                        const clientData = window.clientData || {};
-                        const webhookPayload = {
-                            "Full Name": clientData["Full Name"] || '',
-                            "Email Address": clientData["Email Address"] || '',
-                            "record_id": clientData["record_id"] || clientData["id"] || '',
-                            "proposal_code": window.proposalCode || '',
-                            "auth_method": currentAuthMethod,
-                            "signed_pdf": signedPdfBase64
-                        };
+                // Send to webhook with generated PDF
+                const clientData = window.clientData || {};
+                const webhookPayload = {
+                    "Full Name": clientData["Full Name"] || '',
+                    "Email Address": clientData["Email Address"] || '',
+                    "record_id": clientData["record_id"] || clientData["id"] || '',
+                    "proposal_code": window.proposalCode || '',
+                    "auth_method": currentAuthMethod,
+                    "signed_pdf": signedPdfBase64
+                };
 
-                        console.log('Sending webhook payload:', webhookPayload);
+                console.log('Sending webhook with PDF, payload size:', JSON.stringify(webhookPayload).length);
 
-                        const response = await fetch('https://optionai.optionai.at/webhook/save-sign', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify(webhookPayload)
-                        });
+                const response = await fetch('https://optionai.optionai.at/webhook/save-sign', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(webhookPayload)
+                });
 
-                        console.log('Webhook response status:', response.status);
-                        
-                        if (response.ok) {
-                            console.log('Webhook sent successfully');
-                        } else {
-                            console.error('Webhook failed:', response.statusText);
-                        }
-                        
-                    } catch (error) {
-                        console.error('Background PDF generation or webhook failed:', error);
-                        
-                        // Send fallback webhook without PDF
-                        try {
-                            const fallbackPayload = {
-                                "Full Name": window.clientData?.["Full Name"] || '',
-                                "Email Address": window.clientData?.["Email Address"] || '',
-                                "record_id": window.clientData?.["record_id"] || window.clientData?.["id"] || '',
-                                "proposal_code": window.proposalCode || '',
-                                "auth_method": currentAuthMethod,
-                                "signed_pdf": btoa(`Signed proposal ${window.proposalCode} with ${currentAuthMethod} signature - PDF generation failed`)
-                            };
-                            
-                            await fetch('https://optionai.optionai.at/webhook/save-sign', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Accept': 'application/json'
-                                },
-                                body: JSON.stringify(fallbackPayload)
-                            });
-                            
-                            console.log('Fallback webhook sent');
-                        } catch (fallbackError) {
-                            console.error('Fallback webhook also failed:', fallbackError);
-                        }
-                    }
-                })();
+                console.log('Webhook response status:', response.status);
+                
+                if (response.ok) {
+                    console.log('Webhook sent successfully with PDF');
+                }
 
             } catch (error) {
                 console.error('=== SIGNATURE FINALIZATION ERROR ===');
