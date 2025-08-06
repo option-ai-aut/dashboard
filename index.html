@@ -2270,7 +2270,7 @@
             const tempContainer = document.createElement('div');
             tempContainer.style.cssText = `
                 position: absolute;
-                top: 0;
+                top: -10000px;
                 left: 0;
                 width: 210mm;
                 min-height: 297mm;
@@ -2278,12 +2278,11 @@
                 font-family: Arial, sans-serif;
                 padding: 20px;
                 margin: 0;
-                z-index: 9999;
-                opacity: 0.01;
-                pointer-events: none;
+                z-index: -1;
+                opacity: 1;
                 overflow: visible;
-                transform: scale(0.01);
-                transform-origin: top left;
+                visibility: visible;
+                display: block;
             `;
             
             // Style the cloned content to look like print version
@@ -2384,6 +2383,9 @@
                 // Make container temporarily more visible for html2pdf (but still invisible to user)
                 tempContainer.style.opacity = '0.1';
                 tempContainer.style.transform = 'scale(1)';
+                
+                // Wait for DOM to fully render before PDF generation
+                await new Promise(resolve => setTimeout(resolve, 200));
                 
                 // Generate PDF with settings optimized for content flow
                 const pdfBlob = await html2pdf()
