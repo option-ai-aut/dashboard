@@ -2251,81 +2251,124 @@
         // Flag to prevent multiple simultaneous signature processing
         let isSignatureProcessing = false;
 
-        // Generate simplified PDF for webhook - just content with signature, no page breaks
+        // Generate PDF for webhook - complete content like print but without complex page breaks
         async function generateSignedPDF() {
-            console.log('Generating simplified signed PDF for webhook...');
+            console.log('Generating complete PDF for webhook...');
             
-            // Get the proposal content
+            // Get the complete proposal wrapper
+            const pageWrapper = document.querySelector('#page-wrapper');
             const proposalContent = document.querySelector('.proposal-content');
-            if (!proposalContent) {
-                throw new Error('Proposal content not found');
+            
+            if (!pageWrapper || !proposalContent) {
+                throw new Error('Required content elements not found');
             }
             
-            // Get the HTML content
-            const contentHTML = proposalContent.innerHTML;
+            // Clone the complete wrapper to preserve all content including signatures
+            const clonedWrapper = pageWrapper.cloneNode(true);
             
-            // Create simple PDF content - just the HTML with signature at the end
-            const simplePdfContent = `
-                <div style="
-                    font-family: Arial, sans-serif;
-                    font-size: 12px;
-                    line-height: 1.5;
-                    color: #333;
-                    max-width: none;
-                    padding: 20px;
-                    background: white;
-                ">
-                    ${contentHTML}
-                    
-                    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc;">
-                        <h3 style="margin-bottom: 20px;">Digitale Unterschrift</h3>
-                        <p><strong>Unterschrieben am:</strong> ${new Date().toLocaleDateString('de-DE')} um ${new Date().toLocaleTimeString('de-DE')}</p>
-                        <p><strong>Kunde:</strong> ${window.clientData?.["Full Name"] || 'Unbekannt'}</p>
-                        <p><strong>Authentifizierung:</strong> ${window.currentAuthMethod || 'Unbekannt'}</p>
-                        <p><strong>Proposal Code:</strong> ${window.proposalCode || 'Unbekannt'}</p>
-                    </div>
-                </div>
-            `;
-            
-            // Create temporary element for PDF generation
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = simplePdfContent;
-            tempDiv.style.cssText = `
+            // Create container for PDF
+            const tempContainer = document.createElement('div');
+            tempContainer.style.cssText = `
                 position: absolute;
                 left: -9999px;
                 top: 0;
+                width: 210mm;
                 background: white;
-                width: auto;
-                max-width: 800px;
+                font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+                padding: 0;
+                margin: 0;
             `;
             
-            document.body.appendChild(tempDiv);
+            // Style the cloned content to look like print version
+            const clonedProposalContent = clonedWrapper.querySelector('.proposal-content');
+            if (clonedProposalContent) {
+                clonedProposalContent.style.cssText = `
+                    width: 100%;
+                    max-width: none;
+                    margin: 0 auto;
+                    padding: 2rem;
+                    background: #ffffff;
+                    border: none;
+                    color: #1d1d1f;
+                    transform: none;
+                    overflow: visible;
+                    font-size: 1.1rem;
+                    box-shadow: none;
+                    border-radius: 0;
+                    line-height: 1.6;
+                `;
+                
+                // Style headings
+                const headings = clonedProposalContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+                headings.forEach(heading => {
+                    heading.style.cssText = `
+                        font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+                        font-weight: 700;
+                        color: #000000;
+                    `;
+                });
+                
+                // Style signature images to show properly
+                const signatureImages = clonedProposalContent.querySelectorAll('img[src*="signature"], .signature-image, img[alt*="Signature"], img[alt*="signature"]');
+                signatureImages.forEach(img => {
+                    img.style.cssText = `
+                        max-width: 300px;
+                        max-height: 150px;
+                        width: auto;
+                        height: auto;
+                        border: none;
+                        border-radius: 0;
+                        box-shadow: none;
+                        display: block;
+                        margin: 10px 0;
+                    `;
+                });
+                
+                // Remove page break elements but keep content flowing
+                const pageBreaks = clonedWrapper.querySelectorAll('.page-break');
+                pageBreaks.forEach(pageBreak => {
+                    pageBreak.style.display = 'none'; // Hide page breaks, don't remove content
+                });
+            }
+            
+            // Remove unwanted UI elements
+            const unwantedElements = clonedWrapper.querySelectorAll('.dashboard-header, .sidebar, .sidebar-container, button, .modal');
+            unwantedElements.forEach(el => el.remove());
+            
+            tempContainer.appendChild(clonedWrapper);
+            document.body.appendChild(tempContainer);
             
             try {
+                // Wait for images to load
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
                 if (typeof html2pdf === 'undefined') {
                     throw new Error('html2pdf library not loaded');
                 }
                 
-                // Generate PDF with simple settings - no page breaks, just flow naturally
+                // Generate PDF with settings optimized for content flow
                 const pdfBlob = await html2pdf()
-                    .from(tempDiv)
+                    .from(clonedWrapper)
                     .set({
-                        margin: [20, 20, 20, 20],
+                        margin: [15, 15, 15, 15],
                         filename: `signed-proposal-${window.proposalCode}.pdf`,
-                        image: { type: 'jpeg', quality: 0.9 },
+                        image: { type: 'jpeg', quality: 0.95 },
                         html2canvas: { 
-                            scale: 1.5,
+                            scale: 2,
                             useCORS: true,
                             allowTaint: true,
                             backgroundColor: '#ffffff',
-                            logging: false
+                            letterRendering: true,
+                            logging: false,
+                            height: null, // Let it calculate height automatically
+                            width: null   // Let it calculate width automatically
                         },
                         jsPDF: { 
                             unit: 'mm', 
                             format: 'a4', 
                             orientation: 'portrait'
                         }
-                        // No pagebreak settings - let it flow naturally
+                        // No pagebreak settings - natural flow
                     })
                     .outputPdf('blob');
                 
@@ -2333,7 +2376,7 @@
                 
             } finally {
                 // Clean up
-                document.body.removeChild(tempDiv);
+                document.body.removeChild(tempContainer);
             }
         }
 
@@ -2403,6 +2446,12 @@
                 // Wait for DOM to update
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
+                // Show print dialog immediately after signature is added
+                setTimeout(() => {
+                    console.log('Opening print dialog...');
+                    window.print();
+                }, 500);
+                
                 // First show success toast
                 showToast('✓ Unterschrieben', 'success');
                 
@@ -2425,12 +2474,6 @@
                     signButton.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
                     signButton.onclick = () => window.open('https://calendly.com/dennis-mueller-963/erstberatung', '_blank');
                 }
-                
-                // Show print dialog after short delay (like clicking the print button)
-                setTimeout(() => {
-                    console.log('Opening print dialog...');
-                    window.print();
-                }, 500);
                 
                 // Generate PDF for webhook in background (don't wait for it)
                 (async () => {
