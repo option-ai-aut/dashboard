@@ -2269,20 +2269,23 @@
             // Create container for PDF - MUST BE VISIBLE for html2pdf to work
             const tempContainer = document.createElement('div');
             tempContainer.style.cssText = `
-                position: absolute;
-                top: -10000px;
+                position: fixed;
+                top: 0;
                 left: 0;
-                width: 210mm;
-                min-height: 297mm;
+                width: 800px;
+                min-height: 1000px;
                 background: white;
                 font-family: Arial, sans-serif;
-                padding: 20px;
+                padding: 40px;
                 margin: 0;
-                z-index: -1;
+                z-index: 10000;
                 opacity: 1;
                 overflow: visible;
                 visibility: visible;
                 display: block;
+                color: black;
+                font-size: 16px;
+                line-height: 1.4;
             `;
             
             // Style the cloned content to look like print version
@@ -2423,8 +2426,13 @@
                 return pdfBlob;
                 
             } finally {
-                // Clean up
-                document.body.removeChild(tempContainer);
+                // Clean up - hide first then remove
+                tempContainer.style.display = 'none';
+                setTimeout(() => {
+                    if (tempContainer.parentNode) {
+                        document.body.removeChild(tempContainer);
+                    }
+                }, 500);
             }
         }
 
@@ -2523,7 +2531,42 @@
                     
                 } catch (pdfError) {
                     console.error('PDF generation for webhook failed:', pdfError);
-                    signedPdfBase64 = btoa(`Signed proposal ${window.proposalCode} with ${currentAuthMethod} signature - PDF generation failed`);
+                    console.error('Full error details:', pdfError.stack || pdfError);
+                    
+                    // Try to generate a simple fallback PDF instead of just text
+                    try {
+                        console.log('Attempting fallback PDF generation...');
+                        const fallbackHtml = `
+                            <div style="padding: 20px; font-family: Arial;">
+                                <h1>Signed Proposal</h1>
+                                <p>Proposal Code: ${window.proposalCode}</p>
+                                <p>Signature Method: ${currentAuthMethod}</p>
+                                <p>Signed on: ${new Date().toLocaleString()}</p>
+                                <p>Note: Full PDF generation failed, this is a fallback document.</p>
+                            </div>
+                        `;
+                        
+                        const fallbackContainer = document.createElement('div');
+                        fallbackContainer.innerHTML = fallbackHtml;
+                        fallbackContainer.style.cssText = 'position: absolute; top: -5000px; width: 210mm; background: white; padding: 20px;';
+                        document.body.appendChild(fallbackContainer);
+                        
+                        const fallbackBlob = await html2pdf().from(fallbackContainer).outputPdf('blob');
+                        document.body.removeChild(fallbackContainer);
+                        
+                        const reader = new FileReader();
+                        signedPdfBase64 = await new Promise((resolve, reject) => {
+                            reader.onload = () => resolve(reader.result.split(',')[1]);
+                            reader.onerror = reject;
+                            reader.readAsDataURL(fallbackBlob);
+                        });
+                        
+                        console.log('Fallback PDF generated, base64 length:', signedPdfBase64.length);
+                        
+                    } catch (fallbackError) {
+                        console.error('Even fallback PDF failed:', fallbackError);
+                        signedPdfBase64 = btoa(`Signed proposal ${window.proposalCode} with ${currentAuthMethod} signature - PDF generation completely failed`);
+                    }
                 }
                 
                 // Close modal first
