@@ -2251,125 +2251,81 @@
         // Flag to prevent multiple simultaneous signature processing
         let isSignatureProcessing = false;
 
-        // Generate PDF for webhook using same content as print version
+        // Generate simplified PDF for webhook - just content with signature, no page breaks
         async function generateSignedPDF() {
-            console.log('Generating signed PDF for webhook...');
+            console.log('Generating simplified signed PDF for webhook...');
             
-            // Get the actual proposal content that will be printed
+            // Get the proposal content
             const proposalContent = document.querySelector('.proposal-content');
-            const pageWrapper = document.querySelector('#page-wrapper');
-            
-            if (!proposalContent || !pageWrapper) {
-                throw new Error('Required content elements not found');
+            if (!proposalContent) {
+                throw new Error('Proposal content not found');
             }
             
-            // Clone the page wrapper to avoid modifying the original
-            const clonedWrapper = pageWrapper.cloneNode(true);
+            // Get the HTML content
+            const contentHTML = proposalContent.innerHTML;
             
-            // Create a temporary container for PDF generation
-            const tempContainer = document.createElement('div');
-            tempContainer.style.cssText = `
-                position: absolute !important;
-                left: -9999px !important;
-                top: 0 !important;
-                width: 210mm !important;
-                background: white !important;
-                font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
-                padding: 0 !important;
-                margin: 0 !important;
+            // Create simple PDF content - just the HTML with signature at the end
+            const simplePdfContent = `
+                <div style="
+                    font-family: Arial, sans-serif;
+                    font-size: 12px;
+                    line-height: 1.5;
+                    color: #333;
+                    max-width: none;
+                    padding: 20px;
+                    background: white;
+                ">
+                    ${contentHTML}
+                    
+                    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc;">
+                        <h3 style="margin-bottom: 20px;">Digitale Unterschrift</h3>
+                        <p><strong>Unterschrieben am:</strong> ${new Date().toLocaleDateString('de-DE')} um ${new Date().toLocaleTimeString('de-DE')}</p>
+                        <p><strong>Kunde:</strong> ${window.clientData?.["Full Name"] || 'Unbekannt'}</p>
+                        <p><strong>Authentifizierung:</strong> ${window.currentAuthMethod || 'Unbekannt'}</p>
+                        <p><strong>Proposal Code:</strong> ${window.proposalCode || 'Unbekannt'}</p>
+                    </div>
+                </div>
             `;
             
-            // Apply print-like styles to the cloned content
-            const clonedProposalContent = clonedWrapper.querySelector('.proposal-content');
-            if (clonedProposalContent) {
-                clonedProposalContent.style.cssText = `
-                    width: 100% !important;
-                    max-width: none !important;
-                    margin: 0 auto !important;
-                    padding: 2rem !important;
-                    background: #ffffff !important;
-                    border: none !important;
-                    color: #1d1d1f !important;
-                    transform: none !important;
-                    overflow: visible !important;
-                    font-size: 1.1rem !important;
-                    box-shadow: none !important;
-                    border-radius: 0 !important;
-                    line-height: 1.6 !important;
-                `;
-                
-                // Apply styles to headings
-                const headings = clonedProposalContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
-                headings.forEach(heading => {
-                    heading.style.cssText = `
-                        font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
-                        font-weight: 700 !important;
-                        color: #000000 !important;
-                        page-break-after: avoid !important;
-                    `;
-                });
-                
-                // Apply styles to signature images
-                const signatureImages = clonedProposalContent.querySelectorAll('img[src*="signature"], .signature-image, img[alt*="Signature"], img[alt*="signature"]');
-                signatureImages.forEach(img => {
-                    img.style.cssText = `
-                        max-width: 300px !important;
-                        max-height: 150px !important;
-                        width: auto !important;
-                        height: auto !important;
-                        border: none !important;
-                        border-radius: 0 !important;
-                        box-shadow: none !important;
-                        display: block !important;
-                        margin: 10px 0 !important;
-                    `;
-                });
-                
-                // Handle page breaks
-                const pageBreaks = clonedWrapper.querySelectorAll('.page-break');
-                pageBreaks.forEach(pageBreak => {
-                    pageBreak.style.cssText = `
-                        page-break-before: always !important;
-                        break-before: page !important;
-                        height: 0 !important;
-                        margin: 0 !important;
-                        padding: 0 !important;
-                        display: block !important;
-                    `;
-                });
-            }
+            // Create temporary element for PDF generation
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = simplePdfContent;
+            tempDiv.style.cssText = `
+                position: absolute;
+                left: -9999px;
+                top: 0;
+                background: white;
+                width: auto;
+                max-width: 800px;
+            `;
             
-            // Remove unwanted elements
-            const unwantedElements = clonedWrapper.querySelectorAll('.dashboard-header, .sidebar, .sidebar-container, button, .modal');
-            unwantedElements.forEach(el => el.remove());
-            
-            tempContainer.appendChild(clonedWrapper);
-            document.body.appendChild(tempContainer);
+            document.body.appendChild(tempDiv);
             
             try {
-                // Wait for fonts/images to load
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
                 if (typeof html2pdf === 'undefined') {
                     throw new Error('html2pdf library not loaded');
                 }
                 
+                // Generate PDF with simple settings - no page breaks, just flow naturally
                 const pdfBlob = await html2pdf()
-                    .from(clonedWrapper)
+                    .from(tempDiv)
                     .set({
-                        margin: [15, 15, 15, 15],
+                        margin: [20, 20, 20, 20],
                         filename: `signed-proposal-${window.proposalCode}.pdf`,
-                        image: { type: 'jpeg', quality: 0.98 },
+                        image: { type: 'jpeg', quality: 0.9 },
                         html2canvas: { 
-                            scale: 2, 
+                            scale: 1.5,
                             useCORS: true,
                             allowTaint: true,
                             backgroundColor: '#ffffff',
-                            letterRendering: true,
                             logging: false
                         },
-                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                        jsPDF: { 
+                            unit: 'mm', 
+                            format: 'a4', 
+                            orientation: 'portrait'
+                        }
+                        // No pagebreak settings - let it flow naturally
                     })
                     .outputPdf('blob');
                 
@@ -2377,7 +2333,7 @@
                 
             } finally {
                 // Clean up
-                document.body.removeChild(tempContainer);
+                document.body.removeChild(tempDiv);
             }
         }
 
