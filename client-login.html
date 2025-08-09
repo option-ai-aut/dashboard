@@ -331,6 +331,22 @@
             text-decoration: underline;
         }
 
+        .btn-forgot-password {
+            background: transparent;
+            border: none;
+            color: #86868b;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-forgot-password:hover {
+            color: #007aff;
+            background: rgba(0, 122, 255, 0.05);
+        }
+
         @media (max-width: 480px) {
             .login-container {
                 padding: 32px 24px;
@@ -403,6 +419,12 @@
         <div class="back-link">
             <a href="/index.html">← Zurück zum Proposal</a>
         </div>
+        
+        <div style="text-align: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e5e7;">
+            <button class="btn-forgot-password" id="forgotPasswordBtn">
+                Passwort vergessen?
+            </button>
+        </div>
     </div>
 
     <!-- Sign-Up Modal -->
@@ -445,7 +467,7 @@
                 </div>
 
                 <div class="password-requirements">
-                    💡 Ihr Passwort muss mindestens 5 Zeichen lang sein
+                    Ihr Passwort muss mindestens 5 Zeichen lang sein
                 </div>
 
                 <button type="submit" class="btn-primary" id="createAccountBtn">
@@ -638,6 +660,27 @@
 
         document.getElementById('signupProposalCode').addEventListener('input', (e) => {
             e.target.value = e.target.value.toUpperCase();
+        });
+
+        // Forgot Password Handler
+        document.getElementById('forgotPasswordBtn').addEventListener('click', () => {
+            const proposalCode = document.getElementById('proposalCode').value.trim().toUpperCase() || '[PROPOSAL_CODE]';
+            
+            const subject = encodeURIComponent('Passwort Reset - Kunden Dashboard');
+            const body = encodeURIComponent(`Hallo option.ai Team!
+
+Ich habe mein Passwort für das Kunden-Dashboard vergessen und benötige Unterstützung beim Reset.
+
+Meine Daten:
+- Proposal Code: ${proposalCode}
+- Name (des Vertragspartners): 
+
+Vielen Dank!
+
+Mit freundlichen Grüßen!`);
+            
+            // Open email client with pre-filled template
+            window.location.href = `mailto:contact@option-ai.at?subject=${subject}&body=${body}`;
         });
     </script>
 </body>

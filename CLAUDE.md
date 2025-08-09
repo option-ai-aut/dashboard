@@ -22,6 +22,7 @@ Backend = **n8n Webhooks + Airtable + Dual Auth-System** – steht bereits.
 | **Proposal View Tracking** | `https://optionai.optionai.at/webhook/track-proposal` | POST | `{proposal_code, action, timestamp, user_agent, client_name}` | none | index.html |
 | **Kunden Passwort setzen** | `https://optionai.optionai.at/webhook/set-password` | POST | `{proposal_code, password}` | none | client-login.html |
 | **Kunden Login validieren** | `https://optionai.optionai.at/webhook/validate-password` | POST | `{Proposal Code, password}` | none | client-login.html, dashboard/settings.html |
+| **Instantly API Key speichern** | `https://optionai.optionai.at/webhook/attach-instantly-api` | POST | `{proposal_code, instantly_api_key}` | none | dashboard/settings.html |
 
 > **Auth-Hinweis**: Aktuelle Implementation nutzt nur `sessionStorage.adminAuthenticated` - **kein JWT** implementiert.
 
@@ -32,7 +33,6 @@ Backend = **n8n Webhooks + Airtable + Dual Auth-System** – steht bereits.
 | Datei | Zweck | Zeilen | Features |
 |-------|-------|--------|----------|
 | **/index.html** | Proposal-Viewer + Code‑Eingabe + Signatur‑System | 2800+ | PDF-Gen, 3 Signatur-Methoden, Status-Gate |
-| **/login.html** | Admin‑Login (Netlify Identity Modal) | 395 | JWT-basiert, Rollen-Routing |
 | **/client-login.html** | **NEU:** Kunden-Login + Sign-Up | 420 | Apple Design, Modal Sign-Up |
 | **/dashboard/index.html** | **NEU:** Kunden-Dashboard | 450 | Apple Design, Statistiken, Aktionen |
 | **/dashboard/profile.html** | **NEU:** Kunden-Profil bearbeiten | 400 | Formular, Daten-Updates |
@@ -66,7 +66,7 @@ netlifyIdentity.currentUser().token.access_token
 ## UX‑Flows (Aktuell)
 
 ### 1. **Kunde (Öffentlich)**  
-   `index.html` → Code‑Eingabe → `load-client` →  
+   `index.html` → Code‑Eingabe + "Dashboard Login" Button → `load-client` →  
    - `status = 'draft'` ⇒ "Proposal wird bearbeitet …"  
    - `status = 'approved'` ⇒ Template‑HTML + Custom‑HTML rendern → **Signatur‑System**
 
@@ -78,11 +78,14 @@ netlifyIdentity.currentUser().token.access_token
      - TinyMCE Editor 2: Custom‑HTML → `save-proposal`  
      - Status‑Dropdown → `save-proposal`
 
-### 3. **Kunden-Dashboard (Passwort-basiert)**
-   `/client-login.html` → Login/Sign-Up Modal → `/dashboard/` → Apple-Style Dashboard
+### 3. **Kunden-Dashboard (Apple-Style)**
+   `/client-login.html` → Login/Sign-Up + Passwort vergessen → `/dashboard/` →  
+   - **Header**: Vollständiger Name statt Proposal Code
+   - **Begrüßung**: "Guten Tag, [Vorname]"
+   - **Aktionen**: PDF Download, Profil, Settings, Proposal ansehen
+   - **Profil**: Vollständige Kundendaten bearbeiten
+   - **Settings**: Passwort ändern + API Key Management
 
-### 4. **Netlify Identity (Inaktiv)**
-   `/login.html` → Netlify‑Modal → **NICHT VERWENDET** in aktueller Implementation
 
 ---
 
@@ -197,9 +200,13 @@ const statusMap = {
 3. **admin/client.html** – TinyMCE-Editoren + Webhook-Integration  
 4. **index.html** – Vollständiges Signatur-System + PDF-Generation
 5. **Dual-Auth** – sessionStorage-basierte Admin-Protection
+6. **client-login.html** – Apple-Style Kunden-Login + Sign-Up
+7. **dashboard/** – Komplettes Kunden-Dashboard mit Apple-Design
+8. **Personalisierung** – Namen im Header, Begrüßung mit Vorname
+9. **API-Integration** – Instantly API Key Management
 
-### 🔄 **In Verwendung - Aber veraltet**
-- **login.html** (Netlify Identity) – Nicht verwendet in aktueller Architektur
+### 🔄 **Nicht mehr verwendet (gelöscht)**
+- **login.html** (Netlify Identity) – Datei entfernt, da überflüssig
 - **JWT-Implementation** – Dokumentiert aber nicht implementiert
 
 ### 🎯 **Zukünftige Erweiterungen**

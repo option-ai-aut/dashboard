@@ -411,7 +411,7 @@
                             minlength="5"
                         >
                         <div class="password-requirements">
-                            💡 Ihr neues Passwort muss mindestens 5 Zeichen lang sein
+                            Ihr neues Passwort muss mindestens 5 Zeichen lang sein
                         </div>
                     </div>
 
@@ -428,6 +428,38 @@
 
                     <button type="submit" class="btn btn-primary" id="changePasswordBtn">
                         Passwort ändern
+                    </button>
+                </form>
+            </div>
+        </div>
+
+
+        <!-- API Keys -->
+        <div class="settings-card">
+            <div class="card-header">
+                <h3 class="card-title">API Integrationen</h3>
+                <p class="card-subtitle">Verwalten Sie Ihre API-Schlüssel für externe Services</p>
+            </div>
+            <div class="card-content">
+                <div id="apiErrorMessage" class="message message-error"></div>
+                <div id="apiSuccessMessage" class="message message-success"></div>
+
+                <form id="instantlyApiForm">
+                    <div class="form-group">
+                        <label class="form-label" for="instantlyApiKey">Instantly API Key</label>
+                        <input 
+                            type="password" 
+                            id="instantlyApiKey" 
+                            class="form-input"
+                            placeholder="Ihr Instantly API Key"
+                        >
+                        <div class="password-requirements">
+                            💡 Ihr API Key wird sicher gespeichert
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="saveApiBtn">
+                        API Key speichern
                     </button>
                 </form>
             </div>
@@ -611,6 +643,54 @@
             document.getElementById('accountCreated').textContent = now.toLocaleDateString('de-DE');
             document.getElementById('lastLogin').textContent = 'Gerade eben';
         }
+
+        // API Key Form Handler
+        document.getElementById('instantlyApiForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const apiKey = document.getElementById('instantlyApiKey').value.trim();
+            const saveBtn = document.getElementById('saveApiBtn');
+            const proposalCode = sessionStorage.getItem('proposalCode');
+
+            if (!apiKey) {
+                showMessage('apiErrorMessage', 'Bitte geben Sie einen API Key ein.');
+                return;
+            }
+
+            setButtonLoading(saveBtn, true, 'API Key speichern');
+
+            try {
+                const response = await fetch('https://optionai.optionai.at/webhook/attach-instantly-api', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        proposal_code: proposalCode,
+                        instantly_api_key: apiKey
+                    })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Webhook response:', result);
+                    
+                    showMessage('apiSuccessMessage', 'API Key erfolgreich gespeichert!', 3000);
+                    document.getElementById('instantlyApiKey').value = '';
+                    
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'API Key konnte nicht gespeichert werden');
+                }
+
+            } catch (error) {
+                console.error('API Key save error:', error);
+                showMessage('apiErrorMessage', 'Fehler beim Speichern des API Keys. Bitte versuchen Sie es erneut.');
+            } finally {
+                setButtonLoading(saveBtn, false, 'API Key speichern');
+            }
+        });
+
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {

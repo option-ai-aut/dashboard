@@ -50,22 +50,22 @@
 
         /* Header */
         .header {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 0.5px solid rgba(0, 0, 0, 0.05);
+            background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%);
+            color: white;
+            padding: 25px 0;
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 100%;
         }
 
         .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-            height: 64px;
+            width: 100%;
+            padding: 0 50px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
         }
 
         .header-left {
@@ -75,15 +75,16 @@
         }
 
         .logo img {
-            height: 24px;
+            height: 1.8rem;
             width: auto;
+            display: block;
         }
 
         .header-title {
             font-family: 'SF Pro Display', sans-serif;
             font-size: 20px;
             font-weight: 700;
-            color: #1d1d1f;
+            color: white;
         }
 
         .header-right {
@@ -93,8 +94,8 @@
         }
 
         .proposal-code-badge {
-            background: rgba(0, 122, 255, 0.1);
-            color: #007aff;
+            background: rgba(102, 179, 255, 0.2);
+            color: #66b3ff;
             padding: 6px 12px;
             border-radius: 6px;
             font-size: 14px;
@@ -103,8 +104,8 @@
 
         .logout-btn {
             background: transparent;
-            color: #007aff;
-            border: 1px solid rgba(0, 122, 255, 0.3);
+            color: white;
+            border: 2px solid #66b3ff;
             padding: 8px 16px;
             border-radius: 6px;
             font-size: 14px;
@@ -114,7 +115,8 @@
         }
 
         .logout-btn:hover {
-            background: rgba(0, 122, 255, 0.05);
+            background: #66b3ff;
+            color: #000000;
         }
 
         /* Main Content */
@@ -181,19 +183,9 @@
             font-size: 16px;
         }
 
-        .status-icon {
-            background: rgba(40, 205, 65, 0.1);
-            color: #28cd41;
-        }
-
         .actions-icon {
             background: rgba(0, 122, 255, 0.1);
             color: #007aff;
-        }
-
-        .activity-icon {
-            background: rgba(255, 149, 0, 0.1);
-            color: #ff9500;
         }
 
         .profile-icon {
@@ -212,47 +204,6 @@
             line-height: 1.5;
         }
 
-        /* Status Card */
-        .status-display {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        .status-approved {
-            background: #28cd41;
-        }
-
-        .status-pending {
-            background: #ff9500;
-        }
-
-        .status-draft {
-            background: #8e8e93;
-        }
-
-        .status-signed {
-            background: #28cd41;
-        }
-
-        .status-text {
-            font-size: 17px;
-            font-weight: 600;
-            color: #1d1d1f;
-        }
-
-        .status-date {
-            font-size: 15px;
-            color: #86868b;
-            margin-bottom: 16px;
-        }
 
         /* Action Buttons */
         .action-grid {
@@ -297,46 +248,6 @@
             font-weight: 500;
         }
 
-        /* Activity List */
-        .activity-list {
-            list-style: none;
-        }
-
-        .activity-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #007aff;
-            margin-top: 6px;
-            flex-shrink: 0;
-        }
-
-        .activity-content {
-            flex: 1;
-        }
-
-        .activity-text {
-            font-size: 15px;
-            color: #1d1d1f;
-            margin-bottom: 4px;
-        }
-
-        .activity-time {
-            font-size: 13px;
-            color: #86868b;
-        }
 
         /* Loading States */
         .loading {
@@ -416,13 +327,13 @@
         <div class="header-content">
             <div class="header-left">
                 <div class="logo">
-                    <img src="../bilder/option Logo Colour.png" alt="option.ai" />
+                    <img src="../bilder/option Logo White.png" alt="option.ai" />
                 </div>
                 <h1 class="header-title">Dashboard</h1>
             </div>
             <div class="header-right">
-                <div class="proposal-code-badge" id="proposalCodeBadge">
-                    PROP-XXXX-XXXX
+                <div class="proposal-code-badge" id="userNameBadge">
+                    Wird geladen...
                 </div>
                 <button class="logout-btn" id="logoutBtn">
                     Abmelden
@@ -435,27 +346,13 @@
     <main class="main-content">
         <!-- Welcome Section -->
         <section class="welcome-section">
-            <h2 class="welcome-title">Guten Tag</h2>
+            <h2 class="welcome-title" id="welcomeTitle">Guten Tag</h2>
             <p class="welcome-subtitle">Willkommen in Ihrem persönlichen Dashboard</p>
         </section>
 
         <!-- Dashboard Grid -->
         <div class="dashboard-grid">
-            <!-- Proposal Status Card -->
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <div class="card-icon status-icon">📋</div>
-                    <h3 class="card-title">Proposal Status</h3>
-                </div>
-                <div class="card-content" id="statusContent">
-                    <div class="loading">
-                        <div class="loading-spinner"></div>
-                        Status wird geladen...
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Actions Card -->
+            <!-- Quick Actions Card - Zuerst -->
             <div class="dashboard-card">
                 <div class="card-header">
                     <div class="card-icon actions-icon">⚡</div>
@@ -479,20 +376,6 @@
                             <span class="action-icon">🔍</span>
                             <span class="action-text">Proposal ansehen</span>
                         </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Activity Card -->
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <div class="card-icon activity-icon">📈</div>
-                    <h3 class="card-title">Letzte Aktivitäten</h3>
-                </div>
-                <div class="card-content" id="activityContent">
-                    <div class="loading">
-                        <div class="loading-spinner"></div>
-                        Aktivitäten werden geladen...
                     </div>
                 </div>
             </div>
@@ -529,8 +412,6 @@
                 return false;
             }
             
-            // Set proposal code in header
-            document.getElementById('proposalCodeBadge').textContent = proposalCode;
             return true;
         }
 
@@ -588,34 +469,20 @@
                 templateData = data.template;
             }
 
-            // Update Status Card
-            const statusContent = document.getElementById('statusContent');
             if (clientData) {
-                const status = clientData['Status Proposal'] || clientData['status'] || 'draft';
-                const statusMap = {
-                    'draft': { text: 'Entwurf', class: 'status-draft' },
-                    'pending': { text: 'In Bearbeitung', class: 'status-pending' },
-                    'approved': { text: 'Genehmigt', class: 'status-approved' },
-                    'signed': { text: 'Unterschrieben', class: 'status-signed' }
-                };
+                // Update Header with Full Name
+                const fullName = clientData['Full Name'] || 'Unbekannt';
+                document.getElementById('userNameBadge').textContent = fullName;
                 
-                const statusInfo = statusMap[status] || statusMap.draft;
-                
-                statusContent.innerHTML = `
-                    <div class="status-display">
-                        <div class="status-indicator ${statusInfo.class}"></div>
-                        <span class="status-text">${statusInfo.text}</span>
-                    </div>
-                    <div class="status-date">Zuletzt aktualisiert: ${new Date().toLocaleDateString('de-DE')}</div>
-                `;
-            }
+                // Update Welcome with First Name
+                const firstName = fullName.split(' ')[0];
+                document.getElementById('welcomeTitle').textContent = `Guten Tag, ${firstName}`;
 
-            // Update Profile Card
-            const profileContent = document.getElementById('profileContent');
-            if (clientData) {
+                // Update Profile Card
+                const profileContent = document.getElementById('profileContent');
                 profileContent.innerHTML = `
                     <div style="margin-bottom: 12px;">
-                        <strong>${clientData['Full Name'] || 'Name nicht verfügbar'}</strong>
+                        <strong>${fullName}</strong>
                     </div>
                     <div style="margin-bottom: 8px; color: #86868b; font-size: 15px;">
                         ${clientData['Company'] || 'Unternehmen nicht angegeben'}
@@ -625,48 +492,15 @@
                     </div>
                 `;
             }
-
-            // Update Activity Card
-            const activityContent = document.getElementById('activityContent');
-            activityContent.innerHTML = `
-                <ul class="activity-list">
-                    <li class="activity-item">
-                        <div class="activity-dot"></div>
-                        <div class="activity-content">
-                            <div class="activity-text">Dashboard aufgerufen</div>
-                            <div class="activity-time">Gerade eben</div>
-                        </div>
-                    </li>
-                    <li class="activity-item">
-                        <div class="activity-dot"></div>
-                        <div class="activity-content">
-                            <div class="activity-text">Proposal angeschaut</div>
-                            <div class="activity-time">Heute</div>
-                        </div>
-                    </li>
-                    <li class="activity-item">
-                        <div class="activity-dot"></div>
-                        <div class="activity-content">
-                            <div class="activity-text">Account erstellt</div>
-                            <div class="activity-time">${new Date().toLocaleDateString('de-DE')}</div>
-                        </div>
-                    </li>
-                </ul>
-            `;
         }
 
         // Fallback Dashboard Population
         function populateDashboardFallback() {
             const proposalCode = sessionStorage.getItem('proposalCode');
-            
-            // Update Status Card
-            document.getElementById('statusContent').innerHTML = `
-                <div class="status-display">
-                    <div class="status-indicator status-approved"></div>
-                    <span class="status-text">Aktiv</span>
-                </div>
-                <div class="status-date">Code: ${proposalCode}</div>
-            `;
+
+            // Update Header and Welcome as fallback
+            document.getElementById('userNameBadge').textContent = proposalCode;
+            document.getElementById('welcomeTitle').textContent = 'Guten Tag';
 
             // Update Profile Card
             document.getElementById('profileContent').innerHTML = `
@@ -674,21 +508,8 @@
                     <strong>Profil wird geladen...</strong>
                 </div>
                 <div style="color: #86868b; font-size: 15px;">
-                    Bitte aktualisieren Sie die Seite
+                    Code: ${proposalCode}
                 </div>
-            `;
-
-            // Update Activity Card
-            document.getElementById('activityContent').innerHTML = `
-                <ul class="activity-list">
-                    <li class="activity-item">
-                        <div class="activity-dot"></div>
-                        <div class="activity-content">
-                            <div class="activity-text">Dashboard aufgerufen</div>
-                            <div class="activity-time">Gerade eben</div>
-                        </div>
-                    </li>
-                </ul>
             `;
         }
 
