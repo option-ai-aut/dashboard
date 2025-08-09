@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - option.ai</title>
+    <style>
+        /* SF Pro Font Import */
+        @font-face {
+            font-family: 'SF Pro';
+            src: url('../bilder/SF-Pro-Text-Regular.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro';
+            src: url('../bilder/SF-Pro-Text-Medium.otf') format('opentype');
+            font-weight: 500;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro';
+            src: url('../bilder/SF-Pro-Text-Bold.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"><animate attributeName="cy" values="20;80;20" dur="3s" repeatCount="indefinite"/></circle><circle cx="50" cy="50" r="1.5" fill="rgba(255,255,255,0.08)"><animate attributeName="cy" values="50;10;50" dur="4s" repeatCount="indefinite"/></circle><circle cx="80" cy="30" r="1" fill="rgba(255,255,255,0.06)"><animate attributeName="cy" values="30;90;30" dur="5s" repeatCount="indefinite"/></circle></svg>') repeat;
+            animation: float 20s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-100px); }
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.15);
+            padding: 60px;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        @keyframes slideInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-main {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease-out 0.2s both;
+        }
+
+        .logo-main img {
+            height: 3rem;
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-main img:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+            letter-spacing: -0.01em;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-form {
+            margin: 30px 0;
+            animation: fadeInScale 0.8s ease-out 0.8s both;
+        }
+
+        @keyframes fadeInScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-direction: column;
+        }
+
+        .password-input {
+            padding: 20px 28px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'SF Pro', sans-serif;
+            text-align: center;
+            color: #1a1a1a;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: rgba(102, 179, 255, 0.6);
+            box-shadow: 0 0 0 4px rgba(102, 179, 255, 0.15), 0 8px 32px rgba(102, 179, 255, 0.1);
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .password-input::placeholder {
+            color: rgba(26, 26, 26, 0.5);
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c53030;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 4px solid #e53e3e;
+            font-weight: 500;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading-message {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            color: #1e40af;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            color: #666;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .login-container {
+                padding: 40px 30px;
+                margin: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .input-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .password-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo-main">
+            <img src="../bilder/option Logo Colour.png" alt="option.ai" />
+        </div>
+        <h1>Admin Bereich</h1>
+        <p class="subtitle">Geben Sie das Admin-Passwort ein, um auf das Dashboard zuzugreifen.</p>
+        
+        <form onsubmit="validatePassword(event)" class="login-form">
+            <div class="input-group">
+                <input 
+                    type="password" 
+                    id="passwordInput" 
+                    placeholder="Admin-Passwort eingeben"
+                    required
+                    autocomplete="off"
+                    class="password-input"
+                >
+                <button type="submit" class="btn btn-primary" id="loginButton">
+                    Anmelden
+                </button>
+            </div>
+        </form>
+        
+        <div id="errorMessage" class="error-message" style="display: none;">
+            Falsches Passwort. Bitte versuchen Sie es erneut.
+        </div>
+        
+        <div id="loadingMessage" class="loading-message" style="display: none;">
+            <div class="loading-spinner"></div>
+            <span>Anmeldung wird überprüft...</span>
+        </div>
+
+        <div class="footer">
+            <p>AI Automation · Admin Dashboard</p>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_PASSWORD = 'sand-stone-austria-40';
+        
+        function validatePassword(event) {
+            event.preventDefault();
+            
+            const passwordInput = document.getElementById('passwordInput');
+            const errorMessage = document.getElementById('errorMessage');
+            const loadingMessage = document.getElementById('loadingMessage');
+            const loginButton = document.getElementById('loginButton');
+            
+            const password = passwordInput.value.trim();
+            
+            // Show loading
+            loadingMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+            loginButton.disabled = true;
+            
+            // Simulate network delay for better UX
+            setTimeout(() => {
+                if (password === ADMIN_PASSWORD) {
+                    // Success - set authentication flag and redirect to admin dashboard
+                    sessionStorage.setItem('adminAuthenticated', 'true');
+                    loadingMessage.querySelector('span').textContent = 'Anmeldung erfolgreich! Weiterleitung...';
+                    
+                    setTimeout(() => {
+                        window.location.href = '/admin/index.html';
+                    }, 1000);
+                } else {
+                    // Error - show error message
+                    loadingMessage.style.display = 'none';
+                    errorMessage.style.display = 'block';
+                    loginButton.disabled = false;
+                    passwordInput.focus();
+                    passwordInput.select();
+                }
+            }, 800);
+        }
+        
+        // Focus on password input when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('passwordInput').focus();
+        });
+        
+        // Clear error message when user starts typing
+        document.getElementById('passwordInput').addEventListener('input', function() {
+            document.getElementById('errorMessage').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

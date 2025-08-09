@@ -304,7 +304,7 @@
                 <img src="../bilder/option Logo White.png" alt="option.ai" style="height: 1.8rem; width: auto;" />
             </div>
             <div class="header-actions">
-                <a href="/login.html" class="btn btn-secondary">Logout</a>
+                <a href="#" onclick="logout()" class="btn btn-secondary">Logout</a>
                 <a href="/" class="btn btn-primary">Proposal Dashboard</a>
             </div>
         </div>
@@ -354,6 +354,28 @@
     </div>
 
     <script>
+        // Check if user is authenticated
+        function checkAuth() {
+            const isAuthenticated = sessionStorage.getItem('adminAuthenticated');
+            if (!isAuthenticated) {
+                window.location.href = '/admin/login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // Logout function
+        function logout() {
+            sessionStorage.removeItem('adminAuthenticated');
+            window.location.href = '/admin/login.html';
+        }
+
+        // Check authentication on page load
+        if (!checkAuth()) {
+            // Will redirect, so stop execution
+        } else {
+            // Continue with normal page functionality
+            
         // Status badge helper
         function getStatusBadge(status) {
             const statusMap = {
@@ -438,6 +460,8 @@
         
         // Load clients on page load
         loadClients();
+        
+        } // End of authentication check
     </script>
 </body>
 </html>
