@@ -553,12 +553,35 @@
             const proposalCode = sessionStorage.getItem('proposalCode');
             document.getElementById('proposalCode').value = proposalCode;
             
+            // Try to use pre-cached data first
+            const cachedData = sessionStorage.getItem('clientData');
+            if (cachedData) {
+                try {
+                    const data = JSON.parse(cachedData);
+                    populateForm(data);
+                    return;
+                } catch (error) {
+                    console.warn('Could not parse cached client data:', error);
+                }
+            }
+            
+            // If no cached data, fetch from webhook
             try {
-                const response = await fetch(`https://optionai.optionai.at/webhook/admin/load-client?proposal_code=${proposalCode}`);
+                const response = await fetch('https://optionai.optionai.at/webhook/get-client', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        proposal_code: proposalCode
+                    })
+                });
                 
                 if (response.ok) {
                     const data = await response.json();
                     populateForm(data);
+                    // Cache the data for future use
+                    sessionStorage.setItem('clientData', JSON.stringify(data));
                 } else {
                     console.warn('Could not load profile data');
                 }
