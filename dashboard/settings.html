@@ -313,6 +313,65 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Automation Configuration */
+        .automation-config-section {
+            border: 1px solid #e5e5e7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #fafafa;
+        }
+
+        .automation-config-section.placeholder-config {
+            border-style: dashed;
+            opacity: 0.6;
+        }
+
+        .automation-config-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 4px;
+        }
+
+        .automation-config-subtitle {
+            font-size: 14px;
+            color: #86868b;
+            margin-bottom: 16px;
+        }
+
+        .placeholder-config .automation-config-subtitle {
+            margin-bottom: 0;
+        }
+
+        /* API Key Container */
+        .api-key-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-show-api {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            padding: 4px 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #86868b;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .btn-show-api:hover {
+            background: rgba(0, 122, 255, 0.1);
+            color: #007aff;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .main-content {
@@ -333,6 +392,10 @@
             
             .page-title {
                 font-size: 28px;
+            }
+
+            .automation-config-section {
+                padding: 16px;
             }
         }
     </style>
@@ -434,34 +497,66 @@
         </div>
 
 
-        <!-- API Keys -->
+        <!-- Automations Configuration -->
         <div class="settings-card">
             <div class="card-header">
-                <h3 class="card-title">API Integrationen</h3>
-                <p class="card-subtitle">Verwalten Sie Ihre API-Schlüssel für externe Services</p>
+                <h3 class="card-title">Automations Konfiguration</h3>
+                <p class="card-subtitle">Konfigurieren Sie Ihre Automatisierungen und KPIs</p>
             </div>
             <div class="card-content">
-                <div id="apiErrorMessage" class="message message-error"></div>
-                <div id="apiSuccessMessage" class="message message-success"></div>
+                <div id="automationErrorMessage" class="message message-error"></div>
+                <div id="automationSuccessMessage" class="message message-success"></div>
 
-                <form id="instantlyApiForm">
-                    <div class="form-group">
-                        <label class="form-label" for="instantlyApiKey">Instantly API Key</label>
-                        <input 
-                            type="password" 
-                            id="instantlyApiKey" 
-                            class="form-input"
-                            placeholder="Ihr Instantly API Key"
-                        >
-                        <div class="password-requirements">
-                            💡 Ihr API Key wird sicher gespeichert
+                <!-- AI Cold Outreach System -->
+                <div class="automation-config-section">
+                    <h4 class="automation-config-title">🤖 AI Cold Outreach System</h4>
+                    
+                    <form id="instantlyConfigForm">
+                        <div class="form-group">
+                            <label class="form-label" for="instantlyApiKey">Instantly API Key</label>
+                            <div class="api-key-container">
+                                <input 
+                                    type="password" 
+                                    id="instantlyApiKey" 
+                                    class="form-input"
+                                    placeholder="Ihr Instantly API Key"
+                                    style="padding-right: 60px;"
+                                >
+                                <button type="button" class="btn-show-api" id="toggleApiKeyBtn">
+                                    👁️
+                                </button>
+                            </div>
+                            <div class="password-requirements">
+                                💡 Ihr API Key wird sicher gespeichert und ist für Analytics erforderlich
+                            </div>
                         </div>
-                    </div>
 
-                    <button type="submit" class="btn btn-primary" id="saveApiBtn">
-                        API Key speichern
-                    </button>
-                </form>
+                        <div class="form-group">
+                            <label class="form-label" for="avgDealValue">Durchschnittsumsatz pro Lead (€)</label>
+                            <input 
+                                type="number" 
+                                id="avgDealValue" 
+                                class="form-input"
+                                placeholder="2500"
+                                min="0"
+                                step="100"
+                            >
+                            <div class="password-requirements">
+                                💰 Wird für die Berechnung des potenziellen Umsatzes verwendet
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="saveInstantlyConfigBtn">
+                            Konfiguration speichern
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Future Automations Placeholder -->
+                <div class="automation-config-section placeholder-config">
+                    <h4 class="automation-config-title">➕ Weitere Automationen</h4>
+                    <p class="automation-config-subtitle">Neue Automatisierungen werden hier automatisch hinzugefügt</p>
+                </div>
             </div>
         </div>
 
@@ -598,15 +693,15 @@
                     throw new Error('Aktuelles Passwort ist falsch');
                 }
 
-                // Then update password
-                const updateResponse = await fetch('https://optionai.optionai.at/webhook/set-password', {
+                // Then update password using unified settings webhook
+                const updateResponse = await fetch('https://optionai.optionai.at/webhook/save-settings', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        'proposal_code': proposalCode,
-                        'password': newPassword
+                        proposal_code: proposalCode,
+                        password: newPassword
                     })
                 });
 
@@ -644,51 +739,104 @@
             document.getElementById('lastLogin').textContent = 'Gerade eben';
         }
 
-        // API Key Form Handler
-        document.getElementById('instantlyApiForm').addEventListener('submit', async (e) => {
+        // Instantly Configuration Form Handler
+        document.getElementById('instantlyConfigForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const apiKey = document.getElementById('instantlyApiKey').value.trim();
-            const saveBtn = document.getElementById('saveApiBtn');
+            const avgDealValue = document.getElementById('avgDealValue').value.trim();
+            const saveBtn = document.getElementById('saveInstantlyConfigBtn');
             const proposalCode = sessionStorage.getItem('proposalCode');
 
-            if (!apiKey) {
-                showMessage('apiErrorMessage', 'Bitte geben Sie einen API Key ein.');
+            if (!apiKey && !avgDealValue) {
+                showMessage('automationErrorMessage', 'Bitte füllen Sie mindestens ein Feld aus.');
                 return;
             }
 
-            setButtonLoading(saveBtn, true, 'API Key speichern');
+            setButtonLoading(saveBtn, true, 'Konfiguration speichern');
 
             try {
-                const response = await fetch('https://optionai.optionai.at/webhook/attach-instantly-api', {
+                // Prepare settings data
+                const settingsData = {
+                    proposal_code: proposalCode
+                };
+
+                // Add API Key if provided
+                if (apiKey) {
+                    settingsData.instantly_api_key = apiKey;
+                }
+
+                // Add Average Deal Value if provided
+                if (avgDealValue) {
+                    settingsData.avg_deal_value = parseFloat(avgDealValue);
+                }
+
+                // Send all settings to unified webhook
+                const response = await fetch('https://optionai.optionai.at/webhook/save-settings', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        proposal_code: proposalCode,
-                        instantly_api_key: apiKey
-                    })
+                    body: JSON.stringify(settingsData)
                 });
 
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log('Webhook response:', result);
-                    
-                    showMessage('apiSuccessMessage', 'API Key erfolgreich gespeichert!', 3000);
-                    document.getElementById('instantlyApiKey').value = '';
-                    document.getElementById('instantlyApiKey').placeholder = 'Gespeichert';
-                    
-                } else {
-                    const errorData = await response.json().catch(() => ({}));
-                    throw new Error(errorData.message || 'API Key konnte nicht gespeichert werden');
+                if (!response.ok) {
+                    throw new Error('Einstellungen konnten nicht gespeichert werden');
                 }
 
+                showMessage('automationSuccessMessage', 'Konfiguration erfolgreich gespeichert!', 3000);
+                
+                // Update placeholders
+                if (apiKey) {
+                    document.getElementById('instantlyApiKey').value = '';
+                    document.getElementById('instantlyApiKey').placeholder = 'Gespeichert';
+                }
+                if (avgDealValue) {
+                    document.getElementById('avgDealValue').placeholder = `€${avgDealValue} gespeichert`;
+                }
+                
             } catch (error) {
-                console.error('API Key save error:', error);
-                showMessage('apiErrorMessage', 'Fehler beim Speichern des API Keys. Bitte versuchen Sie es erneut.');
+                console.error('Configuration save error:', error);
+                showMessage('automationErrorMessage', error.message || 'Fehler beim Speichern der Konfiguration.');
             } finally {
-                setButtonLoading(saveBtn, false, 'API Key speichern');
+                setButtonLoading(saveBtn, false, 'Konfiguration speichern');
+            }
+        });
+
+        // Load existing API Key on page load
+        async function loadExistingApiKey() {
+            const proposalCode = sessionStorage.getItem('proposalCode');
+            
+            try {
+                const clientResponse = await fetch(`https://optionai.optionai.at/webhook/admin/load-client?proposal_code=${proposalCode}`);
+                if (clientResponse.ok) {
+                    const clientData = await clientResponse.json();
+                    const client = Array.isArray(clientData) ? clientData.find(item => item.client)?.client : clientData.client;
+                    const apiKey = client?.['Instantly API'];
+                    
+                    if (apiKey) {
+                        // Show API key as masked initially
+                        document.getElementById('instantlyApiKey').value = apiKey;
+                        document.getElementById('instantlyApiKey').type = 'password';
+                        document.getElementById('instantlyApiKey').placeholder = 'API Key gespeichert';
+                    }
+                }
+            } catch (error) {
+                console.warn('Could not load existing API key:', error);
+            }
+        }
+
+        // Toggle API Key visibility
+        document.getElementById('toggleApiKeyBtn').addEventListener('click', () => {
+            const apiKeyInput = document.getElementById('instantlyApiKey');
+            const toggleBtn = document.getElementById('toggleApiKeyBtn');
+            
+            if (apiKeyInput.type === 'password') {
+                apiKeyInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                apiKeyInput.type = 'password';
+                toggleBtn.textContent = '👁️';
             }
         });
 
@@ -696,6 +844,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             if (checkAuth()) {
                 setAccountInfo();
+                loadExistingApiKey();
             }
         });
     </script>

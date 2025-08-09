@@ -22,7 +22,8 @@ Backend = **n8n Webhooks + Airtable + Dual Auth-System** – steht bereits.
 | **Proposal View Tracking** | `https://optionai.optionai.at/webhook/track-proposal` | POST | `{proposal_code, action, timestamp, user_agent, client_name}` | none | index.html |
 | **Kunden Passwort setzen** | `https://optionai.optionai.at/webhook/set-password` | POST | `{proposal_code, password}` | none | client-login.html |
 | **Kunden Login validieren** | `https://optionai.optionai.at/webhook/validate-password` | POST | `{Proposal Code, password}` | none | client-login.html, dashboard/settings.html |
-| **Instantly API Key speichern** | `https://optionai.optionai.at/webhook/attach-instantly-api` | POST | `{proposal_code, instantly_api_key}` | none | dashboard/settings.html |
+| **Unified Settings speichern** | `https://optionai.optionai.at/webhook/save-settings` | POST | `{proposal_code, instantly_api_key?, avg_deal_value?, password?, ...}` | none | dashboard/settings.html |
+| **Instantly Analytics laden** | `https://optionai.optionai.at/webhook/load-instantly-kpi` | POST | `{api_key}` | none | dashboard/index.html |
 
 > **Auth-Hinweis**: Aktuelle Implementation nutzt nur `sessionStorage.adminAuthenticated` - **kein JWT** implementiert.
 
@@ -36,7 +37,7 @@ Backend = **n8n Webhooks + Airtable + Dual Auth-System** – steht bereits.
 | **/client-login.html** | **NEU:** Kunden-Login + Sign-Up | 420 | Apple Design, Modal Sign-Up |
 | **/dashboard/index.html** | **NEU:** Kunden-Dashboard | 450+ | Apple Design, **Instantly Analytics**, Aktionen |
 | **/dashboard/profile.html** | **NEU:** Kunden-Profil bearbeiten | 400 | Formular, Daten-Updates |
-| **/dashboard/settings.html** | **NEU:** Kunden-Einstellungen | 700+ | Passwort ändern, **API Key Management** |
+| **/dashboard/settings.html** | **NEU:** Kunden-Einstellungen | 860+ | **Unified Settings**, API Key Toggle, Automations Config |
 | **/admin/login.html** | Passwort‑Login für Admin‑Bereich | 420 | Hardcoded PW: `sand-stone-austria-40` |
 | **/admin/index.html** | Admin‑Übersicht (Tabelle aller Clients) | 460 | sessionStorage-Auth, Client-Liste |
 | **/admin/client.html** | Admin‑Detail: Template‑Editor + Custom‑Editor + Status | 440 | TinyMCE, Status-Management |
@@ -83,9 +84,9 @@ netlifyIdentity.currentUser().token.access_token
    - **Header**: Vollständiger Name statt Proposal Code
    - **Begrüßung**: "Guten Tag, [Vorname]"
    - **Aktionen**: PDF Download, Profil, Settings, Proposal ansehen
-   - **Automations**: **Instantly Analytics** (Gesendet, Öffnungsrate, Antworten, Antwortrate)
+   - **Automations**: **Instantly Analytics** (Gesendet, Antworten, Opportunities, **Potenzieller Umsatz**)
    - **Profil**: Vollständige Kundendaten bearbeiten
-   - **Settings**: Passwort ändern + **API Key Management**
+   - **Settings**: **Unified Settings Webhook**, API Key Toggle, Automations Config
 
 
 ---
@@ -139,6 +140,9 @@ netlifyIdentity.currentUser().token.access_token
 | `Template` | Link → Templates | ✔ | Verknüpfung zu Template |
 | `Status Proposal` | Single select | ✔ | `draft`/`pending`/`approved`/`signed` |
 | `Custom HTML` | Long text (Rich off) | optional | Client-spezifische Anpassungen |
+| `Password` | Text | optional | Kunden-Dashboard Login |
+| `Instantly API` | Text | optional | Instantly API Key für Analytics |
+| `Avg Deal Value` | Number | optional | Durchschnittsumsatz pro Lead (€) |
 | `record_id` | Auto | ✔ | Airtable Record-ID für Updates |
 
 ---
@@ -204,8 +208,10 @@ const statusMap = {
 6. **client-login.html** – Apple-Style Kunden-Login + Sign-Up
 7. **dashboard/** – Komplettes Kunden-Dashboard mit Apple-Design
 8. **Personalisierung** – Namen im Header, Begrüßung mit Vorname
-9. **Instantly Analytics** – Live-Statistiken im Dashboard (API: `api.instantly.ai/api/v2/campaigns/analytics/overview`)
-10. **API Key Management** – Speichern/Abrufen von Instantly API Keys aus Airtable Feld `client['Instantly API']`
+9. **Instantly Analytics** – Live-Statistiken im Dashboard (emails_sent, reply_count, total_opportunities, potenzieller Umsatz)
+10. **Unified Settings System** – Ein Webhook für alle Kunden-Einstellungen (`/webhook/save-settings`)
+11. **API Key Toggle** – Sicheres Anzeigen/Verbergen mit 👁️ Button
+12. **Analytics Protection** – Webhook-Calls nur bei vorhandenem API Key
 
 ### 🔄 **Nicht mehr verwendet (gelöscht)**
 - **login.html** (Netlify Identity) – Datei entfernt, da überflüssig
@@ -218,9 +224,35 @@ const statusMap = {
 
 ---
 
+## Unified Settings System (Neu August 2025)
+
+### **Webhook:** `/webhook/save-settings`
+**Flexibles Payload-System** für alle Kunden-Einstellungen:
+
+```json
+{
+  "proposal_code": "PROP-CAME-RUDM",
+  "instantly_api_key": "ODYzZGViNWYtNWNkZS0...",    // optional
+  "avg_deal_value": 2500.00,                        // optional  
+  "password": "newPassword123",                     // optional
+  // weitere Settings automatisch erweiterbar
+}
+```
+
+### **Analytics Protection**
+- **Dashboard Analytics** startet nur bei vorhandenem API Key
+- **Verhindert** unnötige n8n Webhook-Calls
+- **Smart UX**: "API Key nicht konfiguriert" Hinweis
+
+### **API Key Management**
+- **👁️ Toggle-Button**: Sicher anzeigen/verbergen
+- **Persistent Loading**: Vorhandene Keys beim Laden anzeigen
+- **Masked Display**: Initial als Password-Feld
+
 ## Konventions‑Reminder für Claude
 
-- **Halte dich strikt an die Webhook-URLs & Payload-Strukturen** in diesem Dokument
+- **Unified Settings**: Nutze `/webhook/save-settings` für alle Kunden-Einstellungen
+- **Analytics Protection**: Prüfe API Key vor Webhook-Calls
 - **Admin-Auth**: Nutze `sessionStorage.adminAuthenticated`, **nicht** JWT
 - **Passwort**: `sand-stone-austria-40` für `/admin/login.html`
 - **Keine Build‑Tools**: Alles bleibt Single-File HTML/JS/CSS

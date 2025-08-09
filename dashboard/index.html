@@ -737,34 +737,31 @@
                     apiKey = clientData.client?.['Instantly API'];
                 }
                 
-                if (!apiKey) {
-                    updateInstantlyStatus('inactive', 'API Key nicht gefunden');
+                // Only proceed if API key exists - prevents unnecessary webhook calls
+                if (!apiKey || apiKey.trim() === '') {
+                    updateInstantlyStatus('inactive', 'API Key nicht konfiguriert');
+                    displayInstantlyError('Bitte speichern Sie Ihren Instantly API Key in den Einstellungen.');
                     return;
                 }
                 
-                // Get current date for API call
-                const now = new Date();
-                const endDate = now.toISOString().split('T')[0]; // Format: YYYY-MM-DD
-                const startDate = '2024-01-01';
-                
-                // Call Instantly API directly
-                const analyticsResponse = await fetch(`https://api.instantly.ai/api/v2/campaigns/analytics/overview?start_date=${startDate}&end_date=${endDate}`, {
-                    method: 'GET',
+                // Call Instantly Analytics webhook with API key
+                const analyticsResponse = await fetch('https://optionai.optionai.at/webhook/load-instantly-kpi', {
+                    method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Accept': 'application/json'
-                    }
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        api_key: apiKey
+                    })
                 });
                 
                 if (analyticsResponse.ok) {
                     const analytics = await analyticsResponse.json();
-                    console.log('Analytics Response from webhook:', JSON.stringify(analytics, null, 2));
                     updateInstantlyStatus('active', 'Verbunden');
                     displayInstantlyStats(analytics);
                 } else {
                     const errorData = await analyticsResponse.json().catch(() => ({}));
-                    console.log('Analytics Error Response:', analyticsResponse.status, errorData);
-                    throw new Error(`API call failed: ${analyticsResponse.status}`);
+                    throw new Error(`Webhook failed: ${analyticsResponse.status}`);
                 }
                 
             } catch (error) {
@@ -796,36 +793,53 @@
         }
 
         // Display Instantly Statistics
-        function displayInstantlyStats(data) {
+        async function displayInstantlyStats(data) {
             const statsContainer = document.getElementById('instantlyStats');
             
-            // Extract key metrics from the API response
-            const totalSent = data.sent || 0;
-            const totalOpens = data.opens || 0;
-            const totalReplies = data.replies || 0;
-            const totalClicks = data.clicks || 0;
+            // Extract key metrics from the new API response format
+            const emailsSent = parseInt(data.emails_sent) || 0;
+            const replyCount = parseInt(data.reply_count) || 0;
+            const totalOpportunities = parseInt(data.total_opportunities) || 0;
             
-            // Calculate rates
-            const openRate = totalSent > 0 ? ((totalOpens / totalSent) * 100).toFixed(1) : '0.0';
-            const replyRate = totalSent > 0 ? ((totalReplies / totalSent) * 100).toFixed(1) : '0.0';
+            // Calculate reply rate
+            const replyRate = emailsSent > 0 ? ((replyCount / emailsSent) * 100).toFixed(1) : '0.0';
+            
+            // Load average deal value from client data
+            const proposalCode = sessionStorage.getItem('proposalCode');
+            let avgDealValue = 0;
+            
+            try {
+                const clientResponse = await fetch(`https://optionai.optionai.at/webhook/admin/load-client?proposal_code=${proposalCode}`);
+                if (clientResponse.ok) {
+                    const clientData = await clientResponse.json();
+                    const client = Array.isArray(clientData) ? clientData.find(item => item.client)?.client : clientData.client;
+                    avgDealValue = parseFloat(client?.['Avg Deal Value']) || 0;
+                }
+            } catch (error) {
+                console.warn('Could not load average deal value:', error);
+            }
+            
+            // Calculate potential revenue
+            const potentialRevenue = totalOpportunities * avgDealValue;
+            const revenueDisplay = avgDealValue > 0 ? `€${potentialRevenue.toLocaleString()}` : '€0 (Wert konfigurieren)';
             
             statsContainer.innerHTML = `
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-value">${totalSent}</div>
+                        <div class="stat-value">${emailsSent}</div>
                         <div class="stat-label">Gesendet</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value">${openRate}%</div>
-                        <div class="stat-label">Öffnungsrate</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">${totalReplies}</div>
+                        <div class="stat-value">${replyCount}</div>
                         <div class="stat-label">Antworten</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value">${replyRate}%</div>
-                        <div class="stat-label">Antwortrate</div>
+                        <div class="stat-value">${totalOpportunities}</div>
+                        <div class="stat-label">Opportunities</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${revenueDisplay}</div>
+                        <div class="stat-label">Potenzieller Umsatz</div>
                     </div>
                 </div>
             `;
