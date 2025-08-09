@@ -727,21 +727,15 @@
                 }
                 
                 const clientData = await clientResponse.json();
-                console.log('Complete webhook response:', JSON.stringify(clientData, null, 2));
-                
                 let apiKey = null;
                 
                 // Extract API key from client data
                 if (Array.isArray(clientData)) {
                     const client = clientData.find(item => item.client)?.client;
-                    console.log('Client data found:', client);
                     apiKey = client?.['Instantly API'];
                 } else {
-                    console.log('Client data found:', clientData.client);
                     apiKey = clientData.client?.['Instantly API'];
                 }
-                
-                console.log('API Key found:', apiKey);
                 
                 if (!apiKey) {
                     updateInstantlyStatus('inactive', 'API Key nicht gefunden');
@@ -750,10 +744,10 @@
                 
                 // Get current date for API call
                 const now = new Date();
-                const endDate = now.toISOString().split('T')[0];
+                const endDate = now.toISOString().split('T')[0]; // Format: YYYY-MM-DD
                 const startDate = '2024-01-01';
                 
-                // Call Instantly API
+                // Call Instantly API directly
                 const analyticsResponse = await fetch(`https://api.instantly.ai/api/v2/campaigns/analytics/overview?start_date=${startDate}&end_date=${endDate}`, {
                     method: 'GET',
                     headers: {
@@ -764,16 +758,19 @@
                 
                 if (analyticsResponse.ok) {
                     const analytics = await analyticsResponse.json();
+                    console.log('Analytics Response from webhook:', JSON.stringify(analytics, null, 2));
                     updateInstantlyStatus('active', 'Verbunden');
                     displayInstantlyStats(analytics);
                 } else {
-                    throw new Error('API call failed');
+                    const errorData = await analyticsResponse.json().catch(() => ({}));
+                    console.log('Analytics Error Response:', analyticsResponse.status, errorData);
+                    throw new Error(`API call failed: ${analyticsResponse.status}`);
                 }
                 
             } catch (error) {
                 console.error('Instantly analytics error:', error);
                 updateInstantlyStatus('inactive', 'Fehler beim Laden');
-                displayInstantlyError('Fehler beim Laden der Statistiken. API Key prüfen.');
+                displayInstantlyError(`Fehler: ${error.message}`);
             }
         }
 
