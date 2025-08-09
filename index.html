@@ -1680,7 +1680,7 @@
                     <img src="./bilder/option Logo White.png" alt="option.ai" />
                 </div>
                 <div class="dashboard-actions">
-                    <a href="/login.html" class="btn btn-secondary">🔐 Login</a>
+                    <a href="/login.html" class="btn btn-secondary">Login</a>
                 </div>
             </div>
         </header>
@@ -1718,10 +1718,10 @@
 
                     <div class="action-buttons">
                         <button class="btn btn-primary" onclick="openSigningModal()" style="width: 100%;" id="signButton">
-                            ✍️ Angebot Unterschreiben
+                            Angebot Unterschreiben
                         </button>
                         <button class="btn btn-secondary" onclick="downloadPDF()" style="width: 100%;">
-                            🖨️ Als PDF drucken/speichern
+                            Als PDF drucken/speichern
                         </button>
                     </div>
                 </div>
@@ -2300,7 +2300,7 @@
             // Prevent multiple clicks
             submitBtn.disabled = true;
             submitBtn.onclick = null;
-            submitBtn.innerHTML = '⏳ Wird verarbeitet...';
+            submitBtn.innerHTML = 'Wird verarbeitet...';
 
             try {
                 console.log('=== SIGNATURE FINALIZATION START ===');
@@ -2352,7 +2352,7 @@
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
                 // Show "Bitte warten" in submit button
-                submitBtn.innerHTML = '⏳ Bitte warten...';
+                submitBtn.innerHTML = 'Bitte warten...';
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 
                 // Close modal
@@ -2365,7 +2365,7 @@
                 await showAppleStyleSuccess();
                 
                 // NOW capture the exact HTML that the user sees in the dashboard
-                console.log('🚀 Capturing visible signed proposal HTML...');
+                console.log('Capturing visible signed proposal HTML...');
                 
                 // Get the proposal content that the user is currently viewing
                 const visibleProposal = document.querySelector('.proposal-content');
@@ -2440,8 +2440,8 @@
                 
                 console.log('✅ Real PDF converted to base64, length:', signedPdfBase64.length);
                 
-                console.log('🎯 HTML capture completed successfully!');
-                console.log('🎯 Final base64 to send:', signedPdfBase64.substring(0, 100) + '...');
+                console.log('HTML capture completed successfully!');
+                console.log('Final base64 to send:', signedPdfBase64.substring(0, 100) + '...');
                 
                 // Print dialog opens immediately after animation completes
                 console.log('Opening print dialog...');
@@ -2459,7 +2459,7 @@
                 }
                 
                 if (signButton) {
-                    signButton.innerHTML = '<span>📅 Termin vereinbaren</span>';
+                    signButton.innerHTML = '<span>Termin vereinbaren</span>';
                     signButton.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
                     signButton.onclick = () => window.open('https://calendly.com/dennis-mueller-963/erstberatung', '_blank');
                 }
@@ -2793,7 +2793,7 @@
                 <!-- Submit Button -->
                 <div style="margin-top: 40px; text-align: center;">
                     <button id="submitSignatureBtn" onclick="finalizeSignature()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #66b3ff 0%, #66b3ff 100%); color: #000000; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(102, 179, 255, 0.3); transition: all 0.2s;">
-                        ✍️ Unterschrift übernehmen und speichern
+                        Unterschrift übernehmen und speichern
                     </button>
                 </div>
             </div>
