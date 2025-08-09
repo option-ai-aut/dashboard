@@ -677,6 +677,7 @@
                     
                     showMessage('apiSuccessMessage', 'API Key erfolgreich gespeichert!', 3000);
                     document.getElementById('instantlyApiKey').value = '';
+                    document.getElementById('instantlyApiKey').placeholder = 'Gespeichert';
                     
                 } else {
                     const errorData = await response.json().catch(() => ({}));
@@ -690,7 +691,6 @@
                 setButtonLoading(saveBtn, false, 'API Key speichern');
             }
         });
-
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {

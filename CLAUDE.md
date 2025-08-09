@@ -34,9 +34,9 @@ Backend = **n8n Webhooks + Airtable + Dual Auth-System** – steht bereits.
 |-------|-------|--------|----------|
 | **/index.html** | Proposal-Viewer + Code‑Eingabe + Signatur‑System | 2800+ | PDF-Gen, 3 Signatur-Methoden, Status-Gate |
 | **/client-login.html** | **NEU:** Kunden-Login + Sign-Up | 420 | Apple Design, Modal Sign-Up |
-| **/dashboard/index.html** | **NEU:** Kunden-Dashboard | 450 | Apple Design, Statistiken, Aktionen |
+| **/dashboard/index.html** | **NEU:** Kunden-Dashboard | 450+ | Apple Design, **Instantly Analytics**, Aktionen |
 | **/dashboard/profile.html** | **NEU:** Kunden-Profil bearbeiten | 400 | Formular, Daten-Updates |
-| **/dashboard/settings.html** | **NEU:** Kunden-Einstellungen | 380 | Passwort ändern, Account-Info |
+| **/dashboard/settings.html** | **NEU:** Kunden-Einstellungen | 700+ | Passwort ändern, **API Key Management** |
 | **/admin/login.html** | Passwort‑Login für Admin‑Bereich | 420 | Hardcoded PW: `sand-stone-austria-40` |
 | **/admin/index.html** | Admin‑Übersicht (Tabelle aller Clients) | 460 | sessionStorage-Auth, Client-Liste |
 | **/admin/client.html** | Admin‑Detail: Template‑Editor + Custom‑Editor + Status | 440 | TinyMCE, Status-Management |
@@ -83,8 +83,9 @@ netlifyIdentity.currentUser().token.access_token
    - **Header**: Vollständiger Name statt Proposal Code
    - **Begrüßung**: "Guten Tag, [Vorname]"
    - **Aktionen**: PDF Download, Profil, Settings, Proposal ansehen
+   - **Automations**: **Instantly Analytics** (Gesendet, Öffnungsrate, Antworten, Antwortrate)
    - **Profil**: Vollständige Kundendaten bearbeiten
-   - **Settings**: Passwort ändern + API Key Management
+   - **Settings**: Passwort ändern + **API Key Management**
 
 
 ---
@@ -203,7 +204,8 @@ const statusMap = {
 6. **client-login.html** – Apple-Style Kunden-Login + Sign-Up
 7. **dashboard/** – Komplettes Kunden-Dashboard mit Apple-Design
 8. **Personalisierung** – Namen im Header, Begrüßung mit Vorname
-9. **API-Integration** – Instantly API Key Management
+9. **Instantly Analytics** – Live-Statistiken im Dashboard (API: `api.instantly.ai/api/v2/campaigns/analytics/overview`)
+10. **API Key Management** – Speichern/Abrufen von Instantly API Keys aus Airtable Feld `client['Instantly API']`
 
 ### 🔄 **Nicht mehr verwendet (gelöscht)**
 - **login.html** (Netlify Identity) – Datei entfernt, da überflüssig

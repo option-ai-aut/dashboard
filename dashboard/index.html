@@ -273,6 +273,143 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Automations Grid */
+        .automations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .automation-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .automation-card:hover:not(.placeholder) {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .automation-card.placeholder {
+            border-style: dashed;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .automation-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .automation-icon {
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 122, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .automation-info {
+            flex: 1;
+        }
+
+        .automation-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: #1d1d1f;
+        }
+
+        .automation-subtitle {
+            font-size: 13px;
+            color: #86868b;
+        }
+
+        .automation-status {
+            display: flex;
+            align-items: center;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .status-indicator.active {
+            background: #28cd41;
+        }
+
+        .status-indicator.inactive {
+            background: #ff3b30;
+        }
+
+        .status-indicator.loading {
+            background: #007aff;
+            animation: pulse 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 1; }
+            to { opacity: 0.5; }
+        }
+
+        .automation-stats {
+            min-height: 60px;
+        }
+
+        .stat-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #86868b;
+            font-size: 14px;
+            padding: 20px 0;
+        }
+
+        .stat-loading .loading-spinner {
+            margin-right: 8px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 6px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #86868b;
+            margin-top: 2px;
+        }
+
+        .stat-error {
+            color: #ff3b30;
+            font-size: 13px;
+            text-align: center;
+            padding: 12px;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .dashboard-grid {
@@ -294,6 +431,10 @@
             
             .dashboard-card {
                 padding: 20px;
+            }
+
+            .automations-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -390,6 +531,48 @@
                     <div class="loading">
                         <div class="loading-spinner"></div>
                         Profil wird geladen...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Automations Overview Card -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon actions-icon">🤖</div>
+                    <h3 class="card-title">Automations</h3>
+                </div>
+                <div class="card-content">
+                    <div class="automations-grid">
+                        <!-- AI Cold Outreach System -->
+                        <div class="automation-card">
+                            <div class="automation-header">
+                                <div class="automation-icon">🤖</div>
+                                <div class="automation-info">
+                                    <div class="automation-title">AI Cold Outreach System</div>
+                                    <div class="automation-subtitle">Powered by Instantly</div>
+                                </div>
+                                <div class="automation-status" id="instantlyStatus">
+                                    <div class="status-indicator loading"></div>
+                                </div>
+                            </div>
+                            <div class="automation-stats" id="instantlyStats">
+                                <div class="stat-loading">
+                                    <div class="loading-spinner"></div>
+                                    Statistiken werden geladen...
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Placeholder for future automations -->
+                        <div class="automation-card placeholder">
+                            <div class="automation-header">
+                                <div class="automation-icon">➕</div>
+                                <div class="automation-info">
+                                    <div class="automation-title">Weitere Automationen</div>
+                                    <div class="automation-subtitle">Bald verfügbar</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -531,10 +714,137 @@
         document.getElementById('logoutBtn').addEventListener('click', logout);
         document.getElementById('downloadPdfBtn').addEventListener('click', handlePdfDownload);
 
+        // Load Instantly Analytics
+        async function loadInstantlyAnalytics() {
+            const proposalCode = sessionStorage.getItem('proposalCode');
+            
+            try {
+                // First, get the stored API key for this client
+                const clientResponse = await fetch(`https://optionai.optionai.at/webhook/admin/load-client?proposal_code=${proposalCode}`);
+                
+                if (!clientResponse.ok) {
+                    throw new Error('Client data not available');
+                }
+                
+                const clientData = await clientResponse.json();
+                console.log('Complete webhook response:', JSON.stringify(clientData, null, 2));
+                
+                let apiKey = null;
+                
+                // Extract API key from client data
+                if (Array.isArray(clientData)) {
+                    const client = clientData.find(item => item.client)?.client;
+                    console.log('Client data found:', client);
+                    apiKey = client?.['Instantly API'];
+                } else {
+                    console.log('Client data found:', clientData.client);
+                    apiKey = clientData.client?.['Instantly API'];
+                }
+                
+                console.log('API Key found:', apiKey);
+                
+                if (!apiKey) {
+                    updateInstantlyStatus('inactive', 'API Key nicht gefunden');
+                    return;
+                }
+                
+                // Get current date for API call
+                const now = new Date();
+                const endDate = now.toISOString().split('T')[0];
+                const startDate = '2024-01-01';
+                
+                // Call Instantly API
+                const analyticsResponse = await fetch(`https://api.instantly.ai/api/v2/campaigns/analytics/overview?start_date=${startDate}&end_date=${endDate}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (analyticsResponse.ok) {
+                    const analytics = await analyticsResponse.json();
+                    updateInstantlyStatus('active', 'Verbunden');
+                    displayInstantlyStats(analytics);
+                } else {
+                    throw new Error('API call failed');
+                }
+                
+            } catch (error) {
+                console.error('Instantly analytics error:', error);
+                updateInstantlyStatus('inactive', 'Fehler beim Laden');
+                displayInstantlyError('Fehler beim Laden der Statistiken. API Key prüfen.');
+            }
+        }
+
+        // Update Instantly Status
+        function updateInstantlyStatus(status, text) {
+            const statusElement = document.getElementById('instantlyStatus');
+            const indicator = statusElement.querySelector('.status-indicator');
+            
+            indicator.className = `status-indicator ${status}`;
+            
+            // Add status text
+            const existingText = statusElement.querySelector('.status-text');
+            if (existingText) {
+                existingText.textContent = text;
+            } else {
+                const statusText = document.createElement('span');
+                statusText.className = 'status-text';
+                statusText.textContent = text;
+                statusText.style.fontSize = '12px';
+                statusText.style.color = '#86868b';
+                statusElement.appendChild(statusText);
+            }
+        }
+
+        // Display Instantly Statistics
+        function displayInstantlyStats(data) {
+            const statsContainer = document.getElementById('instantlyStats');
+            
+            // Extract key metrics from the API response
+            const totalSent = data.sent || 0;
+            const totalOpens = data.opens || 0;
+            const totalReplies = data.replies || 0;
+            const totalClicks = data.clicks || 0;
+            
+            // Calculate rates
+            const openRate = totalSent > 0 ? ((totalOpens / totalSent) * 100).toFixed(1) : '0.0';
+            const replyRate = totalSent > 0 ? ((totalReplies / totalSent) * 100).toFixed(1) : '0.0';
+            
+            statsContainer.innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">${totalSent}</div>
+                        <div class="stat-label">Gesendet</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${openRate}%</div>
+                        <div class="stat-label">Öffnungsrate</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${totalReplies}</div>
+                        <div class="stat-label">Antworten</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${replyRate}%</div>
+                        <div class="stat-label">Antwortrate</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Display Instantly Error
+        function displayInstantlyError(message) {
+            const statsContainer = document.getElementById('instantlyStats');
+            statsContainer.innerHTML = `<div class="stat-error">${message}</div>`;
+        }
+
         // Initialize Dashboard
         document.addEventListener('DOMContentLoaded', () => {
             if (checkAuth()) {
                 loadDashboardData();
+                loadInstantlyAnalytics();
             }
         });
     </script>
