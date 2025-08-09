@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kunden Login - option.ai</title>
+    <style>
+        /* SF Pro Font Import */
+        @font-face {
+            font-family: 'SF Pro Display';
+            src: url('./bilder/SF-Pro-Display-Bold.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('./bilder/SF-Pro-Text-Regular.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('./bilder/SF-Pro-Text-Medium.otf') format('opentype');
+            font-weight: 500;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('./bilder/SF-Pro-Text-Bold.otf') format('opentype');
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f7;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1d1d1f;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 48px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+            border: 0.5px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo img {
+            height: 32px;
+            width: auto;
+        }
+
+        h1 {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #1d1d1f;
+            text-align: center;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 17px;
+            color: #86868b;
+            text-align: center;
+            margin-bottom: 32px;
+            line-height: 1.4;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 17px;
+            font-weight: 500;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px;
+            border: 1.5px solid #d1d1d6;
+            border-radius: 8px;
+            font-size: 17px;
+            background: #ffffff;
+            transition: all 0.2s ease;
+            font-family: 'SF Pro Text', sans-serif;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #007aff;
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #86868b;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: #007aff;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 16px;
+        }
+
+        .btn-primary:hover {
+            background: #0056cc;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            background: #86868b;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            background: transparent;
+            color: #007aff;
+            border: 1.5px solid #007aff;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 122, 255, 0.04);
+        }
+
+        .btn-secondary:active {
+            background: rgba(0, 122, 255, 0.08);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+            color: #86868b;
+            font-size: 15px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #d1d1d6;
+        }
+
+        .divider span {
+            padding: 0 16px;
+        }
+
+        .error-message {
+            background: rgba(255, 59, 48, 0.1);
+            border: 1px solid rgba(255, 59, 48, 0.2);
+            color: #ff3b30;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 15px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .success-message {
+            background: rgba(40, 205, 65, 0.1);
+            border: 1px solid rgba(40, 205, 65, 0.2);
+            color: #28cd41;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 15px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal h2 {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #1d1d1f;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .modal .subtitle {
+            margin-bottom: 24px;
+        }
+
+        .password-requirements {
+            background: rgba(0, 122, 255, 0.05);
+            border: 1px solid rgba(0, 122, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #007aff;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #86868b;
+            transition: all 0.2s ease;
+        }
+
+        .close-modal:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .back-link a {
+            color: #007aff;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 32px 24px;
+            }
+            
+            .modal {
+                padding: 24px;
+                margin: 0 16px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="logo">
+            <img src="./bilder/option Logo Colour.png" alt="option.ai" />
+        </div>
+        
+        <h1>Willkommen zurück</h1>
+        <p class="subtitle">Melden Sie sich in Ihrem Kunden-Dashboard an</p>
+
+        <!-- Error/Success Messages -->
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+
+        <!-- Login Form -->
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label" for="proposalCode">Proposal Code</label>
+                <input 
+                    type="text" 
+                    id="proposalCode" 
+                    class="form-input"
+                    placeholder="PROP-2024-001"
+                    required
+                    autocomplete="username"
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Passwort</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    class="form-input"
+                    placeholder="Ihr Passwort"
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+
+            <button type="submit" class="btn-primary" id="loginBtn">
+                Anmelden
+            </button>
+        </form>
+
+        <div class="divider">
+            <span>oder</span>
+        </div>
+
+        <button class="btn-secondary" id="signupBtn">
+            Neues Konto erstellen
+        </button>
+
+        <div class="back-link">
+            <a href="/index.html">← Zurück zum Proposal</a>
+        </div>
+    </div>
+
+    <!-- Sign-Up Modal -->
+    <div class="modal-overlay" id="signupModal">
+        <div class="modal">
+            <button class="close-modal" id="closeModal">×</button>
+            
+            <h2>Konto erstellen</h2>
+            <p class="subtitle">Erstellen Sie Ihr Kunden-Dashboard Account</p>
+
+            <!-- Modal Error/Success Messages -->
+            <div id="modalErrorMessage" class="error-message"></div>
+            <div id="modalSuccessMessage" class="success-message"></div>
+
+            <!-- Sign-Up Form -->
+            <form id="signupForm">
+                <div class="form-group">
+                    <label class="form-label" for="signupProposalCode">Ihr Proposal Code</label>
+                    <input 
+                        type="text" 
+                        id="signupProposalCode" 
+                        class="form-input"
+                        placeholder="PROP-2024-001"
+                        required
+                        autocomplete="username"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="signupPassword">Neues Passwort wählen</label>
+                    <input 
+                        type="password" 
+                        id="signupPassword" 
+                        class="form-input"
+                        placeholder="Mindestens 5 Zeichen"
+                        required
+                        autocomplete="new-password"
+                        minlength="5"
+                    >
+                </div>
+
+                <div class="password-requirements">
+                    💡 Ihr Passwort muss mindestens 5 Zeichen lang sein
+                </div>
+
+                <button type="submit" class="btn-primary" id="createAccountBtn">
+                    Account erstellen
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Form Elements
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const signupModal = document.getElementById('signupModal');
+        const signupBtn = document.getElementById('signupBtn');
+        const closeModal = document.getElementById('closeModal');
+        const loginBtn = document.getElementById('loginBtn');
+        const createAccountBtn = document.getElementById('createAccountBtn');
+
+        // Message Elements
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const modalErrorMessage = document.getElementById('modalErrorMessage');
+        const modalSuccessMessage = document.getElementById('modalSuccessMessage');
+
+        // Utility Functions
+        function showError(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 3000);
+        }
+
+        function setLoading(button, isLoading) {
+            if (isLoading) {
+                button.disabled = true;
+                button.innerHTML = '<span class="loading-spinner"></span>Wird verarbeitet...';
+            } else {
+                button.disabled = false;
+                button.innerHTML = button.id === 'loginBtn' ? 'Anmelden' : 'Account erstellen';
+            }
+        }
+
+        // Modal Controls
+        signupBtn.addEventListener('click', () => {
+            signupModal.classList.add('active');
+            document.getElementById('signupProposalCode').focus();
+        });
+
+        closeModal.addEventListener('click', () => {
+            signupModal.classList.remove('active');
+        });
+
+        signupModal.addEventListener('click', (e) => {
+            if (e.target === signupModal) {
+                signupModal.classList.remove('active');
+            }
+        });
+
+        // Login Form Handler
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const proposalCode = document.getElementById('proposalCode').value.trim().toUpperCase();
+            const password = document.getElementById('password').value;
+
+            if (!proposalCode || !password) {
+                showError(errorMessage, 'Bitte füllen Sie alle Felder aus.');
+                return;
+            }
+
+            setLoading(loginBtn, true);
+
+            try {
+                const response = await fetch('https://optionai.optionai.at/webhook/validate-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        'Proposal Code': proposalCode,
+                        'password': password
+                    })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    // Set session
+                    sessionStorage.setItem('customerAuthenticated', 'true');
+                    sessionStorage.setItem('proposalCode', proposalCode);
+                    
+                    showSuccess(successMessage, 'Anmeldung erfolgreich! Weiterleitung...');
+                    
+                    setTimeout(() => {
+                        window.location.href = '/dashboard/';
+                    }, 1000);
+                    
+                } else {
+                    throw new Error('Ungültige Anmeldedaten');
+                }
+
+            } catch (error) {
+                console.error('Login error:', error);
+                showError(errorMessage, 'Proposal Code oder Passwort ungültig. Bitte versuchen Sie es erneut.');
+            } finally {
+                setLoading(loginBtn, false);
+            }
+        });
+
+        // Sign-Up Form Handler
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const proposalCode = document.getElementById('signupProposalCode').value.trim().toUpperCase();
+            const password = document.getElementById('signupPassword').value;
+
+            if (!proposalCode || !password) {
+                showError(modalErrorMessage, 'Bitte füllen Sie alle Felder aus.');
+                return;
+            }
+
+            if (password.length < 5) {
+                showError(modalErrorMessage, 'Das Passwort muss mindestens 5 Zeichen lang sein.');
+                return;
+            }
+
+            setLoading(createAccountBtn, true);
+
+            try {
+                const response = await fetch('https://optionai.optionai.at/webhook/set-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        'proposal_code': proposalCode,
+                        'password': password
+                    })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    // Set session
+                    sessionStorage.setItem('customerAuthenticated', 'true');
+                    sessionStorage.setItem('proposalCode', proposalCode);
+                    
+                    showSuccess(modalSuccessMessage, 'Account erfolgreich erstellt! Weiterleitung...');
+                    
+                    setTimeout(() => {
+                        window.location.href = '/dashboard/';
+                    }, 1500);
+                    
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Account-Erstellung fehlgeschlagen');
+                }
+
+            } catch (error) {
+                console.error('Sign-up error:', error);
+                if (error.message.includes('bereits')) {
+                    showError(modalErrorMessage, 'Für diesen Proposal Code existiert bereits ein Account. Verwenden Sie den Login.');
+                } else {
+                    showError(modalErrorMessage, 'Account-Erstellung fehlgeschlagen. Überprüfen Sie Ihren Proposal Code.');
+                }
+            } finally {
+                setLoading(createAccountBtn, false);
+            }
+        });
+
+        // Focus on first input when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('proposalCode').focus();
+        });
+
+        // Auto-uppercase proposal codes
+        document.getElementById('proposalCode').addEventListener('input', (e) => {
+            e.target.value = e.target.value.toUpperCase();
+        });
+
+        document.getElementById('signupProposalCode').addEventListener('input', (e) => {
+            e.target.value = e.target.value.toUpperCase();
+        });
+    </script>
+</body>
+</html>

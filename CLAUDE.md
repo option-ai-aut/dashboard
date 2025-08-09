@@ -20,6 +20,8 @@ Backend = **n8n Webhooks + Airtable + Dual Auth-System** – steht bereits.
 | **Proposal speichern** | `https://optionai.optionai.at/webhook/admin/save-proposal` | POST | `{proposal_code, custom_html?, status?}` | sessionStorage | admin/client.html |
 | **Signatur speichern** | `https://optionai.optionai.at/webhook/save-sign` | POST | `{Full Name, Email Address, record_id, proposal_code, auth_method, signed_pdf}` | none | index.html |
 | **Proposal View Tracking** | `https://optionai.optionai.at/webhook/track-proposal` | POST | `{proposal_code, action, timestamp, user_agent, client_name}` | none | index.html |
+| **Kunden Passwort setzen** | `https://optionai.optionai.at/webhook/set-password` | POST | `{proposal_code, password}` | none | client-login.html |
+| **Kunden Login validieren** | `https://optionai.optionai.at/webhook/validate-password` | POST | `{Proposal Code, password}` | none | client-login.html, dashboard/settings.html |
 
 > **Auth-Hinweis**: Aktuelle Implementation nutzt nur `sessionStorage.adminAuthenticated` - **kein JWT** implementiert.
 
@@ -29,9 +31,13 @@ Backend = **n8n Webhooks + Airtable + Dual Auth-System** – steht bereits.
 
 | Datei | Zweck | Zeilen | Features |
 |-------|-------|--------|----------|
-| **/index.html** | Kunden‑Dashboard + Code‑Eingabe + Signatur‑System | 2800+ | PDF-Gen, 3 Signatur-Methoden, Status-Gate |
+| **/index.html** | Proposal-Viewer + Code‑Eingabe + Signatur‑System | 2800+ | PDF-Gen, 3 Signatur-Methoden, Status-Gate |
 | **/login.html** | Admin‑Login (Netlify Identity Modal) | 395 | JWT-basiert, Rollen-Routing |
-| **/admin/login.html** | **NEU:** Passwort‑Login für Admin‑Bereich | 420 | Hardcoded PW: `sand-stone-austria-40` |
+| **/client-login.html** | **NEU:** Kunden-Login + Sign-Up | 420 | Apple Design, Modal Sign-Up |
+| **/dashboard/index.html** | **NEU:** Kunden-Dashboard | 450 | Apple Design, Statistiken, Aktionen |
+| **/dashboard/profile.html** | **NEU:** Kunden-Profil bearbeiten | 400 | Formular, Daten-Updates |
+| **/dashboard/settings.html** | **NEU:** Kunden-Einstellungen | 380 | Passwort ändern, Account-Info |
+| **/admin/login.html** | Passwort‑Login für Admin‑Bereich | 420 | Hardcoded PW: `sand-stone-austria-40` |
 | **/admin/index.html** | Admin‑Übersicht (Tabelle aller Clients) | 460 | sessionStorage-Auth, Client-Liste |
 | **/admin/client.html** | Admin‑Detail: Template‑Editor + Custom‑Editor + Status | 440 | TinyMCE, Status-Management |
 
@@ -72,7 +78,10 @@ netlifyIdentity.currentUser().token.access_token
      - TinyMCE Editor 2: Custom‑HTML → `save-proposal`  
      - Status‑Dropdown → `save-proposal`
 
-### 3. **Netlify Identity (Inaktiv)**
+### 3. **Kunden-Dashboard (Passwort-basiert)**
+   `/client-login.html` → Login/Sign-Up Modal → `/dashboard/` → Apple-Style Dashboard
+
+### 4. **Netlify Identity (Inaktiv)**
    `/login.html` → Netlify‑Modal → **NICHT VERWENDET** in aktueller Implementation
 
 ---

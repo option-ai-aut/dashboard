@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Einstellungen - option.ai</title>
+    <style>
+        /* SF Pro Font Import */
+        @font-face {
+            font-family: 'SF Pro Display';
+            src: url('../bilder/SF-Pro-Display-Bold.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('../bilder/SF-Pro-Text-Regular.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('../bilder/SF-Pro-Text-Medium.otf') format('opentype');
+            font-weight: 500;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('../bilder/SF-Pro-Text-Bold.otf') format('opentype');
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f7;
+            color: #1d1d1f;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: #007aff;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 122, 255, 0.05);
+        }
+
+        .header-title {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1d1d1f;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .page-title {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .page-subtitle {
+            font-size: 17px;
+            color: #86868b;
+            margin-bottom: 32px;
+        }
+
+        /* Settings Cards */
+        .settings-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+            border: 0.5px solid rgba(0, 0, 0, 0.04);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .card-title {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: #86868b;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 15px;
+            font-weight: 500;
+            color: #1d1d1f;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #d1d1d6;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #ffffff;
+            transition: all 0.2s ease;
+            font-family: 'SF Pro Text', sans-serif;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #007aff;
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #86868b;
+        }
+
+        .password-requirements {
+            background: rgba(0, 122, 255, 0.05);
+            border: 1px solid rgba(0, 122, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 8px;
+            font-size: 14px;
+            color: #007aff;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #007aff;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #0056cc;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background: #86868b;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-danger {
+            background: #ff3b30;
+            color: #ffffff;
+        }
+
+        .btn-danger:hover {
+            background: #d70015;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #86868b;
+            border: 1.5px solid #d1d1d6;
+        }
+
+        .btn-secondary:hover {
+            background: #f5f5f7;
+        }
+
+        /* Messages */
+        .message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .message-error {
+            background: rgba(255, 59, 48, 0.1);
+            border: 1px solid rgba(255, 59, 48, 0.2);
+            color: #ff3b30;
+        }
+
+        .message-success {
+            background: rgba(40, 205, 65, 0.1);
+            border: 1px solid rgba(40, 205, 65, 0.2);
+            color: #28cd41;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #f5f5f7;
+            border: 1px solid #e5e5e7;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .info-box-text {
+            font-size: 14px;
+            color: #86868b;
+            line-height: 1.4;
+        }
+
+        /* Danger Zone */
+        .danger-zone {
+            border: 1px solid rgba(255, 59, 48, 0.2);
+        }
+
+        .danger-zone .card-header {
+            background: rgba(255, 59, 48, 0.05);
+            border-bottom-color: rgba(255, 59, 48, 0.1);
+        }
+
+        .danger-zone .card-title {
+            color: #ff3b30;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px 16px;
+            }
+            
+            .header-content {
+                padding: 0 16px;
+            }
+            
+            .card-content {
+                padding: 20px;
+            }
+            
+            .card-header {
+                padding: 16px 20px;
+            }
+            
+            .page-title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <button class="back-btn" onclick="window.location.href='/dashboard/'">
+                ← Dashboard
+            </button>
+            <h1 class="header-title">Einstellungen</h1>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <h2 class="page-title">Einstellungen</h2>
+        <p class="page-subtitle">Verwalten Sie Ihr Konto und Ihre Sicherheitseinstellungen</p>
+
+        <!-- Account Information -->
+        <div class="settings-card">
+            <div class="card-header">
+                <h3 class="card-title">Account Information</h3>
+                <p class="card-subtitle">Ihre Kontodaten im Überblick</p>
+            </div>
+            <div class="card-content">
+                <div class="info-box">
+                    <div class="info-box-title">Proposal Code</div>
+                    <div class="info-box-text" id="accountProposalCode">PROP-XXXX-XXXX</div>
+                </div>
+                
+                <div class="info-box">
+                    <div class="info-box-title">Account erstellt</div>
+                    <div class="info-box-text" id="accountCreated">Heute</div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-title">Letzter Login</div>
+                    <div class="info-box-text" id="lastLogin">Gerade eben</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Password Settings -->
+        <div class="settings-card">
+            <div class="card-header">
+                <h3 class="card-title">Passwort ändern</h3>
+                <p class="card-subtitle">Aktualisieren Sie Ihr Passwort für mehr Sicherheit</p>
+            </div>
+            <div class="card-content">
+                <!-- Messages -->
+                <div id="passwordErrorMessage" class="message message-error"></div>
+                <div id="passwordSuccessMessage" class="message message-success"></div>
+
+                <form id="passwordForm">
+                    <div class="form-group">
+                        <label class="form-label" for="currentPassword">Aktuelles Passwort</label>
+                        <input 
+                            type="password" 
+                            id="currentPassword" 
+                            class="form-input"
+                            placeholder="Ihr aktuelles Passwort"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="newPassword">Neues Passwort</label>
+                        <input 
+                            type="password" 
+                            id="newPassword" 
+                            class="form-input"
+                            placeholder="Neues Passwort (mindestens 5 Zeichen)"
+                            required
+                            minlength="5"
+                        >
+                        <div class="password-requirements">
+                            💡 Ihr neues Passwort muss mindestens 5 Zeichen lang sein
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="confirmPassword">Passwort bestätigen</label>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            class="form-input"
+                            placeholder="Neues Passwort wiederholen"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="changePasswordBtn">
+                        Passwort ändern
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Preferences -->
+        <div class="settings-card">
+            <div class="card-header">
+                <h3 class="card-title">Einstellungen</h3>
+                <p class="card-subtitle">Personalisieren Sie Ihr Dashboard-Erlebnis</p>
+            </div>
+            <div class="card-content">
+                <div class="info-box">
+                    <div class="info-box-title">E-Mail Benachrichtigungen</div>
+                    <div class="info-box-text">
+                        Benachrichtigungen zu Ihrem Proposal-Status erhalten Sie automatisch an Ihre hinterlegte E-Mail Adresse.
+                        <br><br>
+                        <a href="/dashboard/profile.html" style="color: #007aff; text-decoration: none;">
+                            E-Mail Adresse im Profil ändern →
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <div class="info-box-title">Dashboard-Design</div>
+                    <div class="info-box-text">Ihr Dashboard verwendet automatisch das optimale Design für Ihr Gerät.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="settings-card danger-zone">
+            <div class="card-header">
+                <h3 class="card-title">Danger Zone</h3>
+                <p class="card-subtitle">Irreversible Aktionen - Vorsicht geboten</p>
+            </div>
+            <div class="card-content">
+                <div class="info-box">
+                    <div class="info-box-title">Account löschen</div>
+                    <div class="info-box-text">
+                        Das Löschen Ihres Accounts kann nicht rückgängig gemacht werden. 
+                        Ihr Proposal und alle Daten bleiben erhalten, aber der Dashboard-Zugang wird entfernt.
+                        <br><br>
+                        Kontaktieren Sie unseren Support, wenn Sie Ihren Account löschen möchten.
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-secondary" id="contactSupportBtn">
+                    Support kontaktieren
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Check Authentication
+        function checkAuth() {
+            const isAuthenticated = sessionStorage.getItem('customerAuthenticated');
+            const proposalCode = sessionStorage.getItem('proposalCode');
+            
+            if (!isAuthenticated || !proposalCode) {
+                window.location.href = '/client-login.html';
+                return false;
+            }
+            
+            // Set account info
+            document.getElementById('accountProposalCode').textContent = proposalCode;
+            return true;
+        }
+
+        // Show/Hide Messages
+        function showMessage(elementId, message, duration = 5000) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+            
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, duration);
+        }
+
+        // Set Loading State for Button
+        function setButtonLoading(button, isLoading, originalText) {
+            if (isLoading) {
+                button.disabled = true;
+                button.innerHTML = '<span class="loading-spinner"></span>Wird geändert...';
+            } else {
+                button.disabled = false;
+                button.textContent = originalText;
+            }
+        }
+
+        // Password Form Handler
+        document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const changeBtn = document.getElementById('changePasswordBtn');
+
+            // Validation
+            if (newPassword !== confirmPassword) {
+                showMessage('passwordErrorMessage', 'Die Passwörter stimmen nicht überein.');
+                return;
+            }
+
+            if (newPassword.length < 5) {
+                showMessage('passwordErrorMessage', 'Das neue Passwort muss mindestens 5 Zeichen lang sein.');
+                return;
+            }
+
+            if (currentPassword === newPassword) {
+                showMessage('passwordErrorMessage', 'Das neue Passwort muss sich vom aktuellen unterscheiden.');
+                return;
+            }
+
+            setButtonLoading(changeBtn, true, 'Passwort ändern');
+
+            try {
+                const proposalCode = sessionStorage.getItem('proposalCode');
+                
+                // First validate current password
+                const validateResponse = await fetch('https://optionai.optionai.at/webhook/validate-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        'Proposal Code': proposalCode,
+                        'password': currentPassword
+                    })
+                });
+
+                if (!validateResponse.ok) {
+                    throw new Error('Aktuelles Passwort ist falsch');
+                }
+
+                // Then update password
+                const updateResponse = await fetch('https://optionai.optionai.at/webhook/set-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        'proposal_code': proposalCode,
+                        'password': newPassword
+                    })
+                });
+
+                if (updateResponse.ok) {
+                    showMessage('passwordSuccessMessage', 'Passwort erfolgreich geändert!', 3000);
+                    
+                    // Clear form
+                    document.getElementById('passwordForm').reset();
+                    
+                } else {
+                    throw new Error('Passwort konnte nicht geändert werden');
+                }
+
+            } catch (error) {
+                console.error('Password change error:', error);
+                showMessage('passwordErrorMessage', error.message || 'Fehler beim Ändern des Passworts. Bitte versuchen Sie es erneut.');
+            } finally {
+                setButtonLoading(changeBtn, false, 'Passwort ändern');
+            }
+        });
+
+        // Contact Support Handler
+        document.getElementById('contactSupportBtn').addEventListener('click', () => {
+            const proposalCode = sessionStorage.getItem('proposalCode');
+            const subject = encodeURIComponent('Dashboard Support - ' + proposalCode);
+            const body = encodeURIComponent(`Hallo,\n\nich benötige Unterstützung mit meinem Dashboard-Account.\n\nProposal Code: ${proposalCode}\n\nMein Anliegen:\n\n\n\nVielen Dank!`);
+            
+            window.open(`mailto:support@option.ai?subject=${subject}&body=${body}`, '_self');
+        });
+
+        // Set current date/time info
+        function setAccountInfo() {
+            const now = new Date();
+            document.getElementById('accountCreated').textContent = now.toLocaleDateString('de-DE');
+            document.getElementById('lastLogin').textContent = 'Gerade eben';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            if (checkAuth()) {
+                setAccountInfo();
+            }
+        });
+    </script>
+</body>
+</html>
