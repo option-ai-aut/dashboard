@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposals - option.ai</title>
+    <style>
+        /* SF Pro Font Import */
+        @font-face {
+            font-family: 'SF Pro Display';
+            src: url('../bilder/SF-Pro-Display-Bold.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('../bilder/SF-Pro-Text-Regular.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('../bilder/SF-Pro-Text-Medium.otf') format('opentype');
+            font-weight: 500;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('../bilder/SF-Pro-Text-Bold.otf') format('opentype');
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #161b22;
+            border-right: 1px solid #30363d;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 48px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(48, 54, 61, 0.5);
+        }
+
+        .logo-section img {
+            width: 32px;
+            height: 32px;
+        }
+
+        .logo-text {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #e6edf3;
+        }
+
+        .nav-section {
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #7d8590;
+            font-weight: 500;
+            margin-bottom: 8px;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 16px;
+        }
+
+        .nav-item:hover {
+            background: rgba(48, 54, 61, 0.3);
+            color: #e6edf3;
+        }
+
+        .nav-item.active {
+            background: #30363d;
+            color: #e6edf3;
+        }
+
+        .nav-icon {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .user-section {
+            padding-top: 24px;
+            border-top: 1px solid rgba(48, 54, 61, 0.5);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(48, 54, 61, 0.3);
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            font-size: 14px;
+        }
+
+        .user-details h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e6edf3;
+            margin-bottom: 2px;
+        }
+
+        .user-details p {
+            font-size: 12px;
+            color: #7d8590;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 12px 20px;
+            background: transparent;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            color: #7d8590;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(248, 81, 73, 0.1);
+            border-color: #f85149;
+            color: #f85149;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 40px 48px;
+            overflow-y: auto;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: #e6edf3;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .page-subtitle {
+            font-size: 18px;
+            color: #7d8590;
+            line-height: 1.5;
+        }
+
+        /* Proposals Grid */
+        .proposals-grid {
+            display: grid;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .proposals-section {
+            background: #161b22;
+            border-radius: 20px;
+            border: 1px solid rgba(48, 54, 61, 0.5);
+            padding: 32px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: #e6edf3;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background: rgba(251, 188, 4, 0.15);
+            color: #fbbf04;
+            border: 1px solid rgba(251, 188, 4, 0.3);
+        }
+
+        .status-approved {
+            background: rgba(40, 205, 65, 0.15);
+            color: #28cd41;
+            border: 1px solid rgba(40, 205, 65, 0.3);
+        }
+
+        .status-signed {
+            background: rgba(64, 160, 251, 0.15);
+            color: #40a0fb;
+            border: 1px solid rgba(64, 160, 251, 0.3);
+        }
+
+        .proposals-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .proposal-card {
+            background: rgba(48, 54, 61, 0.3);
+            border: 1px solid rgba(48, 54, 61, 0.5);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .proposal-card:hover {
+            background: rgba(48, 54, 61, 0.5);
+            border-color: rgba(48, 54, 61, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .proposal-header {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            margin-bottom: 16px;
+        }
+
+        .proposal-code {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #e6edf3;
+        }
+
+        .proposal-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .meta-label {
+            font-size: 12px;
+            color: #7d8590;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .meta-value {
+            font-size: 16px;
+            color: #e6edf3;
+            font-weight: 500;
+        }
+
+        .proposal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(48, 54, 61, 0.5);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #40a0fb;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #2188ff;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(48, 54, 61, 0.5);
+            color: #e6edf3;
+            border: 1px solid rgba(48, 54, 61, 0.8);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(48, 54, 61, 0.8);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: #7d8590;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #e6edf3;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Loading States */
+        .loading-skeleton {
+            background: linear-gradient(90deg, rgba(48, 54, 61, 0.3) 25%, rgba(48, 54, 61, 0.5) 50%, rgba(48, 54, 61, 0.3) 75%);
+            background-size: 200% 100%;
+            animation: loading 2s infinite;
+            border-radius: 8px;
+            height: 20px;
+            margin-bottom: 12px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* PDF Viewer Modal */
+        .pdf-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .pdf-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .pdf-viewer {
+            background: #161b22;
+            border-radius: 12px;
+            width: 90%;
+            height: 90%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .pdf-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .pdf-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #e6edf3;
+        }
+
+        .close-pdf {
+            background: transparent;
+            border: none;
+            color: #7d8590;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .close-pdf:hover {
+            background: rgba(248, 81, 73, 0.1);
+            color: #f85149;
+        }
+
+        .pdf-content {
+            flex: 1;
+            padding: 24px;
+            overflow: auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+            
+            .main-content {
+                padding: 32px 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 16px;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+            
+            .main-content {
+                padding: 24px 16px;
+            }
+            
+            .page-title {
+                font-size: 28px;
+            }
+            
+            .proposals-section {
+                padding: 24px;
+            }
+            
+            .proposal-meta {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo-section">
+                <img src="/Users/dennis/client dashboard/Bilder/option Icon Blue.png" alt="option.ai" />
+                <span class="logo-text">option.ai</span>
+            </div>
+            
+            <div class="nav-section">
+                <a href="/dashboard/" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Analytics</span>
+                </a>
+                <a href="/dashboard/proposals.html" class="nav-item active">
+                    <span class="nav-icon">📋</span>
+                    <span>Proposals</span>
+                </a>
+            </div>
+            
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">—</div>
+                    <div class="user-details">
+                        <h4 id="userName">Kunde</h4>
+                        <p id="userCode">PROP-XXXX</p>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    Abmelden
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Proposals</h1>
+                <p class="page-subtitle">Überblick über alle Ihre Angebote und deren Status</p>
+            </div>
+
+            <div class="proposals-grid" id="proposalsGrid">
+                <!-- Loading State -->
+                <div class="proposals-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            ⏳ Offene Angebote
+                            <span class="status-badge status-pending">Bearbeitung</span>
+                        </h2>
+                    </div>
+                    <div class="loading-skeleton"></div>
+                    <div class="loading-skeleton"></div>
+                    <div class="loading-skeleton"></div>
+                </div>
+
+                <div class="proposals-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            ✅ Unterschrieben
+                            <span class="status-badge status-signed">Abgeschlossen</span>
+                        </h2>
+                    </div>
+                    <div class="loading-skeleton"></div>
+                    <div class="loading-skeleton"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- PDF Viewer Modal -->
+    <div class="pdf-modal" id="pdfModal">
+        <div class="pdf-viewer">
+            <div class="pdf-header">
+                <h3 class="pdf-title" id="pdfTitle">Proposal PDF</h3>
+                <button class="close-pdf" onclick="closePdfViewer()">×</button>
+            </div>
+            <div class="pdf-content" id="pdfContent">
+                <iframe id="pdfFrame" width="100%" height="100%" style="border: none; border-radius: 8px;"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check Authentication
+        function checkAuth() {
+            const isAuthenticated = sessionStorage.getItem('customerAuthenticated');
+            const proposalCode = sessionStorage.getItem('proposalCode');
+            
+            if (!isAuthenticated || !proposalCode) {
+                window.location.href = '/client-login.html';
+                return false;
+            }
+            
+            // Update user info
+            const userCode = document.getElementById('userCode');
+            const userAvatar = document.getElementById('userAvatar');
+            const userName = document.getElementById('userName');
+            
+            userCode.textContent = proposalCode;
+            userAvatar.textContent = proposalCode.split('-')[1] ? proposalCode.split('-')[1].substring(0, 2) : 'PR';
+            
+            return true;
+        }
+
+        // Logout function
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = '/client-login.html';
+        }
+
+        // Load proposals data
+        async function loadProposals() {
+            const proposalCode = sessionStorage.getItem('proposalCode');
+            
+            if (!proposalCode || proposalCode === 'null' || proposalCode === 'undefined') {
+                console.error('Invalid proposalCode, redirecting to login');
+                window.location.href = '/client-login.html';
+                return;
+            }
+            
+            console.log('Making webhook call with proposalCode:', proposalCode);
+            console.log('Full URL:', `https://optionai.optionai.at/webhook/get-client?proposal_code=${proposalCode}`);
+            
+            try {
+                // Try to use cached data first
+                const cachedData = sessionStorage.getItem('clientData');
+                if (cachedData) {
+                    const data = JSON.parse(cachedData);
+                    displayProposals(data);
+                    return;
+                }
+
+                // Fetch from API
+                const response = await fetch(`https://optionai.optionai.at/webhook/get-client?proposal_code=${proposalCode}`, {
+                    method: 'GET'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    displayProposals(data);
+                    sessionStorage.setItem('clientData', JSON.stringify(data));
+                } else {
+                    showError('Proposals konnten nicht geladen werden');
+                }
+
+            } catch (error) {
+                console.error('Error loading proposals:', error);
+                showError('Fehler beim Laden der Proposals');
+            }
+        }
+
+        // Display proposals
+        function displayProposals(data) {
+            const clientData = Array.isArray(data) ? data[0] : data;
+            const proposalsGrid = document.getElementById('proposalsGrid');
+            
+            if (!clientData) {
+                proposalsGrid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><div class="empty-state-title">Keine Proposals gefunden</div><div class="empty-state-text">Es wurden keine Proposals für Ihren Account gefunden.</div></div>';
+                return;
+            }
+
+            const status = clientData.status || 'draft';
+            const proposalCode = clientData['Proposal Code'];
+            const fullName = clientData['Full Name'] || 'Unbekannt';
+            const company = clientData['Company'] || 'Unbekannt';
+            const price = clientData['Price'] || 'Nicht festgelegt';
+            const signedPdfUrl = clientData['Signed PDF'];
+
+            // Create proposal card HTML
+            const proposalCard = `
+                <div class="proposal-card" onclick="viewProposal('${proposalCode}')">
+                    <div class="proposal-header">
+                        <div class="proposal-code">${proposalCode}</div>
+                    </div>
+                    <div class="proposal-meta">
+                        <div class="meta-item">
+                            <div class="meta-label">Kunde</div>
+                            <div class="meta-value">${fullName}</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">Unternehmen</div>
+                            <div class="meta-value">${company}</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">Wert</div>
+                            <div class="meta-value">€${price}</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">Status</div>
+                            <div class="meta-value">${getStatusText(status)}</div>
+                        </div>
+                    </div>
+                    <div class="proposal-actions">
+                        ${status === 'signed' && signedPdfUrl ? 
+                            `<button class="btn btn-primary" onclick="event.stopPropagation(); viewPDF('${signedPdfUrl}', '${proposalCode}')">📄 PDF anzeigen</button>` :
+                            `<button class="btn btn-secondary" onclick="event.stopPropagation()">⏳ ${getStatusText(status)}</button>`
+                        }
+                    </div>
+                </div>
+            `;
+
+            let openProposalsHTML = '';
+            let signedProposalsHTML = '';
+
+            if (status === 'signed') {
+                signedProposalsHTML = proposalCard;
+            } else {
+                openProposalsHTML = proposalCard;
+            }
+
+            // Render sections
+            proposalsGrid.innerHTML = `
+                <div class="proposals-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            ⏳ Offene Angebote
+                            <span class="status-badge status-pending">Bearbeitung</span>
+                        </h2>
+                    </div>
+                    <div class="proposals-list">
+                        ${openProposalsHTML || '<div class="empty-state"><div class="empty-state-icon">📋</div><div class="empty-state-title">Keine offenen Angebote</div><div class="empty-state-text">Alle Ihre Angebote sind bereits abgeschlossen.</div></div>'}
+                    </div>
+                </div>
+
+                <div class="proposals-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            ✅ Unterschrieben
+                            <span class="status-badge status-signed">Abgeschlossen</span>
+                        </h2>
+                    </div>
+                    <div class="proposals-list">
+                        ${signedProposalsHTML || '<div class="empty-state"><div class="empty-state-icon">✅</div><div class="empty-state-title">Keine unterschriebenen Angebote</div><div class="empty-state-text">Sobald Sie ein Angebot unterschreiben, erscheint es hier.</div></div>'}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Get status text in German
+        function getStatusText(status) {
+            const statusMap = {
+                'draft': 'Entwurf',
+                'pending': 'In Bearbeitung', 
+                'approved': 'Genehmigt',
+                'signed': 'Unterschrieben'
+            };
+            return statusMap[status] || 'Unbekannt';
+        }
+
+        // View proposal details
+        function viewProposal(proposalCode) {
+            // Navigate back to main proposal view
+            window.location.href = `/index.html?code=${proposalCode}`;
+        }
+
+        // View PDF function
+        function viewPDF(pdfUrl, proposalCode) {
+            const modal = document.getElementById('pdfModal');
+            const frame = document.getElementById('pdfFrame');
+            const title = document.getElementById('pdfTitle');
+            
+            title.textContent = `${proposalCode} - Signed PDF`;
+            frame.src = pdfUrl;
+            modal.classList.add('active');
+        }
+
+        // Close PDF viewer
+        function closePdfViewer() {
+            const modal = document.getElementById('pdfModal');
+            const frame = document.getElementById('pdfFrame');
+            
+            modal.classList.remove('active');
+            frame.src = '';
+        }
+
+        // Show error message
+        function showError(message) {
+            console.error(message);
+            // You could add a toast notification here
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('pdfModal').addEventListener('click', (e) => {
+            if (e.target.id === 'pdfModal') {
+                closePdfViewer();
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            if (checkAuth()) {
+                loadProposals();
+            }
+        });
+    </script>
+</body>
+</html>

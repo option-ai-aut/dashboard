@@ -24,6 +24,7 @@ Backend = **n8n Webhooks + Airtable + Dual Auth-System** – steht bereits.
 | **Kunden Login validieren** | `https://optionai.optionai.at/webhook/validate-password` | POST | `{Proposal Code, password}` | none | client-login.html, dashboard/settings.html |
 | **Unified Settings speichern** | `https://optionai.optionai.at/webhook/save-settings` | POST | `{proposal_code, instantly_api_key?, avg_deal_value?, password?, ...}` | none | dashboard/settings.html |
 | **Instantly Analytics laden** | `https://optionai.optionai.at/webhook/load-instantly-kpi` | POST | `{api_key}` | none | dashboard/index.html |
+| **Customer Client Data laden** | `https://optionai.optionai.at/webhook/get-client` | GET | `?proposal_code=PROP-…` | none | client-login.html, dashboard/index.html, dashboard/settings.html, dashboard/profile.html |
 
 > **Auth-Hinweis**: Aktuelle Implementation nutzt nur `sessionStorage.adminAuthenticated` - **kein JWT** implementiert.
 

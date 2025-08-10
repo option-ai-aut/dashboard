@@ -571,14 +571,8 @@
                     
                     // Pre-load client data for dashboard
                     try {
-                        const clientResponse = await fetch('https://optionai.optionai.at/webhook/get-client', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                proposal_code: proposalCode
-                            })
+                        const clientResponse = await fetch(`https://optionai.optionai.at/webhook/get-client?proposal_code=${proposalCode}`, {
+                            method: 'GET'
                         });
                         
                         if (clientResponse.ok) {
@@ -648,14 +642,8 @@
                     
                     // Pre-load client data for dashboard
                     try {
-                        const clientResponse = await fetch('https://optionai.optionai.at/webhook/get-client', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                proposal_code: proposalCode
-                            })
+                        const clientResponse = await fetch(`https://optionai.optionai.at/webhook/get-client?proposal_code=${proposalCode}`, {
+                            method: 'GET'
                         });
                         
                         if (clientResponse.ok) {

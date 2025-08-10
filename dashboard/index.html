@@ -42,107 +42,518 @@
 
         body {
             font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f7;
-            color: #1d1d1f;
+            background: #0d1117;
+            color: #e6edf3;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%);
-            color: white;
-            padding: 25px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            width: 100%;
+        /* Layout Container */
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
         }
 
-        .header-content {
+        /* Sidebar */
+        .sidebar {
+            width: 84px;
+            background: #161b22;
+            border-right: 1px solid #30363d;
+            padding: 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar:hover {
+            width: 240px;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            padding: 24px 0;
+        }
+
+        .sidebar-logo {
+            padding: 24px 24px 32px 24px;
+            border-bottom: 1px solid #30363d;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+        }
+
+        .sidebar-logo img {
+            height: 28px;
+            width: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 40px;
+            padding: 0 8px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-menu a,
+        .sidebar-menu button {
+            display: flex;
+            align-items: center;
             width: 100%;
-            padding: 0 50px;
+            padding: 12px 0;
+            color: #e6edf3;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            position: relative;
+            justify-content: flex-start;
+            overflow: hidden;
+        }
+
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-left: 22px;
+        }
+
+        .menu-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        .menu-text {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+            margin-left: 64px;
+        }
+
+        .sidebar:hover .menu-text {
+            opacity: 1;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu button:hover {
+            background: #21262d;
+        }
+
+        .sidebar-menu .active {
+            background: #30363d;
+            color: #e6edf3;
+            font-weight: 600;
+        }
+
+        .sidebar-menu .active:hover {
+            background: #373e47;
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid #30363d;
+            padding: 16px 0;
+            margin-top: auto;
+        }
+
+        .sidebar-footer .menu-icon {
+            margin-left: 30px;
+        }
+
+        .user-info {
+            padding: 12px;
+            background: #21262d;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border: 1px solid #30363d;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover .user-info {
+            opacity: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: #e6edf3;
+            margin-bottom: 2px;
+        }
+
+        .user-code {
+            font-size: 11px;
+            color: #7d8590;
+        }
+
+        /* Main Content */
+        .main-container {
+            flex: 1;
+            margin-left: 84px;
+            background: #0d1117;
+            transition: margin-left 0.3s ease;
+        }
+
+        .top-bar {
+            background: rgba(22, 27, 34, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(48, 54, 61, 0.6);
+            padding: 20px 32px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .top-bar-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .header-left {
+        .page-header h1 {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #e6edf3;
+            margin: 0;
+        }
+
+        .page-header p {
+            font-size: 16px;
+            color: #7d8590;
+            margin: 4px 0 0 0;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .breadcrumb-item {
+            font-size: 13px;
+            color: #7d8590;
+            font-weight: 500;
+        }
+
+        .breadcrumb-item.current {
+            color: #e6edf3;
+        }
+
+        .breadcrumb-separator {
+            color: #484f58;
+            font-weight: 300;
+        }
+
+        .header-actions {
             display: flex;
             align-items: center;
             gap: 16px;
         }
 
-        .logo img {
-            height: 1.8rem;
-            width: auto;
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(125, 133, 144, 0.1);
+            border-radius: 20px;
+        }
+
+        .status-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #7d8590;
+        }
+
+        .user-info-header {
+            text-align: right;
+        }
+
+        .user-info-header .user-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #e6edf3;
+            margin-bottom: 2px;
+        }
+
+        .user-info-header .user-code {
+            font-size: 12px;
+            color: #7d8590;
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 60px 60px 60px 60px;
+        }
+
+        /* Dashboard Main Grid */
+        .dashboard-main-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Primary Stats Row */
+        .stats-primary-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .primary-stat-card {
+            background: #161b22;
+            border-radius: 24px;
+            padding: 48px;
+            border: 1px solid rgba(48, 54, 61, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 200px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .primary-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 20%, rgba(125, 133, 144, 0.03) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .primary-stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .primary-stat-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(125, 133, 144, 0.8);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .primary-stat-content {
+            flex: 1;
+        }
+
+        .primary-stat-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #7d8590;
+            margin-bottom: 16px;
             display: block;
         }
 
-        .header-title {
+        .primary-stat-value {
             font-family: 'SF Pro Display', sans-serif;
-            font-size: 20px;
+            font-size: 40px;
             font-weight: 700;
-            color: white;
+            color: #e6edf3;
+            margin-bottom: 8px;
+            line-height: 1;
         }
 
-        .header-right {
+        .primary-stat-description {
+            font-size: 13px;
+            color: #7d8590;
+            opacity: 0.8;
+        }
+
+        .primary-stat-visual {
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: center;
         }
 
-        .proposal-code-badge {
-            background: rgba(102, 179, 255, 0.2);
-            color: #66b3ff;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
+        .stat-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(125, 133, 144, 0.1) 0%, rgba(125, 133, 144, 0.2) 100%);
+            border: 2px solid rgba(125, 133, 144, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
         }
 
-        .logout-btn {
-            background: transparent;
-            color: white;
-            border: 2px solid #66b3ff;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
+        .stat-circle::after {
+            content: '';
+            width: 24px;
+            height: 24px;
+            background: rgba(125, 133, 144, 0.6);
+            border-radius: 50%;
         }
 
-        .logout-btn:hover {
-            background: #66b3ff;
-            color: #000000;
+        .revenue-card .stat-circle {
+            background: linear-gradient(135deg, rgba(125, 133, 144, 0.15) 0%, rgba(125, 133, 144, 0.25) 100%);
+            border-color: rgba(125, 133, 144, 0.4);
         }
 
-        /* Main Content */
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 32px 24px;
+        /* System Status Card */
+        .system-status-card {
+            background: #161b22;
+            border-radius: 24px;
+            padding: 60px;
+            border: 1px solid rgba(48, 54, 61, 0.5);
+            transition: all 0.3s ease;
+            margin-top: 40px;
         }
 
-        .welcome-section {
+        .system-status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 32px;
         }
 
-        .welcome-title {
+        .system-info h3 {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: #e6edf3;
+            margin-bottom: 8px;
+        }
+
+        .system-info p {
+            font-size: 14px;
+            color: #7d8590;
+            margin: 0;
+        }
+
+        .system-status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            background: rgba(125, 133, 144, 0.1);
+            border-radius: 25px;
+            border: 1px solid rgba(125, 133, 144, 0.2);
+        }
+
+        .system-status-content {
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .system-loading {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: #7d8590;
+            font-size: 15px;
+        }
+
+        /* Stats Cards */
+        .stats-overview {
+            margin-bottom: 60px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .stat-card {
+            background: #161b22;
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid #30363d;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #58a6ff 0%, #a5a5a5 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card:hover {
+            border-color: #58a6ff;
+            box-shadow: 0 8px 25px rgba(88, 166, 255, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .stat-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #7d8590;
+        }
+
+        .stat-trend {
+            font-size: 12px;
+            font-weight: 600;
+            color: #7d8590;
+        }
+
+        .stat-trend.negative {
+            color: #7d8590;
+        }
+
+        .stat-value {
             font-family: 'SF Pro Display', sans-serif;
             font-size: 32px;
             font-weight: 700;
-            color: #1d1d1f;
+            color: #e6edf3;
             margin-bottom: 8px;
-            letter-spacing: -0.02em;
         }
 
-        .welcome-subtitle {
-            font-size: 17px;
-            color: #86868b;
-            margin-bottom: 24px;
+        .stat-description {
+            font-size: 13px;
+            color: #7d8590;
         }
 
         /* Dashboard Grid */
@@ -436,6 +847,50 @@
             .automations-grid {
                 grid-template-columns: 1fr;
             }
+
+            .automations-main-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .automation-main-card {
+                padding: 24px;
+            }
+
+            .automation-main-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 24px;
+                margin-right: 12px;
+            }
+
+            .automation-main-title {
+                font-size: 18px;
+            }
+
+            .section-title {
+                font-size: 20px;
+            }
+            
+            /* Mobile Sidebar */
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 16px;
+            }
+            
+            .main-container {
+                margin-left: 0;
+            }
+            
+            .sidebar-footer {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                right: auto;
+                margin-top: 32px;
+            }
         }
 
         /* Toast Notifications */
@@ -460,124 +915,594 @@
             transform: translateY(0);
             opacity: 1;
         }
+
+        /* Main Automations Section */
+        .automations-main-section {
+            margin-bottom: 48px;
+        }
+
+        .section-header {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 4px;
+            letter-spacing: -0.01em;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: #86868b;
+        }
+
+        .automations-main-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+        }
+
+        .automation-main-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.06);
+            border: 0.5px solid rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .automation-main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+        }
+
+        .automation-main-card.placeholder-main {
+            border-style: dashed;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .automation-main-card.placeholder-main::before {
+            background: #d1d1d6;
+        }
+
+        .automation-main-card:hover:not(.placeholder-main) {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .automation-main-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .automation-main-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(0, 122, 255, 0.1) 0%, rgba(88, 86, 214, 0.1) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-right: 16px;
+        }
+
+        .automation-main-info {
+            flex: 1;
+        }
+
+        .automation-main-title {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 4px;
+        }
+
+        .automation-main-subtitle {
+            font-size: 14px;
+            color: #86868b;
+        }
+
+        .automation-main-stats {
+            min-height: 120px;
+        }
+
+        .automation-main-stats .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .automation-main-stats .stat-item {
+            background: rgba(248, 249, 250, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .automation-main-stats .stat-item:hover {
+            background: rgba(248, 249, 250, 1);
+            transform: translateY(-1px);
+        }
+
+        .automation-main-stats .stat-value {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 4px;
+        }
+
+        .automation-main-stats .stat-label {
+            font-size: 13px;
+            color: #86868b;
+            font-weight: 500;
+        }
+
+        .automation-main-stats .stat-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            color: #86868b;
+            font-size: 15px;
+        }
+
+        .automation-main-stats .stat-loading .loading-spinner {
+            margin-right: 12px;
+        }
+
+        .automation-main-stats .stat-error {
+            color: #ff3b30;
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        .coming-soon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 120px;
+            color: #86868b;
+            font-size: 15px;
+            font-style: italic;
+        }
+
+        /* Status Indicators */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #7d8590;
+        }
+
+        .status-dot.active {
+            background: #7d8590;
+        }
+
+        .status-dot.loading {
+            background: #7d8590;
+            animation: pulse 1.5s ease-in-out infinite alternate;
+        }
+
+        .status-dot.inactive {
+            background: #7d8590;
+        }
+
+        .status-text {
+            font-size: 14px;
+            color: #7d8590;
+            font-weight: 500;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-header h2 {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: #e6edf3;
+            margin: 0;
+        }
+
+        .automation-status-section {
+            background: #161b22;
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid #30363d;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .automation-status-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #7d8590 0%, #a5a5a5 100%);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .loading-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 40px;
+            color: #7d8590;
+        }
+
+        /* New Automation Master Card */
+        .automation-master-card {
+            background: #161b22;
+            border-radius: 24px;
+            padding: 60px 80px;
+            border: 1px solid rgba(48, 54, 61, 0.5);
+            margin: 40px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .automation-card-header {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 48px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(48, 54, 61, 0.5);
+        }
+
+        .automation-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(125, 133, 144, 0.1) 0%, rgba(125, 133, 144, 0.2) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(125, 133, 144, 0.3);
+            position: relative;
+        }
+
+        .automation-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: #7d8590;
+        }
+
+        .automation-info {
+            flex: 1;
+        }
+
+        .automation-title {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #e6edf3;
+            margin-bottom: 8px;
+        }
+
+        .automation-subtitle {
+            font-size: 16px;
+            color: #7d8590;
+            margin: 0 0 12px 0;
+        }
+
+        .automation-live-status {
+            font-size: 14px;
+            color: #e6edf3;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .automation-sync-time {
+            font-size: 13px;
+            color: #7d8590;
+            margin: 0;
+            opacity: 0.8;
+        }
+
+        .automation-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 24px;
+            background: rgba(125, 133, 144, 0.1);
+            border-radius: 25px;
+            border: 1px solid rgba(125, 133, 144, 0.2);
+        }
+
+        .automation-kpis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+
+        .kpi-card {
+            background: rgba(48, 54, 61, 0.3);
+            border: 1px solid rgba(48, 54, 61, 0.5);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, rgba(125, 133, 144, 0.6) 0%, rgba(125, 133, 144, 0.3) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            background: rgba(48, 54, 61, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .kpi-card:hover::before {
+            opacity: 1;
+        }
+
+        .kpi-card {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .kpi-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(125, 133, 144, 0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(125, 133, 144, 0.2);
+        }
+
+        .kpi-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: #7d8590;
+        }
+
+        .kpi-content {
+            flex: 1;
+        }
+
+        .kpi-value {
+            font-family: 'SF Pro Display', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: #e6edf3;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .kpi-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #e6edf3;
+            margin-bottom: 4px;
+        }
+
+        .kpi-description {
+            font-size: 14px;
+            color: #7d8590;
+            opacity: 0.8;
+        }
+
+        .revenue-kpi .kpi-icon {
+            background: linear-gradient(135deg, rgba(125, 133, 144, 0.15) 0%, rgba(125, 133, 144, 0.25) 100%);
+            border-color: rgba(125, 133, 144, 0.4);
+        }
+
+        .automation-status-footer {
+            padding: 32px;
+            background: rgba(48, 54, 61, 0.3);
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(48, 54, 61, 0.5);
+        }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <div class="header-left">
-                <div class="logo">
-                    <img src="../bilder/option Logo White.png" alt="option.ai" />
-                </div>
-                <h1 class="header-title">Dashboard</h1>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <img src="../bilder/option Icon Blue.png" alt="option.ai" />
             </div>
-            <div class="header-right">
-                <div class="proposal-code-badge" id="userNameBadge">
-                    Wird geladen...
-                </div>
-                <button class="logout-btn" id="logoutBtn">
-                    Abmelden
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Welcome Section -->
-        <section class="welcome-section">
-            <h2 class="welcome-title" id="welcomeTitle">Hallo</h2>
-            <p class="welcome-subtitle">Willkommen in deinem Persönlichen Dashboard</p>
-        </section>
-
-        <!-- Dashboard Grid -->
-        <div class="dashboard-grid">
-            <!-- Quick Actions Card - Zuerst -->
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <div class="card-icon actions-icon">⚡</div>
-                    <h3 class="card-title">Aktionen</h3>
-                </div>
-                <div class="card-content">
-                    <div class="action-grid">
-                        <button class="action-btn action-btn-primary" id="downloadPdfBtn">
-                            <span class="action-icon">📄</span>
-                            <span class="action-text">PDF herunterladen</span>
-                        </button>
-                        <a href="/dashboard/profile.html" class="action-btn">
-                            <span class="action-icon">👤</span>
-                            <span class="action-text">Profil bearbeiten</span>
-                        </a>
-                        <a href="/dashboard/settings.html" class="action-btn">
-                            <span class="action-icon">⚙️</span>
-                            <span class="action-text">Einstellungen</span>
-                        </a>
-                        <a href="/index.html" class="action-btn" target="_blank">
-                            <span class="action-icon">🔍</span>
-                            <span class="action-text">Proposal ansehen</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Profile Summary Card -->
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <div class="card-icon profile-icon">👤</div>
-                    <h3 class="card-title">Profil</h3>
-                </div>
-                <div class="card-content" id="profileContent">
-                    <div class="loading">
-                        <div class="loading-spinner"></div>
-                        Profil wird geladen...
-                    </div>
-                </div>
-            </div>
-
-            <!-- Automations Overview Card -->
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <div class="card-icon actions-icon">🤖</div>
-                    <h3 class="card-title">Automations</h3>
-                </div>
-                <div class="card-content">
-                    <div class="automations-grid">
-                        <!-- AI Cold Outreach System -->
-                        <div class="automation-card">
-                            <div class="automation-header">
-                                <div class="automation-icon">🤖</div>
-                                <div class="automation-info">
-                                    <div class="automation-title">AI Cold Outreach System</div>
-                                    <div class="automation-subtitle">Powered by Instantly</div>
+            
+            <div class="sidebar-content">
+                <div class="sidebar-section">
+                    <ul class="sidebar-menu">
+                        <li>
+                            <a href="/dashboard/" class="active">
+                                <div class="menu-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                                    </svg>
                                 </div>
-                                <div class="automation-status" id="instantlyStatus">
-                                    <div class="status-indicator loading"></div>
+                                <span class="menu-text">Analytics</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/dashboard/proposals.html">
+                                <div class="menu-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
+                                    </svg>
                                 </div>
+                                <span class="menu-text">Proposals</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="/dashboard/settings.html">
+                            <div class="menu-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                                </svg>
                             </div>
-                            <div class="automation-stats" id="instantlyStats">
-                                <div class="stat-loading">
-                                    <div class="loading-spinner"></div>
-                                    Statistiken werden geladen...
-                                </div>
+                            <span class="menu-text">Einstellungen</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button id="logoutBtn">
+                            <div class="menu-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                                </svg>
+                            </div>
+                            <span class="menu-text">Abmelden</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Container -->
+        <main class="main-container">
+            <div class="top-bar">
+                <div class="top-bar-content">
+                    <div class="page-header">
+                        <nav class="breadcrumb">
+                            <span class="breadcrumb-item">option.ai</span>
+                            <span class="breadcrumb-separator">•</span>
+                            <span class="breadcrumb-item current">Analytics</span>
+                        </nav>
+                        <h1 id="topBarTitle">Analytics Dashboard</h1>
+                        <p>Live-Performance Ihrer AI Cold Outreach Kampagnen</p>
+                    </div>
+                    <div class="header-actions">
+                        <div class="user-info-header">
+                            <div class="user-name" id="headerUserName">Wird geladen...</div>
+                            <div class="user-code" id="headerUserCode">PROP-XXXX-XXXX</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+                <!-- AI Cold Outreach Automation Card -->
+                <div class="automation-master-card">
+                    <div class="automation-card-header">
+                        <div class="automation-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                            </svg>
+                        </div>
+                        <div class="automation-info">
+                            <h2 class="automation-title">AI Cold Outreach System</h2>
+                            <p class="automation-subtitle">Powered by Instantly • Live Analytics Dashboard</p>
+                            <p class="automation-live-status" id="automationLiveStatus">System läuft erfolgreich</p>
+                            <p class="automation-sync-time" id="automationSyncTime">Letzte Synchronisation: --</p>
+                        </div>
+                        <div class="automation-status" id="instantlyStatus">
+                            <div class="status-dot loading"></div>
+                            <span class="status-text">Lädt...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="automation-kpis-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                                </svg>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-value" id="emailsSentValue">—</div>
+                                <div class="kpi-label">E-Mails gesendet</div>
+                                <div class="kpi-description">Insgesamt versendet</div>
                             </div>
                         </div>
                         
-                        <!-- Placeholder for future automations -->
-                        <div class="automation-card placeholder">
-                            <div class="automation-header">
-                                <div class="automation-icon">➕</div>
-                                <div class="automation-info">
-                                    <div class="automation-title">Weitere Automationen</div>
-                                    <div class="automation-subtitle">Bald verfügbar</div>
-                                </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v5l5.5-4H20c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                                </svg>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-value" id="repliesValue">—</div>
+                                <div class="kpi-label">Antworten</div>
+                                <div class="kpi-description">Positive Responses</div>
+                            </div>
+                        </div>
+                        
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-value" id="opportunitiesValue">—</div>
+                                <div class="kpi-label">Opportunities</div>
+                                <div class="kpi-description">Qualifizierte Leads</div>
+                            </div>
+                        </div>
+                        
+                        <div class="kpi-card revenue-kpi">
+                            <div class="kpi-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M7 15h2c0 1.08 1.37 2 3 2s3-.92 3-2c0-1.1-1.04-1.5-3.24-2.03C9.64 12.44 7 11.78 7 9c0-1.79 1.47-3.31 3.5-3.82V3h3v2.18C15.53 5.69 17 7.21 17 9h-2c0-1.08-1.37-2-3-2s-3 .92-3 2c0 1.1 1.04 1.5 3.24 2.03C14.36 11.56 17 12.22 17 15c0 1.79-1.47 3.31-3.5 3.82V21h-3v-2.18C8.47 18.31 7 16.79 7 15z"/>
+                                </svg>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-value" id="revenueValue">—</div>
+                                <div class="kpi-label">Potenzieller Umsatz</div>
+                                <div class="kpi-description">Erwarteter Wert</div>
                             </div>
                         </div>
                     </div>
+                    
                 </div>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
 
     <!-- Toast Notification -->
     <div class="toast" id="toast">
@@ -618,69 +1543,112 @@
 
         // Load Dashboard Data
         async function loadDashboardData() {
+            console.log('=== DASHBOARD LOAD DEBUG ===');
+            console.log('SessionStorage contents:', {
+                customerAuthenticated: sessionStorage.getItem('customerAuthenticated'),
+                proposalCode: sessionStorage.getItem('proposalCode'),
+                clientData: sessionStorage.getItem('clientData') ? 'EXISTS' : 'NOT_EXISTS'
+            });
+            
             const proposalCode = sessionStorage.getItem('proposalCode');
             
+            if (!proposalCode || proposalCode === 'null' || proposalCode === 'undefined') {
+                console.error('Invalid proposalCode, redirecting to login');
+                console.error('ProposalCode value:', JSON.stringify(proposalCode));
+                window.location.href = '/client-login.html';
+                return;
+            }
+            
+            console.log('✅ Valid proposalCode found:', proposalCode);
+            console.log('🚀 CALLING WEBHOOK NOW...');
+            console.log('Full URL:', `https://optionai.optionai.at/webhook/get-client?proposal_code=${proposalCode}`);
+            
+            // ALWAYS call webhook for debugging - ignore cached data temporarily
+            console.log('⚠️  FORCING WEBHOOK CALL (ignoring cache for debugging)');
+            
             try {
-                // Use dedicated customer dashboard webhook
-                const response = await fetch('https://optionai.optionai.at/webhook/get-client', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        proposal_code: proposalCode
-                    })
+                console.log('📡 Sending fetch request...');
+                const response = await fetch(`https://optionai.optionai.at/webhook/get-client?proposal_code=${proposalCode}`, {
+                    method: 'GET'
+                });
+                
+                console.log('📨 Response received:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    ok: response.ok,
+                    headers: Object.fromEntries(response.headers.entries())
                 });
                 
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('✅ Webhook data received:', data);
                     populateDashboard(data);
+                    sessionStorage.setItem('clientData', JSON.stringify(data));
+                    return data;
                 } else {
-                    throw new Error('Failed to load data');
+                    console.error('❌ Webhook failed with status:', response.status);
+                    throw new Error(`Webhook failed: ${response.status} ${response.statusText}`);
                 }
                 
             } catch (error) {
-                console.error('Dashboard data loading error:', error);
+                console.error('💥 Webhook call failed:', error);
+                console.error('Error details:', {
+                    name: error.name,
+                    message: error.message,
+                    stack: error.stack
+                });
                 showToast('Fehler beim Laden der Dashboard-Daten', 5000);
                 populateDashboardFallback();
+                return null;
             }
         }
 
         // Populate Dashboard with Data
         function populateDashboard(data) {
+            console.log('🔧 POPULATE DASHBOARD DEBUG');
+            console.log('Raw data:', data);
+            console.log('Is array:', Array.isArray(data));
+            
             let clientData = null;
-            let templateData = null;
             
             if (Array.isArray(data)) {
-                clientData = data.find(item => item.client)?.client;
-                templateData = data.find(item => item.template)?.template;
+                console.log('Array length:', data.length);
+                clientData = data[0];
+                console.log('Client data from array[0]:', clientData);
             } else {
-                clientData = data.client;
-                templateData = data.template;
+                clientData = data;
+                console.log('Client data direct:', clientData);
             }
 
             if (clientData) {
-                // Update Header with Full Name
                 const fullName = clientData['Full Name'] || 'Unbekannt';
-                document.getElementById('userNameBadge').textContent = fullName;
+                const proposalCode = sessionStorage.getItem('proposalCode');
                 
-                // Update Welcome with First Name
-                const firstName = fullName.split(' ')[0];
-                document.getElementById('welcomeTitle').textContent = `Guten Tag, ${firstName}`;
-
-                // Update Profile Card
-                const profileContent = document.getElementById('profileContent');
-                profileContent.innerHTML = `
-                    <div style="margin-bottom: 12px;">
-                        <strong>${fullName}</strong>
-                    </div>
-                    <div style="margin-bottom: 8px; color: #86868b; font-size: 15px;">
-                        ${clientData['Company'] || 'Unternehmen nicht angegeben'}
-                    </div>
-                    <div style="color: #86868b; font-size: 15px;">
-                        ${clientData['Email Address'] || 'Email nicht verfügbar'}
-                    </div>
-                `;
+                console.log('✅ Updating UI with:');
+                console.log('- Full Name:', fullName);
+                console.log('- Proposal Code:', proposalCode);
+                
+                // Check if elements exist
+                const headerName = document.getElementById('headerUserName');
+                const headerCode = document.getElementById('headerUserCode');
+                const topBarTitle = document.getElementById('topBarTitle');
+                
+                console.log('Elements found:');
+                console.log('- headerUserName:', headerName ? 'EXISTS' : 'MISSING');
+                console.log('- headerUserCode:', headerCode ? 'EXISTS' : 'MISSING');
+                console.log('- topBarTitle:', topBarTitle ? 'EXISTS' : 'MISSING');
+                
+                if (headerName) headerName.textContent = fullName;
+                if (headerCode) headerCode.textContent = proposalCode;
+                
+                if (topBarTitle) {
+                    const firstName = fullName.split(' ')[0];
+                    topBarTitle.textContent = `Guten Tag, ${firstName}`;
+                }
+                
+                console.log('✅ Dashboard population completed');
+            } else {
+                console.error('❌ No client data found');
             }
         }
 
@@ -688,19 +1656,10 @@
         function populateDashboardFallback() {
             const proposalCode = sessionStorage.getItem('proposalCode');
 
-            // Update Header and Welcome as fallback
-            document.getElementById('userNameBadge').textContent = proposalCode;
-            document.getElementById('welcomeTitle').textContent = 'Guten Tag';
-
-            // Update Profile Card
-            document.getElementById('profileContent').innerHTML = `
-                <div style="margin-bottom: 12px;">
-                    <strong>Profil wird geladen...</strong>
-                </div>
-                <div style="color: #86868b; font-size: 15px;">
-                    Code: ${proposalCode}
-                </div>
-            `;
+            // Update Header with fallback
+            document.getElementById('headerUserName').textContent = 'Daten werden geladen...';
+            document.getElementById('headerUserCode').textContent = proposalCode;
+            document.getElementById('topBarTitle').textContent = 'Dashboard';
         }
 
         // PDF Download Handler
@@ -717,39 +1676,41 @@
             }, 2000);
         }
 
-        // Event Listeners
-        document.getElementById('logoutBtn').addEventListener('click', logout);
-        document.getElementById('downloadPdfBtn').addEventListener('click', handlePdfDownload);
+        // Event Listeners - only add if elements exist
+        const logoutBtn = document.getElementById('logoutBtn');
+        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+        
+        if (logoutBtn) logoutBtn.addEventListener('click', logout);
+        if (downloadPdfBtn) downloadPdfBtn.addEventListener('click', handlePdfDownload);
 
         // Load Instantly Analytics
-        async function loadInstantlyAnalytics() {
-            const proposalCode = sessionStorage.getItem('proposalCode');
-            
+        async function loadInstantlyAnalytics(clientData = null) {
             try {
-                // First, get the stored API key for this client
-                const clientResponse = await fetch('https://optionai.optionai.at/webhook/get-client', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        proposal_code: proposalCode
-                    })
-                });
-                
-                if (!clientResponse.ok) {
-                    throw new Error('Client data not available');
+                // If no client data provided, try to get it from cache or fetch it
+                if (!clientData) {
+                    const cachedData = sessionStorage.getItem('clientData');
+                    if (cachedData) {
+                        try {
+                            clientData = JSON.parse(cachedData);
+                        } catch (error) {
+                            console.warn('Could not parse cached client data for analytics:', error);
+                            return;
+                        }
+                    } else {
+                        // No cached data available, skip analytics
+                        updateInstantlyStatus('inactive', 'Client-Daten nicht verfügbar');
+                        displayInstantlyError('Client-Daten konnten nicht geladen werden.');
+                        return;
+                    }
                 }
                 
-                const clientData = await clientResponse.json();
                 let apiKey = null;
                 
                 // Extract API key from client data
                 if (Array.isArray(clientData)) {
-                    const client = clientData.find(item => item.client)?.client;
-                    apiKey = client?.['Instantly API'];
+                    apiKey = clientData[0]?.['Instantly API'];
                 } else {
-                    apiKey = clientData.client?.['Instantly API'];
+                    apiKey = clientData?.['Instantly API'];
                 }
                 
                 // Only proceed if API key exists - prevents unnecessary webhook calls
@@ -773,7 +1734,7 @@
                 if (analyticsResponse.ok) {
                     const analytics = await analyticsResponse.json();
                     updateInstantlyStatus('active', 'Verbunden');
-                    displayInstantlyStats(analytics);
+                    displayInstantlyStats(analytics, clientData);
                 } else {
                     const errorData = await analyticsResponse.json().catch(() => ({}));
                     throw new Error(`Webhook failed: ${analyticsResponse.status}`);
@@ -789,96 +1750,510 @@
         // Update Instantly Status
         function updateInstantlyStatus(status, text) {
             const statusElement = document.getElementById('instantlyStatus');
-            const indicator = statusElement.querySelector('.status-indicator');
+            const statusDot = statusElement.querySelector('.status-dot');
+            const statusText = statusElement.querySelector('.status-text');
             
-            indicator.className = `status-indicator ${status}`;
-            
-            // Add status text
-            const existingText = statusElement.querySelector('.status-text');
-            if (existingText) {
-                existingText.textContent = text;
-            } else {
-                const statusText = document.createElement('span');
-                statusText.className = 'status-text';
-                statusText.textContent = text;
-                statusText.style.fontSize = '12px';
-                statusText.style.color = '#86868b';
-                statusElement.appendChild(statusText);
-            }
+            statusDot.className = `status-dot ${status}`;
+            statusText.textContent = text;
         }
 
         // Display Instantly Statistics
-        async function displayInstantlyStats(data) {
-            const statsContainer = document.getElementById('instantlyStats');
-            
+        async function displayInstantlyStats(data, clientData = null) {
             // Extract key metrics from the new API response format
             const emailsSent = parseInt(data.emails_sent) || 0;
             const replyCount = parseInt(data.reply_count) || 0;
             const totalOpportunities = parseInt(data.total_opportunities) || 0;
             
-            // Calculate reply rate
-            const replyRate = emailsSent > 0 ? ((replyCount / emailsSent) * 100).toFixed(1) : '0.0';
-            
-            // Load average deal value from client data
-            const proposalCode = sessionStorage.getItem('proposalCode');
+            // Use average deal value from cached client data
             let avgDealValue = 0;
             
-            try {
-                const clientResponse = await fetch('https://optionai.optionai.at/webhook/get-client', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        proposal_code: proposalCode
-                    })
-                });
-                if (clientResponse.ok) {
-                    const clientData = await clientResponse.json();
-                    const client = Array.isArray(clientData) ? clientData.find(item => item.client)?.client : clientData.client;
-                    avgDealValue = parseFloat(client?.['Avg Deal Value']) || 0;
+            if (!clientData) {
+                const cachedData = sessionStorage.getItem('clientData');
+                if (cachedData) {
+                    try {
+                        clientData = JSON.parse(cachedData);
+                    } catch (error) {
+                        console.warn('Could not parse cached client data for stats:', error);
+                    }
                 }
-            } catch (error) {
-                console.warn('Could not load average deal value:', error);
+            }
+            
+            if (clientData) {
+                const client = Array.isArray(clientData) ? clientData[0] : clientData;
+                avgDealValue = parseFloat(client?.['Durchschnitts Umsatz']) || 0;
+                console.log('avgDealValue from client data:', avgDealValue);
             }
             
             // Calculate potential revenue
             const potentialRevenue = totalOpportunities * avgDealValue;
-            const revenueDisplay = avgDealValue > 0 ? `€${potentialRevenue.toLocaleString()}` : '€0 (Wert konfigurieren)';
+            const revenueDisplay = avgDealValue > 0 ? `€${potentialRevenue.toLocaleString()}` : '€0';
             
-            statsContainer.innerHTML = `
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value">${emailsSent}</div>
-                        <div class="stat-label">Gesendet</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">${replyCount}</div>
-                        <div class="stat-label">Antworten</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">${totalOpportunities}</div>
-                        <div class="stat-label">Opportunities</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">${revenueDisplay}</div>
-                        <div class="stat-label">Potenzieller Umsatz</div>
-                    </div>
-                </div>
-            `;
+            // Update primary stats cards
+            document.getElementById('emailsSentValue').textContent = emailsSent.toLocaleString();
+            document.getElementById('repliesValue').textContent = replyCount.toLocaleString();
+            document.getElementById('opportunitiesValue').textContent = totalOpportunities.toLocaleString();
+            document.getElementById('revenueValue').textContent = revenueDisplay;
+            
+            // Update system status in header
+            document.getElementById('automationLiveStatus').textContent = 'System läuft erfolgreich';
+            document.getElementById('automationSyncTime').textContent = `Letzte Synchronisation: ${new Date().toLocaleTimeString('de-DE')}`;
         }
 
         // Display Instantly Error
         function displayInstantlyError(message) {
-            const statsContainer = document.getElementById('instantlyStats');
-            statsContainer.innerHTML = `<div class="stat-error">${message}</div>`;
+            // Update status in header
+            document.getElementById('automationLiveStatus').textContent = 'Fehler beim Laden';
+            document.getElementById('automationSyncTime').textContent = message;
+            
+            // Reset stats to dash values
+            document.getElementById('emailsSentValue').textContent = '—';
+            document.getElementById('repliesValue').textContent = '—';
+            document.getElementById('opportunitiesValue').textContent = '—';
+            document.getElementById('revenueValue').textContent = '—';
         }
 
-        // Initialize Dashboard
-        document.addEventListener('DOMContentLoaded', () => {
-            if (checkAuth()) {
-                loadDashboardData();
-                loadInstantlyAnalytics();
+        // SPA Router System
+        class SPARouter {
+            constructor() {
+                this.routes = {
+                    '/dashboard/': () => this.loadAnalytics(),
+                    '/dashboard/proposals.html': () => this.loadProposals(), 
+                    '/dashboard/settings.html': () => this.loadSettings()
+                };
+                this.currentPage = null;
+                this.setupEventListeners();
+                this.handleInitialLoad();
+            }
+
+            setupEventListeners() {
+                // Handle browser back/forward
+                window.addEventListener('popstate', () => {
+                    this.handleRoute(window.location.pathname, false);
+                });
+
+                // Handle navigation links
+                document.addEventListener('click', (e) => {
+                    const link = e.target.closest('a[href*="/dashboard/"]');
+                    if (link) {
+                        e.preventDefault();
+                        const href = link.getAttribute('href');
+                        console.log('🔗 Navigating to:', href);
+                        this.navigateTo(href);
+                    }
+                });
+            }
+
+            navigateTo(path) {
+                this.handleRoute(path, true);
+            }
+
+            handleRoute(path, pushHistory = true) {
+                console.log('🛣️ Handling route:', path);
+                console.log('📋 Available routes:', Object.keys(this.routes));
+                
+                if (pushHistory) {
+                    history.pushState(null, '', path);
+                }
+                
+                const route = this.routes[path] || this.routes['/dashboard/'];
+                console.log('✅ Selected route function:', route.name);
+                
+                this.updateActiveNavigation(path);
+                route();
+            }
+
+            handleInitialLoad() {
+                const currentPath = window.location.pathname;
+                this.handleRoute(currentPath, false);
+            }
+
+            updateActiveNavigation(path) {
+                // Remove active class from all nav items
+                document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                    link.classList.remove('active');
+                });
+
+                // Add active class to current nav item
+                let currentLink;
+                if (path.includes('proposals')) {
+                    currentLink = document.querySelector('a[href="/dashboard/proposals.html"]');
+                } else if (path.includes('settings')) {
+                    currentLink = document.querySelector('a[href="/dashboard/settings.html"]');
+                } else {
+                    currentLink = document.querySelector('a[href="/dashboard/"]');
+                }
+                
+                if (currentLink) {
+                    currentLink.classList.add('active');
+                }
+
+                // Update breadcrumb and title
+                const breadcrumbCurrent = document.querySelector('.breadcrumb-item.current');
+                const topBarTitle = document.getElementById('topBarTitle');
+                
+                if (path.includes('proposals')) {
+                    breadcrumbCurrent.textContent = 'Proposals';
+                    topBarTitle.textContent = 'Proposals Übersicht';
+                } else if (path.includes('settings')) {
+                    breadcrumbCurrent.textContent = 'Einstellungen';
+                    topBarTitle.textContent = 'Konto Einstellungen';
+                } else {
+                    breadcrumbCurrent.textContent = 'Analytics';
+                    topBarTitle.textContent = 'Analytics Dashboard';
+                }
+            }
+
+            async loadAnalytics() {
+                console.log('📊 Loading Analytics page...');
+                if (this.currentPage === 'analytics') {
+                    console.log('⚠️ Analytics already loaded, skipping');
+                    return;
+                }
+                this.currentPage = 'analytics';
+                
+                const contentArea = document.querySelector('.content-area');
+                contentArea.innerHTML = `
+                    <div class="fade-in">
+                        <!-- AI Cold Outreach Automation Card -->
+                        <div class="automation-master-card">
+                            <div class="automation-card-header">
+                                <div class="automation-title-section">
+                                    <h2 class="automation-title">AI Cold Outreach System</h2>
+                                    <div class="automation-meta">
+                                        <div class="status-indicator">
+                                            <div class="status-dot status-success"></div>
+                                            <span class="status-text">System läuft erfolgreich</span>
+                                        </div>
+                                        <div class="sync-info">
+                                            <svg class="sync-icon" viewBox="0 0 24 24">
+                                                <path d="M12 2C17.52 2 22 6.48 22 12C22 17.52 17.52 22 12 22C6.48 22 2 17.52 2 12C2 10.76 2.19 9.55 2.54 8.4L4.47 9.4C4.18 10.24 4 11.1 4 12C4 16.41 7.59 20 12 20S20 16.41 20 12S16.41 4 12 4C9.84 4 7.87 4.85 6.35 6.35L8 8H2V2L4.21 4.21C6.21 2.21 8.95 1 12 1.5V2Z"/>
+                                            </svg>
+                                            <span class="sync-text">Letzte Synch: Gerade eben</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="kpi-grid">
+                                <div class="kpi-item">
+                                    <div class="kpi-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="kpi-content">
+                                        <div class="kpi-label">Emails versandt</div>
+                                        <div class="kpi-value" id="emailsSent">Lädt...</div>
+                                        <div class="kpi-change">+0 heute</div>
+                                    </div>
+                                </div>
+
+                                <div class="kpi-item">
+                                    <div class="kpi-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M21,8C19.5,8 18.7,9.4 18.7,9.4L13,7.9C13,7.9 13.2,7.6 13.2,7.1C13.2,5.6 11.6,4 10.1,4S6.9,5.6 6.9,7.1C6.9,8.6 8.4,10.2 9.9,10.2C10.4,10.2 10.7,10 10.7,10L16.4,11.5C16.4,11.5 16.2,11.8 16.2,12.3C16.2,13.8 17.7,15.4 19.2,15.4S22.4,13.8 22.4,12.3S20.8,8 19.3,8H21Z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="kpi-content">
+                                        <div class="kpi-label">Öffnungsrate</div>
+                                        <div class="kpi-value" id="openRate">Lädt...</div>
+                                        <div class="kpi-change">+0% diese Woche</div>
+                                    </div>
+                                </div>
+
+                                <div class="kpi-item">
+                                    <div class="kpi-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M9,5V9H15V5H9M6,11V15H10V11H6M14,11V15H18V11H14M6,19V23H10V19H6M14,19V23H18V19H14Z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="kpi-content">
+                                        <div class="kpi-label">Antwortrate</div>
+                                        <div class="kpi-value" id="replyRate">Lädt...</div>
+                                        <div class="kpi-change">+0% diese Woche</div>
+                                    </div>
+                                </div>
+
+                                <div class="kpi-item">
+                                    <div class="kpi-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M11,18H13V16H11V18M12,6A4,4 0 0,0 8,10H10A2,2 0 0,1 12,8A2,2 0 0,1 14,10C14,12 11,11.75 11,15H13C13,12.75 16,12.5 16,10A4,4 0 0,0 12,6Z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="kpi-content">
+                                        <div class="kpi-label">Interessierte Leads</div>
+                                        <div class="kpi-value" id="interestedLeads">Lädt...</div>
+                                        <div class="kpi-change">+0 heute</div>
+                                    </div>
+                                </div>
+
+                                <div class="kpi-item">
+                                    <div class="kpi-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M7,15H9C9,16.08 10.37,17 12,17C13.63,17 15,16.08 15,15C15,13.9 13.96,13.5 11.76,12.97C9.64,12.44 7,11.78 7,9C7,7.21 8.47,5.69 10.5,5.18V3H13.5V5.18C15.53,5.69 17,7.21 17,9H15C15,7.92 13.63,7 12,7C10.37,7 9,7.92 9,9C9,10.1 10.04,10.5 12.24,11.03C14.36,11.56 17,12.22 17,15C17,16.79 15.53,18.31 13.5,18.82V21H10.5V18.82C8.47,18.31 7,16.79 7,15Z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="kpi-content">
+                                        <div class="kpi-label">Geschätzter Umsatz</div>
+                                        <div class="kpi-value" id="potentialRevenue">Lädt...</div>
+                                        <div class="kpi-change">+€0 heute</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="loading-state" id="loadingState">
+                                <div class="loading-spinner"></div>
+                                <span>Daten werden geladen...</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Load analytics data
+                await loadClientData();
+            }
+
+            async loadProposals() {
+                console.log('📋 Loading Proposals page...');
+                if (this.currentPage === 'proposals') {
+                    console.log('⚠️ Proposals already loaded, skipping');
+                    return;
+                }
+                this.currentPage = 'proposals';
+                
+                const contentArea = document.querySelector('.content-area');
+                contentArea.innerHTML = `
+                    <div class="fade-in">
+                        <div class="automation-master-card">
+                            <div class="automation-card-header">
+                                <div class="automation-title-section">
+                                    <h2 class="automation-title">Ihre Proposals</h2>
+                                    <div class="automation-meta">
+                                        <div class="status-indicator">
+                                            <div class="status-dot status-pending"></div>
+                                            <span class="status-text">Proposal Management aktiv</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="proposals-content" style="padding: 40px 0;">
+                                <div class="proposals-grid">
+                                    <div class="proposal-section">
+                                        <h3 style="font-size: 24px; color: #e6edf3; margin-bottom: 20px;">Aktuelle Proposals</h3>
+                                        <div class="proposal-card" style="background: rgba(48, 54, 61, 0.3); border-radius: 16px; padding: 30px; border: 1px solid rgba(48, 54, 61, 0.5);">
+                                            <div class="proposal-meta">
+                                                <div class="meta-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                                    <div>
+                                                        <div class="proposal-code" style="font-size: 18px; font-weight: 600; color: #e6edf3;" id="proposalCodeDisplay">PROP-XXXX-XXXX</div>
+                                                        <div class="proposal-status" style="font-size: 14px; color: #7d8590; margin-top: 4px;">Status wird geladen...</div>
+                                                    </div>
+                                                    <div class="status-badge status-pending">In Bearbeitung</div>
+                                                </div>
+                                                
+                                                <div class="proposal-details" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                                    <div class="detail-item">
+                                                        <div class="detail-label" style="font-size: 12px; color: #7d8590; text-transform: uppercase; letter-spacing: 0.5px;">Kunde</div>
+                                                        <div class="detail-value" style="font-size: 16px; color: #e6edf3; font-weight: 500;" id="clientNameDisplay">Wird geladen...</div>
+                                                    </div>
+                                                    <div class="detail-item">
+                                                        <div class="detail-label" style="font-size: 12px; color: #7d8590; text-transform: uppercase; letter-spacing: 0.5px;">Unternehmen</div>
+                                                        <div class="detail-value" style="font-size: 16px; color: #e6edf3; font-weight: 500;" id="companyDisplay">Wird geladen...</div>
+                                                    </div>
+                                                    <div class="detail-item">
+                                                        <div class="detail-label" style="font-size: 12px; color: #7d8590; text-transform: uppercase; letter-spacing: 0.5px;">Wert</div>
+                                                        <div class="detail-value" style="font-size: 16px; color: #e6edf3; font-weight: 500;" id="priceDisplay">Wird geladen...</div>
+                                                    </div>
+                                                    <div class="detail-item">
+                                                        <div class="detail-label" style="font-size: 12px; color: #7d8590; text-transform: uppercase; letter-spacing: 0.5px;">Erstellt</div>
+                                                        <div class="detail-value" style="font-size: 16px; color: #e6edf3; font-weight: 500;">Kürzlich</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Load proposal data
+                await this.loadProposalData();
+            }
+
+            async loadSettings() {
+                console.log('⚙️ Loading Settings page...');
+                if (this.currentPage === 'settings') {
+                    console.log('⚠️ Settings already loaded, skipping');
+                    return;
+                }
+                this.currentPage = 'settings';
+                
+                const contentArea = document.querySelector('.content-area');
+                contentArea.innerHTML = `
+                    <div class="fade-in">
+                        <div class="automation-master-card">
+                            <div class="automation-card-header">
+                                <div class="automation-title-section">
+                                    <h2 class="automation-title">Konto Einstellungen</h2>
+                                    <div class="automation-meta">
+                                        <div class="status-indicator">
+                                            <div class="status-dot status-success"></div>
+                                            <span class="status-text">Konto ist aktiv</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="settings-content" style="padding: 40px 0;">
+                                <div class="settings-grid" style="display: grid; gap: 30px;">
+                                    
+                                    <!-- Account Information -->
+                                    <div class="settings-section">
+                                        <h3 style="font-size: 20px; color: #e6edf3; margin-bottom: 20px;">Account Information</h3>
+                                        <div class="settings-card" style="background: rgba(48, 54, 61, 0.3); border-radius: 16px; padding: 30px; border: 1px solid rgba(48, 54, 61, 0.5);">
+                                            <div class="info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                                <div class="info-item">
+                                                    <div class="info-label" style="font-size: 12px; color: #7d8590; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Proposal Code</div>
+                                                    <div class="info-value" style="font-size: 16px; color: #e6edf3; font-weight: 500;" id="settingsProposalCode">PROP-XXXX-XXXX</div>
+                                                </div>
+                                                <div class="info-item">
+                                                    <div class="info-label" style="font-size: 12px; color: #7d8590; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Vollständiger Name</div>
+                                                    <div class="info-value" style="font-size: 16px; color: #e6edf3; font-weight: 500;" id="settingsFullName">Wird geladen...</div>
+                                                </div>
+                                                <div class="info-item">
+                                                    <div class="info-label" style="font-size: 12px; color: #7d8590; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Unternehmen</div>
+                                                    <div class="info-value" style="font-size: 16px; color: #e6edf3; font-weight: 500;" id="settingsCompany">Wird geladen...</div>
+                                                </div>
+                                                <div class="info-item">
+                                                    <div class="info-label" style="font-size: 12px; color: #7d8590; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Account Status</div>
+                                                    <div class="info-value" style="font-size: 16px; color: #28cd41; font-weight: 500;">Aktiv</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Quick Actions -->
+                                    <div class="settings-section">
+                                        <h3 style="font-size: 20px; color: #e6edf3; margin-bottom: 20px;">Aktionen</h3>
+                                        <div class="settings-card" style="background: rgba(48, 54, 61, 0.3); border-radius: 16px; padding: 30px; border: 1px solid rgba(48, 54, 61, 0.5);">
+                                            <div class="action-buttons" style="display: flex; gap: 16px; flex-wrap: wrap;">
+                                                <button class="action-btn" style="background: #40a0fb; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;">
+                                                    Passwort ändern
+                                                </button>
+                                                <button class="action-btn" style="background: rgba(48, 54, 61, 0.8); color: #e6edf3; border: 1px solid #30363d; padding: 12px 24px; border-radius: 8px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;">
+                                                    Support kontaktieren
+                                                </button>
+                                                <button class="action-btn" style="background: transparent; color: #f85149; border: 1px solid #f85149; padding: 12px 24px; border-radius: 8px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;">
+                                                    Abmelden
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Load settings data
+                await this.loadSettingsData();
+            }
+
+            async loadProposalData() {
+                const proposalCode = sessionStorage.getItem('proposalCode');
+                const cachedData = sessionStorage.getItem('clientData');
+                
+                if (cachedData) {
+                    const data = JSON.parse(cachedData);
+                    const client = Array.isArray(data) ? data[0] : data;
+                    
+                    document.getElementById('proposalCodeDisplay').textContent = client['Proposal Code'] || proposalCode;
+                    document.getElementById('clientNameDisplay').textContent = client['Full Name'] || 'Unbekannt';
+                    document.getElementById('companyDisplay').textContent = client['Company'] || 'Unbekannt';
+                    document.getElementById('priceDisplay').textContent = `€${client['Price'] || '0'}`;
+                }
+            }
+
+            async loadSettingsData() {
+                const proposalCode = sessionStorage.getItem('proposalCode');
+                const cachedData = sessionStorage.getItem('clientData');
+                
+                if (cachedData) {
+                    const data = JSON.parse(cachedData);
+                    const client = Array.isArray(data) ? data[0] : data;
+                    
+                    document.getElementById('settingsProposalCode').textContent = client['Proposal Code'] || proposalCode;
+                    document.getElementById('settingsFullName').textContent = client['Full Name'] || 'Unbekannt';
+                    document.getElementById('settingsCompany').textContent = client['Company'] || 'Unbekannt';
+                }
+            }
+        }
+
+        // Add fade-in animation CSS
+        const fadeInCSS = `
+            .fade-in {
+                animation: fadeIn 0.3s ease-in-out;
+            }
+            
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        
+        const style = document.createElement('style');
+        style.textContent = fadeInCSS;
+        document.head.appendChild(style);
+
+        // Initialize SPA Router
+        let router;
+
+        // SIMPLE: Call webhook directly on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 PAGE LOADED - INITIALIZING SPA ROUTER');
+            
+            const proposalCode = sessionStorage.getItem('proposalCode');
+            console.log('ProposalCode:', proposalCode);
+
+            // Initialize SPA Router
+            router = new SPARouter();
+            
+            if (!proposalCode) {
+                console.log('No proposalCode, redirecting to login');
+                window.location.href = '/client-login.html';
+                return;
+            }
+            
+            try {
+                console.log('📡 DIRECT WEBHOOK CALL');
+                const response = await fetch(`https://optionai.optionai.at/webhook/get-client?proposal_code=${proposalCode}`, {
+                    method: 'GET'
+                });
+                
+                console.log('Response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ SUCCESS! Data received:', data);
+                    populateDashboard(data);
+                    
+                    // Now load Instantly Analytics with the client data
+                    console.log('🔄 Loading Instantly Analytics...');
+                    loadInstantlyAnalytics(data);
+                } else {
+                    console.error('❌ Webhook failed:', response.status);
+                }
+            } catch (error) {
+                console.error('💥 Error:', error);
             }
         });
     </script>
