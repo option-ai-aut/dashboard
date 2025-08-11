@@ -37,7 +37,7 @@ Backend = **n8n Webhooks + Airtable + Dual Auth-System** – steht bereits.
 | **/index.html** | Proposal-Viewer + Code‑Eingabe + Signatur‑System | 2800+ | PDF-Gen, 3 Signatur-Methoden, Status-Gate |
 | **/client-login.html** | **NEU:** Kunden-Login + Sign-Up | 717 | Apple Design, Modal Sign-Up, Pre-load client data |
 | **/dashboard/index.html** | **SPA Kunden-Dashboard (HAUPTDATEI)** | 3200+ | **Single Page Application**, Analytics + Proposals + Settings, Dark Apple Design, Navigation ohne Reload |
-| **/dashboard/settings.html** | **Eigenständige Detail-Settings** | 870 | Unified Settings, Password ändern, API Key management, Automations Config |
+| ~~**/dashboard/settings.html**~~ | ~~**Gelöscht**~~ | ~~870~~ | ~~**ENTFERNT** - Funktionalität komplett in SPA integriert~~ |
 | ~~**/dashboard/proposals.html**~~ | ~~**Gelöscht**~~ | ~~812~~ | ~~**ENTFERNT** - Funktionalität in SPA integriert~~ |
 | **/admin/login.html** | Passwort‑Login für Admin‑Bereich | 420 | Hardcoded PW: `sand-stone-austria-40` |
 | **/admin/index.html** | Admin‑Übersicht (Tabelle aller Clients) | 460 | sessionStorage-Auth, Client-Liste |
@@ -255,12 +255,13 @@ const statusMap = {
 22. **Icon Positioning Fix** – Sidebar Icons stationär während Hover-Transitions (absolute positioning)
 23. **Complete Settings Integration** – Passwort-Änderung, API-Konfiguration, Support-Kontakt vollständig integriert
 24. **Large Proposal Cards** – 4-spaltige KPI-Grid Redesign mit Apple-Style großen Cards
-25. **File Cleanup** – Unnötige proposals.html gelöscht nach vollständiger SPA-Integration
+25. **File Cleanup** – Unnötige proposals.html und settings.html gelöscht nach vollständiger SPA-Integration
 
 ### 🔄 **Nicht mehr verwendet (gelöst/ersetzt)**
 - **login.html** (Netlify Identity) – Datei entfernt, da überflüssig
 - **dashboard/profile.html** – Entfernt, Funktionalität in SPA Settings integriert
 - **dashboard/proposals.html** – Gelöscht, Funktionalität komplett in SPA index.html integriert
+- **dashboard/settings.html** – Gelöscht, Funktionalität komplett in SPA index.html integriert
 - **Separate Proposal/Settings Pages** – Ersetzt durch SPA Router System in einer Datei
 - **Multi-Page Architecture** – Komplett ersetzt durch Single Page Application
 - **JWT-Implementation** – Dokumentiert aber nicht implementiert
