@@ -42,52 +42,48 @@
 
         body {
             font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0d1117;
+            background: #1a1a1a;
             color: #e6edf3;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            padding: 20px;
         }
 
         /* Layout Container */
         .dashboard-layout {
             display: flex;
-            min-height: 100vh;
+            min-height: calc(100vh - 40px);
+            gap: 20px;
         }
 
-        /* Sidebar */
+        /* Sidebar - Complete Redesign */
         .sidebar {
-            width: 84px;
-            background: #161b22;
-            border-right: 1px solid #30363d;
-            padding: 0;
             position: fixed;
-            left: 0;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
+            top: 20px;
+            left: 20px;
+            width: 84px;
+            height: calc(100vh - 40px);
+            background: #0a0a0a;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            overflow: visible;
             z-index: 100;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
-            transition: all 0.3s ease;
         }
 
         .sidebar:hover {
             width: 240px;
         }
 
-        .sidebar-content {
-            flex: 1;
-            padding: 24px 0;
-        }
-
         .sidebar-logo {
-            padding: 24px 24px 32px 24px;
-            border-bottom: 1px solid #30363d;
-            text-align: center;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 80px;
+            padding: 0 24px;
+            flex-shrink: 0;
         }
 
         .sidebar-logo img {
@@ -95,73 +91,31 @@
             width: auto;
         }
 
-        .sidebar-section {
-            margin-bottom: 40px;
-            padding: 0 8px;
-        }
-
         .sidebar-menu {
             list-style: none;
+            padding: 16px 16px 0 16px;
             margin: 0;
-            padding: 0;
         }
 
         .sidebar-menu li {
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
+        /* Menu Items - Flexbox Layout */
         .sidebar-menu a,
         .sidebar-menu button {
             display: flex;
             align-items: center;
             width: 100%;
-            padding: 12px 0;
-            color: #e6edf3;
-            text-decoration: none;
+            height: 52px;
             border-radius: 12px;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
             background: transparent;
             border: none;
+            color: #e6edf3;
+            text-decoration: none;
             cursor: pointer;
-            text-align: left;
-            position: relative;
-            justify-content: flex-start;
-            overflow: hidden;
-        }
-
-        .menu-icon {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            position: absolute;
-            left: 28px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .menu-icon svg {
-            width: 24px;
-            height: 24px;
-            fill: currentColor;
-        }
-
-        .menu-text {
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            white-space: nowrap;
-            position: absolute;
-            left: 68px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .sidebar:hover .menu-text {
-            opacity: 1;
+            transition: background-color 0.2s ease;
+            padding: 0;
         }
 
         .sidebar-menu a:hover,
@@ -171,7 +125,6 @@
 
         .sidebar-menu .active {
             background: #30363d;
-            color: #e6edf3;
             font-weight: 600;
         }
 
@@ -179,22 +132,45 @@
             background: #373e47;
         }
 
-        .sidebar-footer {
-            border-top: 1px solid #30363d;
-            padding: 16px 0;
-            margin-top: auto;
+        /* Icon Container - Centered in collapsed state */
+        .menu-icon {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
-        .sidebar-footer .menu-icon {
-            left: 28px;
+        .menu-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
         }
 
+        /* Text - Only Visible on Hover */
+        .menu-text {
+            opacity: 0;
+            font-size: 15px;
+            font-weight: 500;
+            white-space: nowrap;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            margin-left: 4px;
+        }
+
+        .sidebar:hover .menu-text {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+
+        /* User Info */
         .user-info {
-            padding: 12px;
-            background: #21262d;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            border: 1px solid #30363d;
+            padding: 16px;
+            background: #050505;
+            border-radius: 12px;
+            margin-bottom: 16px;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
@@ -202,6 +178,35 @@
         .sidebar:hover .user-info {
             opacity: 1;
         }
+
+        /* Sidebar Content - Flexible Layout */
+        .sidebar-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-section {
+            padding-top: 16px;
+        }
+
+        /* Sidebar Footer - Position at Bottom */
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 0 16px 16px 16px;
+        }
+
+        .sidebar-footer .sidebar-menu {
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Logout Button - Red on Hover */
+        #logoutBtn:hover {
+            background: rgba(255, 59, 48, 0.15) !important;
+            color: #ff3b30 !important;
+        }
+
 
         .user-name {
             font-weight: 600;
@@ -218,20 +223,20 @@
         /* Main Content */
         .main-container {
             flex: 1;
-            margin-left: 84px;
-            background: #0d1117;
-            transition: margin-left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-left: 124px;
         }
 
         .top-bar {
-            background: rgba(22, 27, 34, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(48, 54, 61, 0.6);
+            background: #0a0a0a;
+            border: none;
+            border-radius: 24px;
             padding: 20px 32px;
-            position: sticky;
-            top: 0;
+            position: relative;
             z-index: 50;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
         .top-bar-content {
@@ -315,7 +320,11 @@
 
         /* Content Area */
         .content-area {
-            padding: 60px 60px 60px 60px;
+            background: #0a0a0a;
+            border-radius: 24px;
+            padding: 60px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            flex: 1;
         }
 
         /* Dashboard Main Grid */
@@ -498,7 +507,7 @@
             background: #161b22;
             border-radius: 20px;
             padding: 40px;
-            border: 1px solid #30363d;
+            border: none;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -571,16 +580,17 @@
 
         /* Card Styles */
         .dashboard-card {
-            background: #ffffff;
-            border-radius: 12px;
+            background: #0a1018;
+            border-radius: 20px;
             padding: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
-            border: 0.5px solid rgba(0, 0, 0, 0.04);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            border: none;
             transition: all 0.2s ease;
         }
 
         .dashboard-card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
+            transform: translateY(-2px);
         }
 
         .card-header {
@@ -829,17 +839,30 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .dashboard-layout {
+                gap: 10px;
+            }
+            
             .dashboard-grid {
                 grid-template-columns: 1fr;
                 gap: 16px;
             }
             
-            .main-content {
-                padding: 20px 16px;
+            .sidebar {
+                width: 70px;
+                min-height: calc(100vh - 20px);
             }
             
-            .header-content {
-                padding: 0 16px;
+            .top-bar {
+                padding: 16px 20px;
+            }
+            
+            .content-area {
+                padding: 30px;
             }
             
             .welcome-title {
@@ -1105,12 +1128,11 @@
         }
 
         .status-dot.active {
-            background: #7d8590;
+            background: #28cd41;
         }
 
         .status-dot.loading {
-            background: #7d8590;
-            animation: pulse 1.5s ease-in-out infinite alternate;
+            display: none;
         }
 
         .status-dot.inactive {
@@ -1142,7 +1164,7 @@
             background: #161b22;
             border-radius: 16px;
             padding: 32px;
-            border: 1px solid #30363d;
+            border: none;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
             position: relative;
         }
@@ -1169,12 +1191,12 @@
 
         /* New Automation Master Card */
         .automation-master-card {
-            background: #161b22;
+            background: #0a1018;
             border-radius: 24px;
-            padding: 60px 80px;
-            border: 1px solid rgba(48, 54, 61, 0.5);
-            margin: 40px 0;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            padding: 80px;
+            border: none;
+            margin: 0 0 40px 0;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
         }
 
         .automation-card-header {
@@ -1355,38 +1377,16 @@
         }
 
         .proposal-master-card {
-            background: #161b22;
+            background: #0a1018;
             border-radius: 24px;
-            padding: 60px 80px;
-            border: 1px solid rgba(48, 54, 61, 0.5);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 80px;
+            border: none;
+            margin: 0 0 40px 0;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
             position: relative;
             overflow: hidden;
-            cursor: pointer;
         }
 
-        .proposal-master-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 20% 20%, rgba(125, 133, 144, 0.03) 0%, transparent 50%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .proposal-master-card:hover::before {
-            opacity: 1;
-        }
-
-        .proposal-master-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(125, 133, 144, 0.8);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        }
 
         .proposal-header {
             display: flex;
@@ -1608,7 +1608,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="/dashboard/proposals.html">
+                            <a href="/dashboard/#proposals">
                                 <div class="menu-icon">
                                     <svg viewBox="0 0 24 24">
                                         <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
@@ -1624,10 +1624,10 @@
             <div class="sidebar-footer">
                 <ul class="sidebar-menu">
                     <li>
-                        <a href="#" onclick="event.preventDefault(); spaManager.loadSettings(); return false;">
+                        <a href="/dashboard/#settings">
                             <div class="menu-icon">
                                 <svg viewBox="0 0 24 24">
-                                    <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                                    <path d="M12 15.5c-1.93 0-3.5-1.57-3.5-3.5S10.07 8.5 12 8.5s3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5zm7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-.97l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0014 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.31-.07.64-.07.97s.03.65.07.97l-2.11 1.66c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.31.61.22l2.49-1c.52.39 1.06.73 1.69.98l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.25 1.17-.59 1.69-.98l2.49 1c.22.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.66z"/>
                                 </svg>
                             </div>
                             <span class="menu-text">Einstellungen</span>
@@ -1658,7 +1658,7 @@
                             <span class="breadcrumb-item current">Analytics</span>
                         </nav>
                         <h1 id="topBarTitle">Analytics Dashboard</h1>
-                        <p>Live-Performance Ihrer AI Cold Outreach Kampagnen</p>
+                        <p>Live-Performance Ihrer Automationen</p>
                     </div>
                     <div class="header-actions">
                         <div class="user-info-header">
@@ -1680,13 +1680,12 @@
                         </div>
                         <div class="automation-info">
                             <h2 class="automation-title">AI Cold Outreach System</h2>
-                            <p class="automation-subtitle">Powered by Instantly • Live Analytics Dashboard</p>
                             <p class="automation-live-status" id="automationLiveStatus">System läuft erfolgreich</p>
                             <p class="automation-sync-time" id="automationSyncTime">Letzte Synchronisation: --</p>
                         </div>
                         <div class="automation-status" id="instantlyStatus">
                             <div class="status-dot loading"></div>
-                            <span class="status-text">Lädt...</span>
+                            <span class="status-text">Verbinden...</span>
                         </div>
                     </div>
                     
@@ -1808,8 +1807,8 @@
             console.log('🚀 CALLING WEBHOOK NOW...');
             console.log('Full URL:', `https://optionai.optionai.at/webhook/get-client?proposal_code=${proposalCode}`);
             
-            // ALWAYS call webhook for debugging - ignore cached data temporarily
-            console.log('⚠️  FORCING WEBHOOK CALL (ignoring cache for debugging)');
+            // For debugging: Always fetch fresh data from webhook
+            console.log('🔄 Fetching fresh data from webhook (ignoring cache for debugging)...');
             
             try {
                 console.log('📡 Sending fetch request...');
@@ -1828,6 +1827,11 @@
                     const data = await response.json();
                     console.log('✅ Webhook data received:', data);
                     populateDashboard(data);
+                    
+                    // Load Instantly Analytics with the client data
+                    console.log('🔄 Loading Instantly Analytics...');
+                    await loadInstantlyAnalytics(data);
+                    
                     sessionStorage.setItem('clientData', JSON.stringify(data));
                     return data;
                 } else {
@@ -1886,9 +1890,9 @@
                 if (headerName) headerName.textContent = fullName;
                 if (headerCode) headerCode.textContent = proposalCode;
                 
-                if (topBarTitle) {
-                    const firstName = fullName.split(' ')[0];
-                    topBarTitle.textContent = `Guten Tag, ${firstName}`;
+                // Set default header title to Analytics Dashboard if no custom title is set
+                if (topBarTitle && !topBarTitle.dataset.customTitle) {
+                    topBarTitle.textContent = 'Analytics Dashboard';
                 }
                 
                 console.log('✅ Dashboard population completed');
@@ -2062,8 +2066,8 @@
             constructor() {
                 this.routes = {
                     '/dashboard/': () => this.loadAnalytics(),
-                    '/dashboard/proposals.html': () => this.loadProposals(), 
-                    '/dashboard/settings': () => this.loadSettings()
+                    '/dashboard/#proposals': () => this.loadProposals(),
+                    '/dashboard/#settings': () => this.loadSettings()
                 };
                 this.currentPage = null;
                 this.setupEventListeners();
@@ -2076,6 +2080,18 @@
                 // Handle browser back/forward
                 window.addEventListener('popstate', () => {
                     this.handleRoute(window.location.pathname, false);
+                });
+                
+                // Handle hash changes for SPA routing
+                window.addEventListener('hashchange', () => {
+                    const hash = window.location.hash.substring(1);
+                    if (hash === 'proposals') {
+                        this.loadProposals();
+                    } else if (hash === 'settings') {
+                        this.loadSettings();
+                    } else {
+                        this.loadAnalytics();
+                    }
                 });
 
                 // Handle navigation links
@@ -2092,23 +2108,12 @@
                     }
                 });
                 
-                // Also add direct click handlers to ensure they work
-                const menuLinks = document.querySelectorAll('a[href*="/dashboard/"]');
-                console.log('🔗 Found menu links:', menuLinks.length);
-                
-                menuLinks.forEach((link, index) => {
-                    console.log(`Link ${index}:`, link.getAttribute('href'));
-                    link.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const href = link.getAttribute('href');
-                        console.log('🎯 Direct click on:', href);
-                        this.navigateTo(href);
-                    });
-                });
+                // Note: Direct click handlers removed to avoid conflicts with document handler
             }
 
             navigateTo(path) {
-                this.handleRoute(path, true);
+                console.log('🧭 Navigate to:', path);
+                this.handleRoute(path, true); // Use handleRoute for consistent behavior
             }
 
             handleRoute(path, pushHistory = true) {
@@ -2127,8 +2132,33 @@
             }
 
             handleInitialLoad() {
-                const currentPath = window.location.pathname;
-                this.handleRoute(currentPath, false);
+                // Ensure analytics content is wrapped in a section first
+                this.ensureAnalyticsSectionExists();
+                
+                // Check for hash in URL
+                const hash = window.location.hash.substring(1); // Remove #
+                
+                if (hash === 'proposals') {
+                    this.loadProposals();
+                } else if (hash === 'settings') {
+                    this.loadSettings();
+                } else {
+                    // Default to analytics
+                    this.loadAnalytics();
+                }
+            }
+            
+            ensureAnalyticsSectionExists() {
+                const contentArea = document.querySelector('.content-area');
+                const existingCard = contentArea.querySelector('.automation-master-card');
+                
+                if (existingCard && !existingCard.closest('.spa-section')) {
+                    // Wrap existing analytics card in a section
+                    const analyticsSection = document.createElement('div');
+                    analyticsSection.className = 'spa-section analytics';
+                    existingCard.parentNode.insertBefore(analyticsSection, existingCard);
+                    analyticsSection.appendChild(existingCard);
+                }
             }
 
             updateActiveNavigation(path) {
@@ -2140,9 +2170,9 @@
                 // Add active class to current nav item
                 let currentLink;
                 if (path.includes('proposals')) {
-                    currentLink = document.querySelector('a[href="/dashboard/proposals.html"]');
+                    currentLink = document.querySelector('a[href="/dashboard/#proposals"]');
                 } else if (path.includes('settings')) {
-                    currentLink = document.querySelector('a[onclick*="loadSettings"]');
+                    currentLink = document.querySelector('a[href="/dashboard/#settings"]');
                 } else {
                     currentLink = document.querySelector('a[href="/dashboard/"]');
                 }
@@ -2169,11 +2199,14 @@
 
             async loadAnalytics() {
                 console.log('📊 Loading Analytics page...');
-                if (this.currentPage === 'analytics') {
-                    console.log('⚠️ Analytics already loaded, skipping');
-                    return;
-                }
                 this.currentPage = 'analytics';
+                
+                // Set header title for analytics
+                const topBarTitle = document.querySelector('.top-bar .title');
+                if (topBarTitle) {
+                    topBarTitle.textContent = 'Analytics Dashboard';
+                    topBarTitle.dataset.customTitle = 'true';
+                }
                 
                 // Hide all content sections
                 const contentArea = document.querySelector('.content-area');
@@ -2204,11 +2237,14 @@
 
             async loadProposals() {
                 console.log('📋 Loading Proposals page...');
-                if (this.currentPage === 'proposals') {
-                    console.log('⚠️ Proposals already loaded, skipping');
-                    return;
-                }
                 this.currentPage = 'proposals';
+                
+                // Update page header
+                const topBarTitle = document.querySelector('.top-bar .title');
+                if (topBarTitle) {
+                    topBarTitle.textContent = 'Proposals';
+                    topBarTitle.dataset.customTitle = 'true';
+                }
                 
                 // Hide all content sections
                 const contentArea = document.querySelector('.content-area');
@@ -2312,108 +2348,117 @@
                     return;
                 }
 
-                const status = clientData.status || 'draft';
+                const status = clientData['Status Proposal'] || clientData.status || 'draft';
                 const proposalCode = clientData['Proposal Code'];
                 const fullName = clientData['Full Name'] || 'Unbekannt';
                 const company = clientData['Company'] || 'Unbekannt';
                 const price = clientData['Price'] || 'Nicht festgelegt';
-                const signedPdfUrl = clientData['Signed PDF'];
+                const signedPdfUrl = Array.isArray(clientData['Signed PDF']) && clientData['Signed PDF'].length > 0 
+                    ? clientData['Signed PDF'][0].url 
+                    : null;
                 const templateName = clientData['Template Name'] || 'Standard Template';
 
                 // Get status info
                 const statusInfo = this.getStatusInfo(status);
                 
-                // Create large proposal card with 4-column grid
+                // Create large proposal card matching analytics design exactly
                 const proposalCard = `
-                    <div class="proposal-master-card" onclick="viewProposal('${proposalCode}')">
-                        <div class="proposal-header">
-                            <div class="proposal-info">
-                                <h2 class="proposal-title">${proposalCode}</h2>
-                                <p class="proposal-subtitle">${templateName}</p>
-                                <p class="proposal-live-status">${statusInfo.message}</p>
-                                <p class="proposal-sync-time">Letzte Aktualisierung: ${new Date().toLocaleDateString('de-DE')} um ${new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})}</p>
+                    <div class="proposal-master-card">
+                        <div class="automation-card-header">
+                            <div class="automation-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" fill="currentColor"/>
+                                    <polyline points="14,2 14,8 20,8" fill="currentColor"/>
+                                </svg>
                             </div>
-                            <div class="proposal-status-badge">
-                                <div class="detail-icon">
-                                    ${statusInfo.icon}
+                            <div class="automation-info">
+                                <h2 class="automation-title" style="font-size: 28px; font-weight: 700; color: #e6edf3; margin-bottom: 8px;">Proposal ${proposalCode}</h2>
+                                <p class="automation-live-status" style="font-size: 16px; color: #e6edf3; margin: 4px 0;">${statusInfo.message}</p>
+                                <p class="automation-sync-time" style="font-size: 14px; color: #7d8590;">Letzte Aktualisierung: ${new Date().toLocaleDateString('de-DE')} um ${new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})}</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div class="automation-status">
+                                    <div class="status-dot ${status === 'approved' || status === 'signed' ? 'active' : 'inactive'}"></div>
+                                    <span class="status-text">${statusInfo.text}</span>
                                 </div>
-                                <span class="status-label">${statusInfo.text}</span>
+                                ${signedPdfUrl ? 
+                                    `<div onclick="window.open('${signedPdfUrl}', '_blank')" style="
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 12px;
+                                        padding: 16px 24px;
+                                        background: rgba(125, 133, 144, 0.1);
+                                        border-radius: 25px;
+                                        border: 1px solid rgba(125, 133, 144, 0.2);
+                                        cursor: pointer;
+                                        transition: background 0.2s ease;
+                                    " onmouseover="this.style.background='rgba(125, 133, 144, 0.15)'" onmouseout="this.style.background='rgba(125, 133, 144, 0.1)'">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 16L7 11h3V3h4v8h3l-5 5zM5 20v-2h14v2H5z"/>
+                                        </svg>
+                                        <span style="font-size: 14px; color: #e6edf3; font-weight: 500;">Download</span>
+                                    </div>` : ''
+                                }
                             </div>
                         </div>
-
-                        <div class="proposal-details-grid">
-                            <!-- Client Info -->
-                            <div class="detail-card">
-                                <div class="detail-content">
-                                    <span class="detail-title">Kunde</span>
-                                    <div class="detail-value">${fullName}</div>
-                                    <div class="detail-description">Auftraggeber</div>
+                        
+                        <div class="automation-kpis-grid">
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z"/>
+                                        <path d="M20.5899 22C20.5899 18.13 16.7399 15 11.9999 15C7.25991 15 3.40991 18.13 3.40991 22"/>
+                                    </svg>
                                 </div>
-                                <div class="detail-visual">
-                                    <div class="detail-icon">
-                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" fill="currentColor"/>
-                                            <path d="M20.5899 22C20.5899 18.13 16.7399 15 11.9999 15C7.25991 15 3.40991 18.13 3.40991 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                    </div>
+                                <div class="kpi-content">
+                                    <div class="kpi-value">${fullName}</div>
+                                    <div class="kpi-label">Kunde</div>
                                 </div>
                             </div>
 
-                            <!-- Company Info -->
-                            <div class="detail-card">
-                                <div class="detail-content">
-                                    <span class="detail-title">Unternehmen</span>
-                                    <div class="detail-value">${company}</div>
-                                    <div class="detail-description">Firma</div>
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M2 22H22"/>
+                                        <path d="M3 22V5C3 3.35 4.35 2 6 2H18C19.65 2 21 3.35 21 5V22"/>
+                                        <path d="M7 7H17M7 11H17M7 15H17"/>
+                                    </svg>
                                 </div>
-                                <div class="detail-visual">
-                                    <div class="detail-icon">
-                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M2 22H22" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M3 22V5C3 3.35 4.35 2 6 2H18C19.65 2 21 3.35 21 5V22" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M7 7H17M7 11H17M7 15H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                        </svg>
-                                    </div>
+                                <div class="kpi-content">
+                                    <div class="kpi-value">${company}</div>
+                                    <div class="kpi-label">Unternehmen</div>
                                 </div>
                             </div>
 
-                            <!-- Price Info -->
-                            <div class="detail-card">
-                                <div class="detail-content">
-                                    <span class="detail-title">Wert</span>
-                                    <div class="detail-value">€${price}</div>
-                                    <div class="detail-description">Angebotswert</div>
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 1V23"/>
+                                        <path d="M17 5H9.5C8.57174 5 7.6815 5.36875 7.02513 6.02513C6.36875 6.6815 6 7.57174 6 8.5C6 9.42826 6.36875 10.3185 7.02513 10.9749C7.6815 11.6312 8.57174 12 9.5 12H14.5C15.4283 12 16.3185 12.3687 16.9749 13.0251C17.6312 13.6815 18 14.5717 18 15.5C18 16.4283 17.6312 17.3185 16.9749 17.9749C16.3185 18.6312 15.4283 19 14.5 19H6"/>
+                                    </svg>
                                 </div>
-                                <div class="detail-visual">
-                                    <div class="detail-icon">
-                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M12 1V23" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                            <path d="M17 5H9.5C8.57174 5 7.6815 5.36875 7.02513 6.02513C6.36875 6.6815 6 7.57174 6 8.5C6 9.42826 6.36875 10.3185 7.02513 10.9749C7.6815 11.6312 8.57174 12 9.5 12H14.5C15.4283 12 16.3185 12.3687 16.9749 13.0251C17.6312 13.6815 18 14.5717 18 15.5C18 16.4283 17.6312 17.3185 16.9749 17.9749C16.3185 18.6312 15.4283 19 14.5 19H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                        </svg>
-                                    </div>
+                                <div class="kpi-content">
+                                    <div class="kpi-value">€${price}</div>
+                                    <div class="kpi-label">Wert</div>
                                 </div>
                             </div>
 
-                            <!-- Actions -->
-                            <div class="detail-card">
-                                <div class="detail-content">
-                                    <span class="detail-title">Aktionen</span>
-                                    <div class="detail-value">${status === 'signed' && signedPdfUrl ? 'PDF verfügbar' : 'In Bearbeitung'}</div>
-                                    <div class="detail-description">${status === 'signed' && signedPdfUrl ? 'Klicken zum Download' : 'Warten auf Freigabe'}</div>
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    ${status === 'signed' && signedPdfUrl ? 
+                                        `<svg viewBox="0 0 24 24">
+                                            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z"/>
+                                            <path d="M14 2V8H20"/>
+                                        </svg>` :
+                                        `<svg viewBox="0 0 24 24">
+                                            <path d="M12 2C13.3132 2 14.6136 2.25866 15.8268 2.7612C17.0401 3.26375 18.1425 4.00035 19.0711 4.92893C19.9997 5.85752 20.7362 6.95991 21.2388 8.17317C21.7413 9.38642 22 10.6868 22 12"/>
+                                            <path d="M2 12C2 6.477 6.477 2 12 2"/>
+                                        </svg>`
+                                    }
                                 </div>
-                                <div class="detail-visual">
-                                    <div class="detail-icon">
-                                        ${status === 'signed' && signedPdfUrl ? 
-                                            `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M14 2V8H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>` :
-                                            `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M12 2C13.3132 2 14.6136 2.25866 15.8268 2.7612C17.0401 3.26375 18.1425 4.00035 19.0711 4.92893C19.9997 5.85752 20.7362 6.95991 21.2388 8.17317C21.7413 9.38642 22 10.6868 22 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                                <path d="M2 12C2 6.477 6.477 2 12 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                            </svg>`
-                                        }
-                                    </div>
+                                <div class="kpi-content">
+                                    <div class="kpi-value">${statusInfo.text}</div>
+                                    <div class="kpi-label">Status</div>
                                 </div>
                             </div>
                         </div>
@@ -2453,11 +2498,14 @@
 
             async loadSettings() {
                 console.log('⚙️ Loading Settings page...');
-                if (this.currentPage === 'settings') {
-                    console.log('⚠️ Settings already loaded, skipping');
-                    return;
-                }
                 this.currentPage = 'settings';
+                
+                // Update page header
+                const topBarTitle = document.querySelector('.top-bar .title');
+                if (topBarTitle) {
+                    topBarTitle.textContent = 'Einstellungen';
+                    topBarTitle.dataset.customTitle = 'true';
+                }
                 
                 // Hide all content sections
                 const contentArea = document.querySelector('.content-area');
@@ -2471,199 +2519,112 @@
                     settingsSection = document.createElement('div');
                     settingsSection.className = 'spa-section settings fade-in';
                     settingsSection.innerHTML = `
-                        <!-- Account Information -->
+                        <!-- Account Settings Main Card -->
                         <div class="automation-master-card" style="margin-bottom: 40px;">
                             <div class="automation-card-header">
-                                <div class="automation-title-section">
-                                    <h2 class="automation-title">Account Information</h2>
-                                    <div class="automation-meta">
-                                        <div class="status-indicator">
-                                            <div class="status-dot status-success"></div>
-                                            <span class="status-text">Konto ist aktiv</span>
-                                        </div>
-                                    </div>
+                                <div class="automation-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 15c1.66 0 2.99-1.34 2.99-3S13.66 9 12 9c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-6-2c0-3.31 2.69-6 6-6s6 2.69 6 6-2.69 6-6 6-6-2.69-6-6z"/>
+                                    </svg>
+                                </div>
+                                <div class="automation-info">
+                                    <h2 class="automation-title" style="font-size: 28px; font-weight: 700; color: #e6edf3; margin-bottom: 8px;">Konto Einstellungen</h2>
+                                    <p class="automation-live-status" style="font-size: 16px; color: #e6edf3; margin: 4px 0;">Verwalten Sie Ihre Kontoinformationen</p>
+                                    <p class="automation-sync-time" style="font-size: 14px; color: #7d8590;">Zuletzt aktualisiert: ${new Date().toLocaleDateString('de-DE')} um ${new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})}</p>
+                                </div>
+                                <div class="automation-status">
+                                    <div class="status-dot active"></div>
+                                    <span class="status-text">Aktiv</span>
                                 </div>
                             </div>
-
-                            <div style="padding: 40px 0;">
-                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
-                                    <div style="background: rgba(48, 54, 61, 0.3); border-radius: 16px; padding: 24px; border: 1px solid rgba(48, 54, 61, 0.5);">
-                                        <div style="font-size: 14px; color: #7d8590; margin-bottom: 8px; font-weight: 600;">Proposal Code</div>
-                                        <div style="font-size: 18px; color: #e6edf3; font-weight: 500;" id="accountProposalCode">PROP-XXXX-XXXX</div>
+                            
+                            <div class="automation-kpis-grid">
+                                <div class="kpi-card">
+                                    <div class="kpi-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z"/>
+                                            <path d="M20.5899 22C20.5899 18.13 16.7399 15 11.9999 15C7.25991 15 3.40991 18.13 3.40991 22"/>
+                                        </svg>
                                     </div>
-                                    <div style="background: rgba(48, 54, 61, 0.3); border-radius: 16px; padding: 24px; border: 1px solid rgba(48, 54, 61, 0.5);">
-                                        <div style="font-size: 14px; color: #7d8590; margin-bottom: 8px; font-weight: 600;">Account erstellt</div>
-                                        <div style="font-size: 18px; color: #e6edf3; font-weight: 500;" id="accountCreated">Heute</div>
+                                    <div class="kpi-content">
+                                        <div class="kpi-value" id="settingsFullName">Lädt...</div>
+                                        <div class="kpi-label">Vollständiger Name</div>
                                     </div>
-                                    <div style="background: rgba(48, 54, 61, 0.3); border-radius: 16px; padding: 24px; border: 1px solid rgba(48, 54, 61, 0.5);">
-                                        <div style="font-size: 14px; color: #7d8590; margin-bottom: 8px; font-weight: 600;">Letzter Login</div>
-                                        <div style="font-size: 18px; color: #e6edf3; font-weight: 500;" id="lastLogin">Gerade eben</div>
+                                </div>
+                                
+                                <div class="kpi-card">
+                                    <div class="kpi-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M2 22H22"/>
+                                            <path d="M3 22V5C3 3.35 4.35 2 6 2H18C19.65 2 21 3.35 21 5V22"/>
+                                            <path d="M7 7H17M7 11H17M7 15H17"/>
+                                        </svg>
                                     </div>
-                                    <div style="background: rgba(48, 54, 61, 0.3); border-radius: 16px; padding: 24px; border: 1px solid rgba(48, 54, 61, 0.5);">
-                                        <div style="font-size: 14px; color: #7d8590; margin-bottom: 8px; font-weight: 600;">Account Status</div>
-                                        <div style="font-size: 18px; color: #28cd41; font-weight: 500;">✓ Aktiv</div>
+                                    <div class="kpi-content">
+                                        <div class="kpi-value" id="settingsCompany">Lädt...</div>
+                                        <div class="kpi-label">Unternehmen</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="kpi-card">
+                                    <div class="kpi-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z"/>
+                                            <polyline points="14,2 14,8 20,8"/>
+                                        </svg>
+                                    </div>
+                                    <div class="kpi-content">
+                                        <div class="kpi-value" id="settingsProposalCode">Lädt...</div>
+                                        <div class="kpi-label">Proposal Code</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="kpi-card" onclick="requestPasswordReset()" style="cursor: pointer;">
+                                    <div class="kpi-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM15.1 8H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="kpi-content">
+                                        <div class="kpi-value">Passwort-Reset</div>
+                                        <div class="kpi-label">Support kontaktieren</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Password Settings -->
-                        <div class="automation-master-card" style="margin-bottom: 40px;">
-                            <div class="automation-card-header">
-                                <div class="automation-title-section">
-                                    <h2 class="automation-title">Passwort ändern</h2>
-                                    <div class="automation-meta">
-                                        <div class="status-indicator">
-                                            <div class="status-dot status-warning"></div>
-                                            <span class="status-text">Sicherheit verwalten</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div style="padding: 40px 0;">
-                                <!-- Messages -->
-                                <div id="passwordErrorMessage" style="background: rgba(255, 59, 48, 0.1); border: 1px solid rgba(255, 59, 48, 0.2); color: #ff3b30; padding: 12px 16px; border-radius: 8px; font-size: 15px; margin-bottom: 16px; display: none;"></div>
-                                <div id="passwordSuccessMessage" style="background: rgba(40, 205, 65, 0.1); border: 1px solid rgba(40, 205, 65, 0.2); color: #28cd41; padding: 12px 16px; border-radius: 8px; font-size: 15px; margin-bottom: 16px; display: none;"></div>
-
-                                <form id="passwordForm" style="max-width: 500px;">
-                                    <div style="margin-bottom: 20px;">
-                                        <label style="display: block; font-size: 15px; font-weight: 500; color: #e6edf3; margin-bottom: 6px;">Aktuelles Passwort</label>
-                                        <input type="password" id="currentPassword" style="width: 100%; padding: 12px 16px; border: 1.5px solid rgba(125, 133, 144, 0.3); border-radius: 8px; font-size: 16px; background: rgba(48, 54, 61, 0.3); color: #e6edf3;" placeholder="Ihr aktuelles Passwort" required>
-                                    </div>
-
-                                    <div style="margin-bottom: 20px;">
-                                        <label style="display: block; font-size: 15px; font-weight: 500; color: #e6edf3; margin-bottom: 6px;">Neues Passwort</label>
-                                        <input type="password" id="newPassword" style="width: 100%; padding: 12px 16px; border: 1.5px solid rgba(125, 133, 144, 0.3); border-radius: 8px; font-size: 16px; background: rgba(48, 54, 61, 0.3); color: #e6edf3;" placeholder="Neues Passwort (mindestens 5 Zeichen)" required minlength="5">
-                                        <div style="background: rgba(125, 133, 144, 0.05); border: 1px solid rgba(125, 133, 144, 0.1); border-radius: 8px; padding: 12px; margin-top: 8px; font-size: 14px; color: #7d8590;">
-                                            💡 Ihr neues Passwort muss mindestens 5 Zeichen lang sein
-                                        </div>
-                                    </div>
-
-                                    <div style="margin-bottom: 20px;">
-                                        <label style="display: block; font-size: 15px; font-weight: 500; color: #e6edf3; margin-bottom: 6px;">Passwort bestätigen</label>
-                                        <input type="password" id="confirmPassword" style="width: 100%; padding: 12px 16px; border: 1.5px solid rgba(125, 133, 144, 0.3); border-radius: 8px; font-size: 16px; background: rgba(48, 54, 61, 0.3); color: #e6edf3;" placeholder="Neues Passwort wiederholen" required>
-                                    </div>
-
-                                    <button type="submit" id="changePasswordBtn" style="background: #40a0fb; color: #ffffff; border: none; border-radius: 8px; padding: 12px 24px; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;">
-                                        Passwort ändern
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-
-                        <!-- Automation Configuration -->
-                        <div class="automation-master-card" style="margin-bottom: 40px;">
-                            <div class="automation-card-header">
-                                <div class="automation-title-section">
-                                    <h2 class="automation-title">Automations Konfiguration</h2>
-                                    <div class="automation-meta">
-                                        <div class="status-indicator">
-                                            <div class="status-dot status-info"></div>
-                                            <span class="status-text">KPI-Einstellungen</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div style="padding: 40px 0;">
-                                <div id="automationErrorMessage" style="background: rgba(255, 59, 48, 0.1); border: 1px solid rgba(255, 59, 48, 0.2); color: #ff3b30; padding: 12px 16px; border-radius: 8px; font-size: 15px; margin-bottom: 16px; display: none;"></div>
-                                <div id="automationSuccessMessage" style="background: rgba(40, 205, 65, 0.1); border: 1px solid rgba(40, 205, 65, 0.2); color: #28cd41; padding: 12px 16px; border-radius: 8px; font-size: 15px; margin-bottom: 16px; display: none;"></div>
-
-                                <!-- AI Cold Outreach System -->
-                                <div style="border: 1px solid rgba(125, 133, 144, 0.2); border-radius: 8px; padding: 30px; margin-bottom: 20px; background: rgba(48, 54, 61, 0.1);">
-                                    <h4 style="font-size: 18px; font-weight: 600; color: #e6edf3; margin-bottom: 4px;">🤖 AI Cold Outreach System</h4>
-                                    
-                                    <form id="instantlyConfigForm">
-                                        <div style="margin-bottom: 20px;">
-                                            <label style="display: block; font-size: 15px; font-weight: 500; color: #e6edf3; margin-bottom: 6px;">Instantly API Key</label>
-                                            <div style="position: relative; display: flex; align-items: center;">
-                                                <input type="password" id="instantlyApiKey" style="width: 100%; padding: 12px 60px 12px 16px; border: 1.5px solid rgba(125, 133, 144, 0.3); border-radius: 8px; font-size: 16px; background: rgba(48, 54, 61, 0.3); color: #e6edf3;" placeholder="Ihr Instantly API Key">
-                                                <button type="button" id="toggleApiKeyBtn" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-size: 14px; color: #7d8590;">👁️</button>
-                                            </div>
-                                            <div style="background: rgba(125, 133, 144, 0.05); border: 1px solid rgba(125, 133, 144, 0.1); border-radius: 8px; padding: 12px; margin-top: 8px; font-size: 14px; color: #7d8590;">
-                                                💡 Ihr API Key wird sicher gespeichert und ist für Analytics erforderlich
-                                            </div>
-                                        </div>
-
-                                        <div style="margin-bottom: 20px;">
-                                            <label style="display: block; font-size: 15px; font-weight: 500; color: #e6edf3; margin-bottom: 6px;">Durchschnittsumsatz pro Lead (€)</label>
-                                            <input type="number" id="avgDealValue" style="width: 100%; padding: 12px 16px; border: 1.5px solid rgba(125, 133, 144, 0.3); border-radius: 8px; font-size: 16px; background: rgba(48, 54, 61, 0.3); color: #e6edf3;" placeholder="2500" min="0" step="1">
-                                            <div style="background: rgba(125, 133, 144, 0.05); border: 1px solid rgba(125, 133, 144, 0.1); border-radius: 8px; padding: 12px; margin-top: 8px; font-size: 14px; color: #7d8590;">
-                                                💰 Wird für die Berechnung des potenziellen Umsatzes verwendet
-                                            </div>
-                                        </div>
-
-                                        <button type="submit" id="saveInstantlyConfigBtn" style="background: #40a0fb; color: #ffffff; border: none; border-radius: 8px; padding: 12px 24px; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;">
-                                            Konfiguration speichern
-                                        </button>
-                                    </form>
-                                </div>
-
-                                <!-- Future Automations Placeholder -->
-                                <div style="border: 1px dashed rgba(125, 133, 144, 0.2); border-radius: 8px; padding: 30px; opacity: 0.6;">
-                                    <h4 style="font-size: 18px; font-weight: 600; color: #e6edf3; margin-bottom: 4px;">➕ Weitere Automationen</h4>
-                                    <p style="font-size: 14px; color: #7d8590;">Neue Automatisierungen werden hier automatisch hinzugefügt</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Dashboard Preferences -->
-                        <div class="automation-master-card" style="margin-bottom: 40px;">
-                            <div class="automation-card-header">
-                                <div class="automation-title-section">
-                                    <h2 class="automation-title">Dashboard Einstellungen</h2>
-                                    <div class="automation-meta">
-                                        <div class="status-indicator">
-                                            <div class="status-dot status-info"></div>
-                                            <span class="status-text">Personalisierung</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div style="padding: 40px 0;">
-                                <div style="display: grid; gap: 24px;">
-                                    <div style="background: rgba(125, 133, 144, 0.05); border: 1px solid rgba(125, 133, 144, 0.1); border-radius: 8px; padding: 20px;">
-                                        <div style="font-size: 16px; font-weight: 600; color: #e6edf3; margin-bottom: 8px;">E-Mail Benachrichtigungen</div>
-                                        <div style="font-size: 14px; color: #7d8590; line-height: 1.5;">
-                                            Benachrichtigungen zu Ihrem Proposal-Status erhalten Sie automatisch an Ihre hinterlegte E-Mail Adresse.
-                                        </div>
-                                    </div>
-                                    
-                                    <div style="background: rgba(125, 133, 144, 0.05); border: 1px solid rgba(125, 133, 144, 0.1); border-radius: 8px; padding: 20px;">
-                                        <div style="font-size: 16px; font-weight: 600; color: #e6edf3; margin-bottom: 8px;">Dashboard-Design</div>
-                                        <div style="font-size: 14px; color: #7d8590; line-height: 1.5;">
-                                            Ihr Dashboard verwendet automatisch das optimale Design für Ihr Gerät.
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Support -->
+                        <!-- Logout Section -->
                         <div class="automation-master-card">
                             <div class="automation-card-header">
-                                <div class="automation-title-section">
-                                    <h2 class="automation-title">Support & Hilfe</h2>
-                                    <div class="automation-meta">
-                                        <div class="status-indicator">
-                                            <div class="status-dot status-warning"></div>
-                                            <span class="status-text">Vorsicht geboten</span>
-                                        </div>
-                                    </div>
+                                <div class="automation-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                                    </svg>
                                 </div>
-                            </div>
-
-                            <div style="padding: 40px 0;">
-                                <div style="background: rgba(255, 59, 48, 0.05); border: 1px solid rgba(255, 59, 48, 0.1); border-radius: 8px; padding: 20px;">
-                                    <div style="font-size: 16px; font-weight: 600; color: #e6edf3; margin-bottom: 8px;">Account löschen</div>
-                                    <div style="font-size: 14px; color: #7d8590; line-height: 1.5; margin-bottom: 16px;">
-                                        Das Löschen Ihres Accounts kann nicht rückgängig gemacht werden. 
-                                        Ihr Proposal und alle Daten bleiben erhalten, aber der Dashboard-Zugang wird entfernt.
-                                    </div>
-                                    <button id="contactSupportBtn" style="background: transparent; color: #7d8590; border: 1.5px solid rgba(125, 133, 144, 0.3); padding: 12px 24px; border-radius: 8px; font-size: 14px; cursor: pointer;">
-                                        Support kontaktieren
+                                <div class="automation-info">
+                                    <h2 class="automation-title" style="font-size: 28px; font-weight: 700; color: #e6edf3; margin-bottom: 8px;">Abmelden</h2>
+                                    <p class="automation-live-status" style="font-size: 16px; color: #e6edf3; margin: 4px 0;">Beenden Sie Ihre aktuelle Sitzung</p>
+                                    <p class="automation-sync-time" style="font-size: 14px; color: #7d8590;">Sie können sich jederzeit wieder anmelden</p>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 16px;">
+                                    <button onclick="logout()" style="
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 12px;
+                                        padding: 16px 24px;
+                                        background: rgba(255, 59, 48, 0.1);
+                                        border-radius: 25px;
+                                        border: 1px solid rgba(255, 59, 48, 0.2);
+                                        cursor: pointer;
+                                        transition: background 0.2s ease;
+                                        color: #ff3b30;
+                                        font-weight: 500;
+                                    " onmouseover="this.style.background='rgba(255, 59, 48, 0.15)'" onmouseout="this.style.background='rgba(255, 59, 48, 0.1)'">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                                        </svg>
+                                        <span style="font-size: 14px;">Abmelden</span>
                                     </button>
                                 </div>
                             </div>
@@ -2865,28 +2826,8 @@
                 return;
             }
             
-            try {
-                console.log('📡 DIRECT WEBHOOK CALL');
-                const response = await fetch(`https://optionai.optionai.at/webhook/get-client?proposal_code=${proposalCode}`, {
-                    method: 'GET'
-                });
-                
-                console.log('Response status:', response.status);
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('✅ SUCCESS! Data received:', data);
-                    populateDashboard(data);
-                    
-                    // Now load Instantly Analytics with the client data
-                    console.log('🔄 Loading Instantly Analytics...');
-                    loadInstantlyAnalytics(data);
-                } else {
-                    console.error('❌ Webhook failed:', response.status);
-                }
-            } catch (error) {
-                console.error('💥 Error:', error);
-            }
+            // No direct webhook call needed - let SPA Router handle data loading
+            console.log('✅ DOMContentLoaded setup complete - SPA Router will handle data loading');
         });
 
         // Missing function definitions
@@ -2904,78 +2845,54 @@
             showToast(message);
         }
 
-        // Settings functionality
-        async function handlePasswordChange() {
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const changeBtn = document.getElementById('changePasswordBtn');
-
-            // Validation
-            if (newPassword !== confirmPassword) {
-                showMessage('passwordErrorMessage', 'Die Passwörter stimmen nicht überein.');
-                return;
-            }
-
-            if (newPassword.length < 5) {
-                showMessage('passwordErrorMessage', 'Das neue Passwort muss mindestens 5 Zeichen lang sein.');
-                return;
-            }
-
-            if (currentPassword === newPassword) {
-                showMessage('passwordErrorMessage', 'Das neue Passwort muss sich vom aktuellen unterscheiden.');
-                return;
-            }
-
-            setButtonLoading(changeBtn, true, 'Passwort ändern');
-
+        // Settings functionality - Password Reset Request
+        function requestPasswordReset() {
+            const proposalCode = sessionStorage.getItem('proposalCode') || '[PROPOSAL_CODE]';
+            
+            // Get client data from sessionStorage, with fallback to DOM elements if available
+            let clientData = {};
             try {
-                const proposalCode = sessionStorage.getItem('proposalCode');
-                
-                // First validate current password
-                const validateResponse = await fetch('https://optionai.optionai.at/webhook/validate-password', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        'Proposal Code': proposalCode,
-                        'password': currentPassword
-                    })
-                });
-
-                if (!validateResponse.ok) {
-                    throw new Error('Aktuelles Passwort ist falsch');
-                }
-
-                // Then update password using unified settings webhook
-                const updateResponse = await fetch('https://optionai.optionai.at/webhook/save-settings', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        proposal_code: proposalCode,
-                        password: newPassword
-                    })
-                });
-
-                if (updateResponse.ok) {
-                    showMessage('passwordSuccessMessage', 'Passwort erfolgreich geändert!', 3000);
-                    
-                    // Clear form
-                    document.getElementById('passwordForm').reset();
-                    
-                } else {
-                    throw new Error('Passwort konnte nicht geändert werden');
-                }
-
-            } catch (error) {
-                console.error('Password change error:', error);
-                showMessage('passwordErrorMessage', error.message || 'Fehler beim Ändern des Passworts. Bitte versuchen Sie es erneut.');
-            } finally {
-                setButtonLoading(changeBtn, false, 'Passwort ändern');
+                clientData = JSON.parse(sessionStorage.getItem('clientData') || '{}');
+            } catch (e) {
+                console.warn('Could not parse clientData from sessionStorage');
             }
+            
+            // Try to get name and company from clientData first, then fallback to DOM elements
+            let fullName = clientData['Full Name'];
+            let company = clientData['Company'];
+            
+            // Fallback: try to get from DOM elements if they exist
+            if (!fullName) {
+                const nameEl = document.getElementById('settingsFullName');
+                fullName = nameEl ? nameEl.textContent : '[NAME]';
+            }
+            if (!company) {
+                const companyEl = document.getElementById('settingsCompany');
+                company = companyEl ? companyEl.textContent : '[COMPANY]';
+            }
+            
+            // Clean up any "Lädt..." text
+            if (fullName === 'Lädt...' || fullName === 'Unbekannt') fullName = '[NAME]';
+            if (company === 'Lädt...' || company === 'Unbekannt') company = '[COMPANY]';
+            
+            const subject = encodeURIComponent('Passwort Reset - Kunden Dashboard');
+            const body = encodeURIComponent(`Hallo option.ai Team!
+
+Ich möchte mein Passwort für das Kunden-Dashboard zurücksetzen und benötige Unterstützung.
+
+Meine Daten:
+- Proposal Code: ${proposalCode}
+- Name: ${fullName}
+- Unternehmen: ${company}
+
+Bitte kontaktieren Sie mich für den sicheren Passwort-Reset.
+
+Vielen Dank für Ihre Unterstützung!
+
+Mit freundlichen Grüßen`);
+            
+            // Open email client with pre-filled template
+            window.location.href = `mailto:contact@option-ai.at?subject=${subject}&body=${body}`;
         }
 
         async function handleInstantlyConfig() {
@@ -3084,14 +3001,7 @@
 
         // Add event listeners when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            // Password form handler
-            const passwordForm = document.getElementById('passwordForm');
-            if (passwordForm) {
-                passwordForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    await handlePasswordChange();
-                });
-            }
+            // Password form no longer exists - replaced with email link
 
             // Instantly configuration form handler
             const instantlyForm = document.getElementById('instantlyConfigForm');

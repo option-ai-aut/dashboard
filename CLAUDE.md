@@ -256,6 +256,13 @@ const statusMap = {
 23. **Complete Settings Integration** – Passwort-Änderung, API-Konfiguration, Support-Kontakt vollständig integriert
 24. **Large Proposal Cards** – 4-spaltige KPI-Grid Redesign mit Apple-Style großen Cards
 25. **File Cleanup** – Unnötige proposals.html und settings.html gelöscht nach vollständiger SPA-Integration
+26. **Analytics Card-Header Redesign** – Icon links, Status rechts, Querstrich unter Header für Konsistenz
+27. **Proposals Card Complete Redesign** – Exakt gleiche Struktur wie Analytics mit KPI-Grid, nicht klickbar
+28. **Status Data Source Fix** – Nutzt korrekt `Status Proposal` Feld statt `status`
+29. **PDF URL Parsing** – Korrekte Extraktion aus Array-Struktur `Signed PDF[0].url`
+30. **Download Button Design** – Status-Badge Design für Download Button
+31. **Settings Complete Redesign** – Apple-Style mit KPI-Grid, klickbares Passwort-Card, funktionale Formulare
+32. **Unified Design Language** – Alle 3 Views (Analytics/Proposals/Settings) nutzen identische Card-Struktur
 
 ### 🔄 **Nicht mehr verwendet (gelöst/ersetzt)**
 - **login.html** (Netlify Identity) – Datei entfernt, da überflüssig
