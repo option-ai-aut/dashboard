@@ -2238,14 +2238,18 @@
                     void analyticsSection.offsetHeight;
                     analyticsSection.classList.add('fade-in');
                     
-                    // Set current timestamp
-                    const timestampEl = document.getElementById('automationSyncTime');
-                    if (timestampEl) {
-                        timestampEl.textContent = `Letzte Aktualisierung: ${new Date().toLocaleDateString('de-DE')} um ${new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})}`;
+                    // Load analytics data only on first visit or if data is not loaded
+                    const emailsSentValue = document.getElementById('emailsSentValue');
+                    if (emailsSentValue && emailsSentValue.textContent === '—') {
+                        // Data not loaded yet, load it now
+                        await loadClientData();
+                    } else {
+                        // Data already loaded, just update timestamp if needed
+                        const timestampEl = document.getElementById('automationSyncTime');
+                        if (timestampEl && timestampEl.textContent.includes('--')) {
+                            timestampEl.textContent = `Letzte Aktualisierung: ${new Date().toLocaleDateString('de-DE')} um ${new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})}`;
+                        }
                     }
-                    
-                    // Load analytics data
-                    await loadClientData();
                 } else {
                     console.error('❌ Could not find analytics content');
                 }
@@ -2311,8 +2315,11 @@
                 
                 if (proposalsSection) {
                     proposalsSection.style.display = 'block';
-                    // Load proposals data
-                    await this.loadProposalsData();
+                    // Only load proposals data if not already loaded
+                    const proposalsContainer = document.getElementById('proposalsContainer');
+                    if (proposalsContainer && proposalsContainer.innerHTML.includes('Lade Proposals...')) {
+                        await this.loadProposalsData();
+                    }
                 } else {
                     console.error('❌ Could not find proposals content');
                 }
@@ -2713,8 +2720,11 @@
                 
                 settingsSection.style.display = 'block';
                 
-                // Load settings data and setup event listeners
-                await this.loadSettingsData();
+                // Only load settings data if not already loaded
+                const settingsFullNameEl = document.getElementById('settingsFullName');
+                if (settingsFullNameEl && settingsFullNameEl.textContent === 'Lädt...') {
+                    await this.loadSettingsData();
+                }
                 this.setupSettingsEventListeners();
             }
 
@@ -3302,6 +3312,11 @@ Mit freundlichen Grüßen`);
                 
                 // Update the settings display
                 await router.loadSettingsData();
+                
+                // If analytics view is currently active, refresh the data
+                if (router.currentPage === 'analytics') {
+                    await loadClientData();
+                }
                 
                 // Close modal after short delay
                 setTimeout(() => {
