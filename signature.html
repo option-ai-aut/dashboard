@@ -536,9 +536,18 @@
             animation: pulse 2s infinite;
         }
 
+        .status-dot.signed {
+            background: #10b981;
+            animation: none;
+        }
+
         .status-text {
             font-weight: 600;
             color: #66b3ff;
+        }
+
+        .status-text.signed {
+            color: #10b981;
         }
 
         .client-info {
@@ -781,6 +790,7 @@
             padding: 8px 0;
             position: relative;
             padding-left: 25px;
+            color: #000000;
         }
 
         .benefits-list li::before {
@@ -1652,11 +1662,169 @@
             }
             
             // We have proposal data, proceed with loading the proposal
-            // The existing loadContent() function will handle this
             console.log('Proposal code found:', proposalCode);
-            // Show the proposal dashboard immediately
-            document.getElementById('proposalDashboard').style.display = 'block';
+            // Call the content loading function
+            loadContentFromSession();
         });
+        
+        // Load content from sessionStorage using the original working logic
+        function loadContentFromSession() {
+            try {
+                const proposalCode = sessionStorage.getItem('proposalCode');
+                const clientDataString = sessionStorage.getItem('clientData');
+                
+                if (!proposalCode || !clientDataString) {
+                    console.error('Missing data in sessionStorage');
+                    window.location.replace('/index.html');
+                    return;
+                }
+                
+                const client = JSON.parse(clientDataString);
+                console.log('✅ Loading client data from sessionStorage:', client);
+                
+                // Check if proposal is draft (same logic as original)
+                if (client && (client['Status Proposal'] === 'draft' || client.Status === 'draft')) {
+                    console.log('Proposal status is draft:', client['Status Proposal'] || client.Status);
+                    document.body.innerHTML = '<h2>Proposal wird bearbeitet …</h2>';
+                    return;
+                }
+                
+                // Store data globally for signing process
+                window.proposalCode = proposalCode;
+                window.clientData = client;
+                
+                // Get HTML content using the exact same logic as the original working system
+                let html = '';
+                if (client && client["Custom HTML"]) {
+                    html = client["Custom HTML"];
+                    console.log('✅ Using Custom HTML from client data');
+                } else if (client && client.Template && Array.isArray(client.Template) && client.Template.length > 0) {
+                    html = client.Template[0].HTML || '';
+                    console.log('✅ Using Template HTML from client data');
+                } else {
+                    console.warn('❌ No HTML content found in client data');
+                    console.log('Available client fields:', client ? Object.keys(client) : 'No client');
+                }
+                
+                // Replace placeholders in HTML (same as original)
+                if (html && client) {
+                    html = html.replace(/\{\{([^}]+)\}\}/g, (match, placeholder) => {
+                        const fieldName = placeholder.trim();
+                        const value = client[fieldName] || '';
+                        console.log(`Replacing placeholder ${placeholder} with:`, value);
+                        return value;
+                    });
+                }
+                
+                // Show proposal dashboard first (same as original)
+                const codeEntryScreen = document.getElementById('codeEntryScreen');
+                const proposalDashboard = document.getElementById('proposalDashboard');
+                
+                if (codeEntryScreen) codeEntryScreen.style.display = 'none';
+                if (proposalDashboard) proposalDashboard.style.display = 'block';
+                
+                // Replace proposal content with HTML (EXACT SAME LOGIC AS ORIGINAL WORKING SYSTEM)
+                const proposalContentElement = document.getElementById('proposal-content');
+                if (proposalContentElement && html && html.trim().length > 0) {
+                    console.log('✅ Replacing proposal content with HTML from sessionStorage');
+                    // Remove all styles and classes from the HTML
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    
+                    // Strip all style attributes and classes (except page-break)
+                    const allElements = tempDiv.querySelectorAll('*');
+                    allElements.forEach(el => {
+                        el.removeAttribute('style');
+                        // Keep page-break and other important classes
+                        const currentClass = el.getAttribute('class');
+                        if (currentClass && (currentClass.includes('page-break') || currentClass.includes('unterschriften-section'))) {
+                            // Keep these classes
+                        } else {
+                            el.removeAttribute('class');
+                        }
+                    });
+                    
+                    // Create proposal header with logo and company name
+                    const companyName = client?.Company || 'FF Office';
+                    const proposalHeader = `
+                        <div class="proposal-header">
+                            <div class="proposal-logo">
+                                <img src="./bilder/option Logo Colour.png" alt="option.ai Logo" />
+                            </div>
+                            <div class="proposal-company">${companyName}</div>
+                        </div>
+                    `;
+                    
+                    proposalContentElement.innerHTML = proposalHeader + tempDiv.innerHTML;
+                    console.log('✅ Content rendered successfully using original working logic');
+                } else {
+                    console.error('❌ No HTML content found in sessionStorage data');
+                    console.log('Available client fields:', client ? Object.keys(client) : 'No client');
+                    proposalContentElement.innerHTML = `
+                        <div style="padding: 100px; text-align: center; color: #dc2626; background: white;">
+                            <h2>Kein Proposal-Inhalt verfügbar</h2>
+                            <p>Das Proposal wurde noch nicht erstellt oder ist leer.</p>
+                            <p>Custom HTML Feld: "${client ? client["Custom HTML"] || 'LEER' : 'Kein Client'}"</p>
+                            <p>Verfügbare Felder: ${client ? Object.keys(client).join(', ') : 'Keine'}</p>
+                        </div>
+                    `;
+                }
+                
+                // Fill client data in sidebar (same as original working logic)
+                if (client) {
+                    const sidebarName = document.getElementById('sidebarName');
+                    const sidebarCompany = document.getElementById('sidebarCompany');
+                    const sidebarAddress = document.getElementById('sidebarAddress');
+                    const sidebarCountry = document.getElementById('sidebarCountry');
+                    const createdDate = document.getElementById('createdDate');
+
+                    if (sidebarName) sidebarName.textContent = client["Full Name"] || '';
+                    if (sidebarCompany) sidebarCompany.textContent = client.Company || '';
+                    if (sidebarAddress) sidebarAddress.textContent = client.Adress || '';
+                    if (sidebarCountry) sidebarCountry.textContent = client.Country || '';
+
+                    // Erstelldatum (ISO‑String → deutsches Datum)
+                    if (client.createdTime && createdDate){
+                        const d = new Date(client.createdTime);
+                        createdDate.textContent = d.toLocaleDateString('de-DE');
+                    }
+                    
+                    console.log('✅ Sidebar client info filled successfully');
+                    
+                    // Update status based on proposal status
+                    const statusDot = document.querySelector('.status-dot');
+                    const statusText = document.querySelector('.status-text');
+                    const proposalStatus = client['Status Proposal'];
+                    
+                    if (statusDot && statusText && proposalStatus === 'signed') {
+                        statusDot.classList.add('signed');
+                        statusText.classList.add('signed');
+                        statusText.textContent = 'Unterschrieben';
+                        console.log('✅ Status updated to "Unterschrieben" (signed)');
+                        
+                        // Update sign button to "Termin vereinbaren" for already signed proposals
+                        const signButton = document.getElementById('signButton');
+                        if (signButton) {
+                            signButton.innerHTML = '<span>Termin vereinbaren</span>';
+                            signButton.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                            signButton.onclick = () => window.open('https://calendly.com/dennis-mueller-963/erstberatung', '_blank');
+                            console.log('✅ Sign button updated to "Termin vereinbaren" for signed proposal');
+                        }
+                    } else if (statusDot && statusText) {
+                        // Default status for other states
+                        statusText.textContent = 'Proposal Live';
+                        console.log('✅ Status set to "Proposal Live"');
+                    }
+                }
+                
+                // Track proposal view
+                trackProposalView(proposalCode, client['Full Name'] || 'Unknown');
+                
+            } catch (error) {
+                console.error('Error loading content from sessionStorage:', error);
+                window.location.replace('/index.html');
+            }
+        }
     </script>
 
     <!-- Proposal Dashboard (Hidden initially) -->
@@ -1929,7 +2097,7 @@
                         const proposalHeader = `
                             <div class="proposal-header">
                                 <div class="proposal-logo">
-                                    <img src="./bilder/option Logo White.png" alt="Company Logo" />
+                                    <img src="./bilder/option Logo Colour.png" alt="option.ai Logo" />
                                 </div>
                                 <div class="proposal-company">${companyName}</div>
                             </div>

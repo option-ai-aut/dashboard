@@ -49,22 +49,29 @@
             padding: 20px;
         }
 
-        /* Layout Container */
+        /* Layout Container with Push Animation */
         .dashboard-layout {
             display: flex;
-            min-height: calc(100vh - 40px);
             gap: 20px;
+            padding: 20px 20px 20px 0;  /* Kein left-padding für Konsistenz */
+            min-height: calc(100vh - 40px);
+            margin-left: 104px;  /* 84px Sidebar + 20px Gap */
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Sidebar - Complete Redesign */
+        .dashboard-layout.sidebar-expanded {
+            margin-left: 260px;  /* 240px Sidebar + 20px Gap */
+        }
+
+        /* Sidebar - Fixed Position with Push Effect */
         .sidebar {
             position: fixed;
             top: 20px;
             left: 20px;
             width: 84px;
-            height: calc(100vh - 40px);
+            bottom: 20px;
             background: #0a0a0a;
-            border-radius: 24px;
+            border-radius: 12px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             overflow: visible;
             z-index: 100;
@@ -108,7 +115,7 @@
             align-items: center;
             width: 100%;
             height: 52px;
-            border-radius: 12px;
+            border-radius: 8px;
             background: transparent;
             border: none;
             color: #e6edf3;
@@ -169,7 +176,7 @@
         .user-info {
             padding: 16px;
             background: #050505;
-            border-radius: 12px;
+            border-radius: 8px;
             margin-bottom: 16px;
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -225,15 +232,14 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            margin-left: 124px;
         }
 
         .top-bar {
             background: #0a0a0a;
             border: none;
-            border-radius: 24px;
+            border-radius: 12px;
             padding: 20px 32px;
+            margin-bottom: 20px;
             position: relative;
             z-index: 50;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
@@ -247,7 +253,7 @@
 
         .page-header h1 {
             font-family: 'SF Pro Display', sans-serif;
-            font-size: 28px;
+            font-size: 20px;
             font-weight: 700;
             color: #e6edf3;
             margin: 0;
@@ -293,7 +299,7 @@
             gap: 8px;
             padding: 8px 12px;
             background: rgba(125, 133, 144, 0.1);
-            border-radius: 20px;
+            border-radius: 8px;
         }
 
         .status-label {
@@ -321,8 +327,8 @@
         /* Content Area */
         .content-area {
             background: #0a0a0a;
-            border-radius: 24px;
-            padding: 60px;
+            border-radius: 12px;
+            padding: 40px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             flex: 1;
         }
@@ -331,25 +337,25 @@
         .dashboard-main-grid {
             display: flex;
             flex-direction: column;
-            gap: 32px;
+            gap: 20px;
         }
 
         /* Primary Stats Row */
         .stats-primary-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 24px;
+            gap: 16px;
         }
 
         .primary-stat-card {
             background: #161b22;
-            border-radius: 24px;
-            padding: 48px;
+            border-radius: 8px;
+            padding: 24px;
             border: 1px solid rgba(48, 54, 61, 0.5);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            min-height: 200px;
+            min-height: 120px;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
@@ -382,24 +388,24 @@
         }
 
         .primary-stat-title {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 500;
             color: #7d8590;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
             display: block;
         }
 
         .primary-stat-value {
             font-family: 'SF Pro Display', sans-serif;
-            font-size: 40px;
+            font-size: 24px;
             font-weight: 700;
             color: #e6edf3;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             line-height: 1;
         }
 
         .primary-stat-description {
-            font-size: 13px;
+            font-size: 11px;
             color: #7d8590;
             opacity: 0.8;
         }
@@ -411,8 +417,8 @@
         }
 
         .stat-circle {
-            width: 60px;
-            height: 60px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: linear-gradient(135deg, rgba(125, 133, 144, 0.1) 0%, rgba(125, 133, 144, 0.2) 100%);
             border: 2px solid rgba(125, 133, 144, 0.3);
@@ -424,8 +430,8 @@
 
         .stat-circle::after {
             content: '';
-            width: 24px;
-            height: 24px;
+            width: 16px;
+            height: 16px;
             background: rgba(125, 133, 144, 0.6);
             border-radius: 50%;
         }
@@ -438,26 +444,26 @@
         /* System Status Card */
         .system-status-card {
             background: #161b22;
-            border-radius: 24px;
-            padding: 60px;
+            border-radius: 8px;
+            padding: 32px;
             border: 1px solid rgba(48, 54, 61, 0.5);
             transition: all 0.3s ease;
-            margin-top: 40px;
+            margin-top: 24px;
         }
 
         .system-status-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 32px;
+            margin-bottom: 20px;
         }
 
         .system-info h3 {
             font-family: 'SF Pro Display', sans-serif;
-            font-size: 24px;
+            font-size: 18px;
             font-weight: 600;
             color: #e6edf3;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .system-info p {
@@ -472,7 +478,7 @@
             gap: 12px;
             padding: 12px 20px;
             background: rgba(125, 133, 144, 0.1);
-            border-radius: 25px;
+            border-radius: 8px;
             border: 1px solid rgba(125, 133, 144, 0.2);
         }
 
@@ -493,19 +499,19 @@
 
         /* Stats Cards */
         .stats-overview {
-            margin-bottom: 60px;
+            margin-bottom: 32px;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            margin-bottom: 50px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
         }
 
         .stat-card {
             background: #161b22;
-            border-radius: 20px;
+            border-radius: 8px;
             padding: 40px;
             border: none;
             transition: all 0.3s ease;
@@ -560,7 +566,7 @@
 
         .stat-value {
             font-family: 'SF Pro Display', sans-serif;
-            font-size: 32px;
+            font-size: 22px;
             font-weight: 700;
             color: #e6edf3;
             margin-bottom: 8px;
@@ -574,14 +580,14 @@
         /* Dashboard Grid */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 24px;
         }
 
         /* Card Styles */
         .dashboard-card {
             background: #0a1018;
-            border-radius: 20px;
+            border-radius: 8px;
             padding: 24px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
             border: none;
@@ -703,7 +709,7 @@
         /* Automations Grid */
         .automations-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 16px;
         }
 
@@ -815,7 +821,7 @@
             text-align: center;
             padding: 8px;
             background: rgba(255, 255, 255, 0.8);
-            border-radius: 6px;
+            border-radius: 8px;
         }
 
         .stat-value {
@@ -866,7 +872,7 @@
             }
             
             .welcome-title {
-                font-size: 28px;
+                font-size: 20px;
             }
             
             .dashboard-card {
@@ -901,17 +907,21 @@
                 font-size: 20px;
             }
             
-            /* Mobile Sidebar */
+            /* Mobile Layout - Vertical Stack */
+            .dashboard-layout {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                padding: 16px;
+                margin-left: 0;
+            }
+            
             .sidebar {
                 width: 100%;
                 height: auto;
-                position: relative;
                 padding: 16px;
             }
             
-            .main-container {
-                margin-left: 0;
-            }
             
             .sidebar-footer {
                 position: relative;
@@ -947,7 +957,7 @@
 
         /* Main Automations Section */
         .automations-main-section {
-            margin-bottom: 48px;
+            margin-bottom: 32px;
         }
 
         .section-header {
@@ -970,13 +980,13 @@
 
         .automations-main-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 24px;
         }
 
         .automation-main-card {
             background: #ffffff;
-            border-radius: 16px;
+            border-radius: 8px;
             padding: 32px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.06);
             border: 0.5px solid rgba(0, 0, 0, 0.04);
@@ -1017,14 +1027,14 @@
         }
 
         .automation-main-icon {
-            width: 56px;
-            height: 56px;
+            width: 40px;
+            height: 40px;
             background: linear-gradient(135deg, rgba(0, 122, 255, 0.1) 0%, rgba(88, 86, 214, 0.1) 100%);
-            border-radius: 16px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 20px;
             margin-right: 16px;
         }
 
@@ -1058,7 +1068,7 @@
         .automation-main-stats .stat-item {
             background: rgba(248, 249, 250, 0.8);
             border: 1px solid rgba(0, 0, 0, 0.04);
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 16px;
             text-align: center;
             transition: all 0.2s ease;
@@ -1162,7 +1172,7 @@
 
         .automation-status-section {
             background: #161b22;
-            border-radius: 16px;
+            border-radius: 8px;
             padding: 32px;
             border: none;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -1177,7 +1187,7 @@
             right: 0;
             height: 4px;
             background: linear-gradient(90deg, #7d8590 0%, #a5a5a5 100%);
-            border-radius: 16px 16px 0 0;
+            border-radius: 8px 8px 0 0;
         }
 
         .loading-state {
@@ -1192,27 +1202,27 @@
         /* New Automation Master Card */
         .automation-master-card {
             background: #0a1018;
-            border-radius: 24px;
-            padding: 80px;
+            border-radius: 8px;
+            padding: 40px;
             border: none;
-            margin: 0 0 40px 0;
+            margin: 0 0 24px 0;
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
         }
 
         .automation-card-header {
             display: flex;
             align-items: center;
-            gap: 24px;
-            margin-bottom: 48px;
-            padding-bottom: 24px;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
             border-bottom: 1px solid rgba(48, 54, 61, 0.5);
         }
 
         .automation-icon {
-            width: 80px;
-            height: 80px;
+            width: 52px;
+            height: 52px;
             background: linear-gradient(135deg, rgba(125, 133, 144, 0.1) 0%, rgba(125, 133, 144, 0.2) 100%);
-            border-radius: 20px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1232,10 +1242,10 @@
 
         .automation-title {
             font-family: 'SF Pro Display', sans-serif;
-            font-size: 28px;
+            font-size: 20px;
             font-weight: 700;
             color: #e6edf3;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .automation-subtitle {
@@ -1264,22 +1274,22 @@
             gap: 12px;
             padding: 16px 24px;
             background: rgba(125, 133, 144, 0.1);
-            border-radius: 25px;
+            border-radius: 8px;
             border: 1px solid rgba(125, 133, 144, 0.2);
         }
 
         .automation-kpis-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 32px;
-            margin-bottom: 48px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
         }
 
         .kpi-card {
             background: rgba(48, 54, 61, 0.3);
             border: 1px solid rgba(48, 54, 61, 0.5);
-            border-radius: 20px;
-            padding: 32px;
+            border-radius: 8px;
+            padding: 20px;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
@@ -1310,14 +1320,14 @@
         .kpi-card {
             display: flex;
             align-items: center;
-            gap: 24px;
+            gap: 16px;
         }
 
         .kpi-icon {
-            width: 60px;
-            height: 60px;
+            width: 40px;
+            height: 40px;
             background: rgba(125, 133, 144, 0.1);
-            border-radius: 16px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1336,18 +1346,18 @@
 
         .kpi-value {
             font-family: 'SF Pro Display', sans-serif;
-            font-size: 36px;
+            font-size: 24px;
             font-weight: 700;
             color: #e6edf3;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             line-height: 1;
         }
 
         .kpi-label {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             color: #e6edf3;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .kpi-description {
@@ -1364,7 +1374,7 @@
         .automation-status-footer {
             padding: 32px;
             background: rgba(48, 54, 61, 0.3);
-            border-radius: 16px;
+            border-radius: 8px;
             text-align: center;
             border: 1px solid rgba(48, 54, 61, 0.5);
         }
@@ -1373,13 +1383,13 @@
         .proposals-container {
             display: flex;
             flex-direction: column;
-            gap: 48px;
+            gap: 24px;
         }
 
         .proposal-master-card {
             background: #0a1018;
-            border-radius: 24px;
-            padding: 80px;
+            border-radius: 8px;
+            padding: 40px;
             border: none;
             margin: 0 0 40px 0;
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
@@ -1392,7 +1402,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 48px;
+            margin-bottom: 32px;
         }
 
         .proposal-info {
@@ -1401,7 +1411,7 @@
 
         .proposal-title {
             font-family: 'SF Pro Display', sans-serif;
-            font-size: 28px;
+            font-size: 20px;
             font-weight: 700;
             color: #e6edf3;
             margin-bottom: 8px;
@@ -1433,7 +1443,7 @@
             gap: 12px;
             padding: 16px 24px;
             background: rgba(125, 133, 144, 0.1);
-            border-radius: 25px;
+            border-radius: 8px;
             border: 1px solid rgba(125, 133, 144, 0.2);
         }
 
@@ -1447,22 +1457,22 @@
         .proposal-details-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 32px;
+            gap: 20px;
             margin-bottom: 0;
         }
 
         .detail-card {
             background: rgba(48, 54, 61, 0.3);
             border: 1px solid rgba(48, 54, 61, 0.5);
-            border-radius: 20px;
-            padding: 32px;
+            border-radius: 8px;
+            padding: 20px;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            min-height: 140px;
+            min-height: 100px;
         }
 
         .detail-card::before {
@@ -1521,10 +1531,10 @@
         }
 
         .detail-icon {
-            width: 48px;
-            height: 48px;
+            width: 36px;
+            height: 36px;
             background: rgba(125, 133, 144, 0.1);
-            border-radius: 12px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1553,16 +1563,16 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 80px 40px;
+            padding: 40px 24px;
             text-align: center;
             color: #7d8590;
             background: rgba(48, 54, 61, 0.1);
-            border-radius: 20px;
+            border-radius: 8px;
             border: 2px dashed rgba(48, 54, 61, 0.3);
         }
 
         .empty-state-icon {
-            font-size: 48px;
+            font-size: 32px;
             margin-bottom: 16px;
             opacity: 0.6;
         }
@@ -1680,8 +1690,7 @@
                         </div>
                         <div class="automation-info">
                             <h2 class="automation-title">AI Cold Outreach System</h2>
-                            <p class="automation-live-status" id="automationLiveStatus">System läuft erfolgreich</p>
-                            <p class="automation-sync-time" id="automationSyncTime">Letzte Synchronisation: --</p>
+                            <p class="automation-sync-time" id="automationSyncTime">Letzte Aktualisierung: --</p>
                         </div>
                         <div class="automation-status" id="instantlyStatus">
                             <div class="status-dot loading"></div>
@@ -1699,7 +1708,6 @@
                             <div class="kpi-content">
                                 <div class="kpi-value" id="emailsSentValue">—</div>
                                 <div class="kpi-label">E-Mails gesendet</div>
-                                <div class="kpi-description">Insgesamt versendet</div>
                             </div>
                         </div>
                         
@@ -1712,7 +1720,6 @@
                             <div class="kpi-content">
                                 <div class="kpi-value" id="repliesValue">—</div>
                                 <div class="kpi-label">Antworten</div>
-                                <div class="kpi-description">Positive Responses</div>
                             </div>
                         </div>
                         
@@ -1724,8 +1731,7 @@
                             </div>
                             <div class="kpi-content">
                                 <div class="kpi-value" id="opportunitiesValue">—</div>
-                                <div class="kpi-label">Opportunities</div>
-                                <div class="kpi-description">Qualifizierte Leads</div>
+                                <div class="kpi-label">Gelegenheiten</div>
                             </div>
                         </div>
                         
@@ -1738,7 +1744,6 @@
                             <div class="kpi-content">
                                 <div class="kpi-value" id="revenueValue">—</div>
                                 <div class="kpi-label">Potenzieller Umsatz</div>
-                                <div class="kpi-description">Erwarteter Wert</div>
                             </div>
                         </div>
                     </div>
@@ -2044,15 +2049,13 @@
             document.getElementById('revenueValue').textContent = revenueDisplay;
             
             // Update system status in header
-            document.getElementById('automationLiveStatus').textContent = 'System läuft erfolgreich';
-            document.getElementById('automationSyncTime').textContent = `Letzte Synchronisation: ${new Date().toLocaleTimeString('de-DE')}`;
+            document.getElementById('automationSyncTime').textContent = `Letzte Aktualisierung: ${new Date().toLocaleDateString('de-DE')} um ${new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})}`;
         }
 
         // Display Instantly Error
         function displayInstantlyError(message) {
             // Update status in header
-            document.getElementById('automationLiveStatus').textContent = 'Fehler beim Laden';
-            document.getElementById('automationSyncTime').textContent = message;
+            document.getElementById('automationSyncTime').textContent = `Fehler: ${message}`;
             
             // Reset stats to dash values
             document.getElementById('emailsSentValue').textContent = '—';
@@ -2228,6 +2231,19 @@
                 
                 if (analyticsSection) {
                     analyticsSection.style.display = 'block';
+                    
+                    // Trigger fade-in animation for consistency with other views
+                    analyticsSection.classList.remove('fade-in');
+                    // Force reflow to ensure class removal takes effect
+                    void analyticsSection.offsetHeight;
+                    analyticsSection.classList.add('fade-in');
+                    
+                    // Set current timestamp
+                    const timestampEl = document.getElementById('automationSyncTime');
+                    if (timestampEl) {
+                        timestampEl.textContent = `Letzte Aktualisierung: ${new Date().toLocaleDateString('de-DE')} um ${new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})}`;
+                    }
+                    
                     // Load analytics data
                     await loadClientData();
                 } else {
@@ -2275,16 +2291,16 @@
 
                                 <div class="proposal-details-grid">
                                     <div class="detail-card">
-                                        <div class="loading-skeleton" style="width: 100%; height: 80px;"></div>
+                                        <div class="loading-skeleton" style="width: 100%; height: 60px;"></div>
                                     </div>
                                     <div class="detail-card">
-                                        <div class="loading-skeleton" style="width: 100%; height: 80px;"></div>
+                                        <div class="loading-skeleton" style="width: 100%; height: 60px;"></div>
                                     </div>
                                     <div class="detail-card">
-                                        <div class="loading-skeleton" style="width: 100%; height: 80px;"></div>
+                                        <div class="loading-skeleton" style="width: 100%; height: 60px;"></div>
                                     </div>
                                     <div class="detail-card">
-                                        <div class="loading-skeleton" style="width: 100%; height: 80px;"></div>
+                                        <div class="loading-skeleton" style="width: 100%; height: 60px;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -2372,8 +2388,8 @@
                                 </svg>
                             </div>
                             <div class="automation-info">
-                                <h2 class="automation-title" style="font-size: 28px; font-weight: 700; color: #e6edf3; margin-bottom: 8px;">Proposal ${proposalCode}</h2>
-                                <p class="automation-live-status" style="font-size: 16px; color: #e6edf3; margin: 4px 0;">${statusInfo.message}</p>
+                                <h2 class="automation-title" style="font-size: 20px; font-weight: 700; color: #e6edf3; margin-bottom: 4px;">Proposal ${proposalCode}</h2>
+                                ${statusInfo.message ? `<p class="automation-live-status" style="font-size: 16px; color: #e6edf3; margin: 4px 0;">${statusInfo.message}</p>` : ''}
                                 <p class="automation-sync-time" style="font-size: 14px; color: #7d8590;">Letzte Aktualisierung: ${new Date().toLocaleDateString('de-DE')} um ${new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})}</p>
                             </div>
                             <div style="display: flex; align-items: center; gap: 16px;">
@@ -2388,7 +2404,7 @@
                                         gap: 12px;
                                         padding: 16px 24px;
                                         background: rgba(125, 133, 144, 0.1);
-                                        border-radius: 25px;
+                                        border-radius: 8px;
                                         border: 1px solid rgba(125, 133, 144, 0.2);
                                         cursor: pointer;
                                         transition: background 0.2s ease;
@@ -2489,7 +2505,7 @@
                     },
                     'signed': {
                         text: 'Unterschrieben',
-                        message: 'Erfolgreich abgeschlossen',
+                        message: '',
                         icon: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
                     }
                 };
@@ -2520,7 +2536,7 @@
                     settingsSection.className = 'spa-section settings fade-in';
                     settingsSection.innerHTML = `
                         <!-- Account Settings Main Card -->
-                        <div class="automation-master-card" style="margin-bottom: 40px;">
+                        <div class="automation-master-card" style="margin-bottom: 24px;">
                             <div class="automation-card-header">
                                 <div class="automation-icon">
                                     <svg viewBox="0 0 24 24">
@@ -2528,7 +2544,7 @@
                                     </svg>
                                 </div>
                                 <div class="automation-info">
-                                    <h2 class="automation-title" style="font-size: 28px; font-weight: 700; color: #e6edf3; margin-bottom: 8px;">Konto Einstellungen</h2>
+                                    <h2 class="automation-title" style="font-size: 20px; font-weight: 700; color: #e6edf3; margin-bottom: 4px;">Konto Einstellungen</h2>
                                     <p class="automation-live-status" style="font-size: 16px; color: #e6edf3; margin: 4px 0;">Verwalten Sie Ihre Kontoinformationen</p>
                                     <p class="automation-sync-time" style="font-size: 14px; color: #7d8590;">Zuletzt aktualisiert: ${new Date().toLocaleDateString('de-DE')} um ${new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})}</p>
                                 </div>
@@ -2593,6 +2609,68 @@
                             </div>
                         </div>
 
+                        <!-- Analytics Settings Section -->
+                        <div class="automation-master-card" style="margin-bottom: 24px;">
+                            <div class="automation-card-header">
+                                <div class="automation-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M3 13h8V3H9v6H5V3H3v10zm10-6h8V5h-8v2zm0 8h8v-2h-8v2zm0-4h8V9h-8v2z"/>
+                                        <path d="M13 17h8v-2h-8v2z"/>
+                                    </svg>
+                                </div>
+                                <div class="automation-info">
+                                    <h2 class="automation-title" style="font-size: 20px; font-weight: 700; color: #e6edf3; margin-bottom: 4px;">Analytics Einstellungen</h2>
+                                    <p class="automation-live-status" style="font-size: 16px; color: #e6edf3; margin: 4px 0;">Konfigurieren Sie Ihre Analytics-Parameter</p>
+                                    <p class="automation-sync-time" style="font-size: 14px; color: #7d8590;">Für präzise Umsatzberechnungen erforderlich</p>
+                                </div>
+                                <div class="automation-status">
+                                    <div class="status-dot active"></div>
+                                    <span class="status-text">Konfigurierbar</span>
+                                </div>
+                            </div>
+                            
+                            <div class="automation-kpis-grid">
+                                <div class="kpi-card">
+                                    <div class="kpi-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M12 2v6m0 8v6m-6-6h12M8 8l4-4 4 4m-8 8l4 4 4-4"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                        </svg>
+                                    </div>
+                                    <div class="kpi-content">
+                                        <div class="kpi-value" id="settingsInstantlyApiKey">Nicht konfiguriert</div>
+                                        <div class="kpi-label">Instantly API Key</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="kpi-card">
+                                    <div class="kpi-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M12 1v6m6 6h6M7 7l4-4 4 4M7 17l4 4 4-4"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="kpi-content">
+                                        <div class="kpi-value" id="settingsAvgDealValue">€0</div>
+                                        <div class="kpi-label">Durchschnittsumsatz pro Lead</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="kpi-card" onclick="openAnalyticsSettingsModal()" style="cursor: pointer;">
+                                    <div class="kpi-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                        </svg>
+                                    </div>
+                                    <div class="kpi-content">
+                                        <div class="kpi-value">Konfigurieren</div>
+                                        <div class="kpi-label">Analytics bearbeiten</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Logout Section -->
                         <div class="automation-master-card">
@@ -2603,7 +2681,7 @@
                                     </svg>
                                 </div>
                                 <div class="automation-info">
-                                    <h2 class="automation-title" style="font-size: 28px; font-weight: 700; color: #e6edf3; margin-bottom: 8px;">Abmelden</h2>
+                                    <h2 class="automation-title" style="font-size: 20px; font-weight: 700; color: #e6edf3; margin-bottom: 4px;">Abmelden</h2>
                                     <p class="automation-live-status" style="font-size: 16px; color: #e6edf3; margin: 4px 0;">Beenden Sie Ihre aktuelle Sitzung</p>
                                     <p class="automation-sync-time" style="font-size: 14px; color: #7d8590;">Sie können sich jederzeit wieder anmelden</p>
                                 </div>
@@ -2614,7 +2692,7 @@
                                         gap: 12px;
                                         padding: 16px 24px;
                                         background: rgba(255, 59, 48, 0.1);
-                                        border-radius: 25px;
+                                        border-radius: 8px;
                                         border: 1px solid rgba(255, 59, 48, 0.2);
                                         cursor: pointer;
                                         transition: background 0.2s ease;
@@ -2755,9 +2833,24 @@
                     const settingsFullNameEl = document.getElementById('settingsFullName');
                     const settingsCompanyEl = document.getElementById('settingsCompany');
                     
+                    // Update analytics settings fields
+                    const settingsInstantlyApiKeyEl = document.getElementById('settingsInstantlyApiKey');
+                    const settingsAvgDealValueEl = document.getElementById('settingsAvgDealValue');
+                    
                     if (settingsProposalCodeEl) settingsProposalCodeEl.textContent = client['Proposal Code'] || proposalCode;
                     if (settingsFullNameEl) settingsFullNameEl.textContent = client['Full Name'] || 'Unbekannt';
                     if (settingsCompanyEl) settingsCompanyEl.textContent = client['Company'] || 'Unbekannt';
+                    
+                    // Update analytics settings display
+                    if (settingsInstantlyApiKeyEl) {
+                        const apiKey = client['Instantly API'] || client['instantly_api_key'];
+                        settingsInstantlyApiKeyEl.textContent = apiKey ? '••••••••••••' + apiKey.slice(-4) : 'Nicht konfiguriert';
+                    }
+                    
+                    if (settingsAvgDealValueEl) {
+                        const avgDealValue = client['Durchschnitts Umsatz'] || client['Avg Deal Value'] || client['avg_deal_value'];
+                        settingsAvgDealValueEl.textContent = avgDealValue ? `€${avgDealValue.toLocaleString('de-DE')}` : '€0';
+                    }
                 }
             }
         }
@@ -2969,6 +3062,260 @@ Mit freundlichen Grüßen`);
             }
         }
 
+        function openAnalyticsSettingsModal() {
+            const modal = document.getElementById('analyticsSettingsModal');
+            if (!modal) {
+                createAnalyticsSettingsModal();
+            }
+            
+            // Pre-fill current values if they exist
+            const cachedData = sessionStorage.getItem('clientData');
+            if (cachedData) {
+                const data = JSON.parse(cachedData);
+                const client = Array.isArray(data) ? data[0] : data;
+                
+                const apiKeyInput = document.getElementById('analyticsInstantlyApiKey');
+                const avgDealValueInput = document.getElementById('analyticsAvgDealValue');
+                
+                if (apiKeyInput) {
+                    const currentApiKey = client['Instantly API'] || client['instantly_api_key'];
+                    if (currentApiKey) {
+                        apiKeyInput.placeholder = 'Bereits konfiguriert - Neu eingeben zum Ändern';
+                    }
+                }
+                
+                if (avgDealValueInput) {
+                    const currentAvgDealValue = client['Durchschnitts Umsatz'] || client['Avg Deal Value'] || client['avg_deal_value'];
+                    if (currentAvgDealValue) {
+                        avgDealValueInput.value = currentAvgDealValue;
+                        avgDealValueInput.placeholder = `€${currentAvgDealValue} bereits konfiguriert - Ändern zum Überschreiben`;
+                    }
+                }
+            }
+            
+            document.getElementById('analyticsSettingsModal').style.display = 'flex';
+        }
+
+        function closeAnalyticsSettingsModal() {
+            document.getElementById('analyticsSettingsModal').style.display = 'none';
+        }
+
+        function createAnalyticsSettingsModal() {
+            const modalHTML = `
+                <div id="analyticsSettingsModal" style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0, 0, 0, 0.5);
+                    backdrop-filter: blur(8px);
+                    display: none;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1000;
+                    padding: 20px;
+                ">
+                    <div style="
+                        background: #0a0a0a;
+                        border-radius: 12px;
+                        padding: 32px;
+                        max-width: 500px;
+                        width: 100%;
+                        border: 1px solid rgba(48, 54, 61, 0.5);
+                        position: relative;
+                    ">
+                        <button onclick="closeAnalyticsSettingsModal()" style="
+                            position: absolute;
+                            top: 16px;
+                            right: 16px;
+                            background: none;
+                            border: none;
+                            color: #7d8590;
+                            font-size: 20px;
+                            cursor: pointer;
+                        ">×</button>
+                        
+                        <h2 style="
+                            font-family: 'SF Pro Display', sans-serif;
+                            font-size: 20px;
+                            font-weight: 700;
+                            color: #e6edf3;
+                            margin-bottom: 8px;
+                        ">Analytics Einstellungen</h2>
+                        
+                        <p style="
+                            font-size: 14px;
+                            color: #7d8590;
+                            margin-bottom: 24px;
+                        ">Konfigurieren Sie Ihre Analytics-Parameter für präzise Berechnungen</p>
+                        
+                        <div id="analyticsErrorMessage" style="
+                            background: rgba(255, 59, 48, 0.1);
+                            border: 1px solid rgba(255, 59, 48, 0.2);
+                            color: #ff3b30;
+                            padding: 12px;
+                            border-radius: 8px;
+                            margin-bottom: 16px;
+                            display: none;
+                        "></div>
+                        
+                        <div id="analyticsSuccessMessage" style="
+                            background: rgba(40, 205, 65, 0.1);
+                            border: 1px solid rgba(40, 205, 65, 0.2);
+                            color: #28cd41;
+                            padding: 12px;
+                            border-radius: 8px;
+                            margin-bottom: 16px;
+                            display: none;
+                        "></div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="
+                                display: block;
+                                font-size: 14px;
+                                font-weight: 500;
+                                color: #e6edf3;
+                                margin-bottom: 8px;
+                            ">Instantly API Key</label>
+                            <div style="position: relative;">
+                                <input type="password" id="analyticsInstantlyApiKey" placeholder="Ihr Instantly API Key" style="
+                                    width: 100%;
+                                    padding: 12px;
+                                    padding-right: 50px;
+                                    border: 1.5px solid rgba(125, 133, 144, 0.3);
+                                    border-radius: 8px;
+                                    background: rgba(48, 54, 61, 0.3);
+                                    color: #e6edf3;
+                                    font-size: 14px;
+                                    font-family: 'SF Pro Text', sans-serif;
+                                ">
+                                <button type="button" id="toggleAnalyticsApiKeyBtn" onclick="toggleAnalyticsApiKeyVisibility()" style="
+                                    position: absolute;
+                                    right: 12px;
+                                    top: 50%;
+                                    transform: translateY(-50%);
+                                    background: none;
+                                    border: none;
+                                    color: #7d8590;
+                                    cursor: pointer;
+                                    font-size: 16px;
+                                ">👁️</button>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 24px;">
+                            <label style="
+                                display: block;
+                                font-size: 14px;
+                                font-weight: 500;
+                                color: #e6edf3;
+                                margin-bottom: 8px;
+                            ">Durchschnittsumsatz pro Lead (€)</label>
+                            <input type="number" id="analyticsAvgDealValue" placeholder="z.B. 2500" step="0.01" min="0" style="
+                                width: 100%;
+                                padding: 12px;
+                                border: 1.5px solid rgba(125, 133, 144, 0.3);
+                                border-radius: 8px;
+                                background: rgba(48, 54, 61, 0.3);
+                                color: #e6edf3;
+                                font-size: 14px;
+                                font-family: 'SF Pro Text', sans-serif;
+                            ">
+                        </div>
+                        
+                        <button id="saveAnalyticsConfigBtn" onclick="handleAnalyticsConfig()" style="
+                            width: 100%;
+                            background: #007aff;
+                            color: #ffffff;
+                            border: none;
+                            border-radius: 8px;
+                            padding: 12px;
+                            font-size: 16px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: background 0.2s ease;
+                        ">Einstellungen speichern</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        function toggleAnalyticsApiKeyVisibility() {
+            const apiKeyInput = document.getElementById('analyticsInstantlyApiKey');
+            const toggleBtn = document.getElementById('toggleAnalyticsApiKeyBtn');
+            
+            if (apiKeyInput.type === 'password') {
+                apiKeyInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                apiKeyInput.type = 'password';
+                toggleBtn.textContent = '👁️';
+            }
+        }
+
+        async function handleAnalyticsConfig() {
+            const apiKey = document.getElementById('analyticsInstantlyApiKey').value.trim();
+            const avgDealValue = document.getElementById('analyticsAvgDealValue').value.trim();
+            const saveBtn = document.getElementById('saveAnalyticsConfigBtn');
+            const proposalCode = sessionStorage.getItem('proposalCode');
+
+            if (!apiKey && !avgDealValue) {
+                showMessage('analyticsErrorMessage', 'Bitte füllen Sie mindestens ein Feld aus.');
+                return;
+            }
+
+            setButtonLoading(saveBtn, true, 'Einstellungen speichern');
+
+            try {
+                // Prepare settings data
+                const settingsData = {
+                    proposal_code: proposalCode
+                };
+
+                // Add API Key if provided
+                if (apiKey) {
+                    settingsData.instantly_api_key = apiKey;
+                }
+
+                // Add Average Deal Value if provided
+                if (avgDealValue) {
+                    settingsData.avg_deal_value = parseFloat(avgDealValue);
+                }
+
+                // Send all settings to unified webhook
+                const response = await fetch('https://optionai.optionai.at/webhook/save-settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(settingsData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Einstellungen konnten nicht gespeichert werden');
+                }
+
+                showMessage('analyticsSuccessMessage', 'Einstellungen erfolgreich gespeichert!', 3000);
+                
+                // Update the settings display
+                await router.loadSettingsData();
+                
+                // Close modal after short delay
+                setTimeout(() => {
+                    closeAnalyticsSettingsModal();
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Analytics configuration save error:', error);
+                showMessage('analyticsErrorMessage', error.message || 'Fehler beim Speichern der Einstellungen.');
+            } finally {
+                setButtonLoading(saveBtn, false, 'Einstellungen speichern');
+            }
+        }
+
         function contactSupport() {
             const proposalCode = sessionStorage.getItem('proposalCode');
             const subject = encodeURIComponent('Dashboard Support - ' + proposalCode);
@@ -3022,6 +3369,20 @@ Mit freundlichen Grüßen`);
             const contactBtn = document.getElementById('contactSupportBtn');
             if (contactBtn) {
                 contactBtn.addEventListener('click', contactSupport);
+            }
+
+            // Sidebar Push Animation
+            const sidebar = document.querySelector('.sidebar');
+            const dashboardLayout = document.querySelector('.dashboard-layout');
+            
+            if (sidebar && dashboardLayout) {
+                sidebar.addEventListener('mouseenter', () => {
+                    dashboardLayout.classList.add('sidebar-expanded');
+                });
+                
+                sidebar.addEventListener('mouseleave', () => {
+                    dashboardLayout.classList.remove('sidebar-expanded');
+                });
             }
         });
     </script>

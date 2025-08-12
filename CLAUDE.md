@@ -15,7 +15,7 @@ Backend = **n8n Webhooks + Airtable + Dual Auth-System** – steht bereits.
 | Zweck | URL | Methode | Body / Query | Auth | Verwendet von |
 |-------|-----|---------|--------------|------|---------------|
 | **Clients‑Liste** | `https://optionai.optionai.at/webhook/admin/load-clients` | GET | – | sessionStorage | admin/index.html |
-| **Einzel‑Client + Template** | `https://optionai.optionai.at/webhook/admin/load-client` | GET | `?proposal_code=PROP‑…` | sessionStorage/none | admin/client.html, index.html |
+| **Einzel‑Client + Template** | `https://optionai.optionai.at/webhook/get-client` | GET | `?proposal_code=PROP‑…` | none | admin/client.html, index.html, signature.html |
 | **Template speichern** | `https://optionai.optionai.at/webhook/admin/save-template` | POST | `{template_id, html}` | sessionStorage | admin/client.html |
 | **Proposal speichern** | `https://optionai.optionai.at/webhook/admin/save-proposal` | POST | `{proposal_code, custom_html?, status?}` | sessionStorage | admin/client.html |
 | **Signatur speichern** | `https://optionai.optionai.at/webhook/save-sign` | POST | `{Full Name, Email Address, record_id, proposal_code, auth_method, signed_pdf}` | none | index.html |
@@ -34,8 +34,9 @@ Backend = **n8n Webhooks + Airtable + Dual Auth-System** – steht bereits.
 
 | Datei | Zweck | Zeilen | Features |
 |-------|-------|--------|----------|
-| **/index.html** | Proposal-Viewer + Code‑Eingabe + Signatur‑System | 2800+ | PDF-Gen, 3 Signatur-Methoden, Status-Gate |
-| **/client-login.html** | **NEU:** Kunden-Login + Sign-Up | 717 | Apple Design, Modal Sign-Up, Pre-load client data |
+| **/index.html** | Proposal-Code Eingabe & Weiterleitung | 410 | Code-Validation, Timeout-Handling, sessionStorage, Redirect zu signature.html |
+| **/signature.html** | **HAUPT-PROPOSAL-VIEWER** + Signatur-System | 2800+ | PDF-Gen, 3 Signatur-Methoden, Status-Gate, Sidebar mit Kunden-Info, Dynamischer Status |
+| **/client-login.html** | Kunden-Login + Sign-Up | 717 | Apple Design, Modal Sign-Up, Pre-load client data |
 | **/dashboard/index.html** | **SPA Kunden-Dashboard (HAUPTDATEI)** | 3200+ | **Single Page Application**, Analytics + Proposals + Settings, Dark Apple Design, Navigation ohne Reload |
 | ~~**/dashboard/settings.html**~~ | ~~**Gelöscht**~~ | ~~870~~ | ~~**ENTFERNT** - Funktionalität komplett in SPA integriert~~ |
 | ~~**/dashboard/proposals.html**~~ | ~~**Gelöscht**~~ | ~~812~~ | ~~**ENTFERNT** - Funktionalität in SPA integriert~~ |
@@ -67,10 +68,14 @@ netlifyIdentity.currentUser().token.access_token
 
 ## UX‑Flows (Aktuell)
 
-### 1. **Kunde (Öffentlich)**  
-   `index.html` → Code‑Eingabe + "Dashboard Login" Button → `load-client` →  
+### 1. **Kunde (Öffentlich) - Neues 2-Seiten System**  
+   `index.html` → Code‑Eingabe → `get-client` API → sessionStorage → redirect zu `signature.html`  
+   
+   **signature.html Workflow:**
+   - Lädt Daten aus sessionStorage (kein neuer API-Call)
    - `status = 'draft'` ⇒ "Proposal wird bearbeitet …"  
-   - `status = 'approved'` ⇒ Template‑HTML + Custom‑HTML rendern → **Signatur‑System**
+   - `status = 'approved/pending'` ⇒ Template‑HTML + Custom‑HTML rendern → **Signatur‑System**
+   - `status = 'signed'` ⇒ Grüner "Unterschrieben" Status mit grünem Punkt
 
 ### 2. **Admin (Passwort-geschützt)**  
    `/admin/` → **Redirect** → `/admin/login.html` → Passwort `sand-stone-austria-40` → `/admin/index.html`  
@@ -102,8 +107,9 @@ netlifyIdentity.currentUser().token.access_token
    
    **⚙️ Settings Section** (`/dashboard/settings.html` Route):
    - **Account Information**: Proposal Code, Full Name, Company, Status
+   - **Analytics Settings**: Instantly API Key + Durchschnittsumsatz pro Lead Konfiguration (Neu August 2025)
    - **Quick Actions**: Erweiterte Einstellungen, Abmelden
-   - **Unified Settings Integration**: Link zur Detail-Settings-Seite
+   - **Modal-basierte Konfiguration**: Analytics Settings Modal mit sicherem API Key Toggle
    
    **🎨 UI Konsistenz:**
    - **Kollapsible Sidebar**: 84px ↔ 240px mit perfekt zentrierten SVG Icons
@@ -173,8 +179,8 @@ netlifyIdentity.currentUser().token.access_token
 
 | Datei | Bibliothek | Version | Zweck |
 |-------|------------|---------|-------|
-| **index.html** | `signature_pad` | 4.1.7 | Canvas-Signatur |
-| **index.html** | `html2pdf.js` | 0.10.1 | PDF-Generierung |
+| **signature.html** | `signature_pad` | 4.1.7 | Canvas-Signatur |
+| **signature.html** | `html2pdf.js` | 0.10.1 | PDF-Generierung |
 | **admin/client.html** | `tinymce` | 5.10.7 | WYSIWYG HTML-Editor |
 | **login.html** | `netlify-identity-widget.js` | v1 | Netlify Auth (inaktiv) |
 
@@ -183,7 +189,7 @@ netlifyIdentity.currentUser().token.access_token
 ## Request-Handling & Performance
 
 ### Timeout & Error-Handling
-- **API-Timeout**: 15 Sekunden (AbortController)
+- **API-Timeout**: 30 Sekunden (AbortController) - Updated August 2025
 - **Debouncing**: 300ms für User-Input
 - **Request-Deduplication**: Flag verhindert simultane Calls
 - **Status-Codes**: 404 → "Code ungültig", 500 → "Serverfehler"
@@ -205,10 +211,11 @@ const statusMap = {
 ### Dashboard Dark Theme (Apple-Style)
 - **Background**: `#0d1117` (GitHub Dark)
 - **Sidebar**: `#161b22` mit `84px ↔ 240px` Hover-Expansion
-- **Cards**: `#161b22` mit `border-radius: 24px` und Padding `60px 80px`
+- **Cards**: `#161b22` mit `border-radius: 8px` und Padding `40px` (Optimiert August 2025)
 - **Border**: `1px solid rgba(48, 54, 61, 0.5)` mit Box-Shadow
 - **Text Primary**: `#e6edf3` (Hellgrau)
 - **Text Secondary**: `#7d8590` (Grau)
+- **Border-Radius System**: 12px (Container), 8px (UI-Elemente), 50% (Kreise) - Apple-konform
 
 ### Public Proposal (Light Theme)
 - **Primary**: `#66b3ff` (Gradient-Blau)
@@ -263,6 +270,11 @@ const statusMap = {
 30. **Download Button Design** – Status-Badge Design für Download Button
 31. **Settings Complete Redesign** – Apple-Style mit KPI-Grid, klickbares Passwort-Card, funktionale Formulare
 32. **Unified Design Language** – Alle 3 Views (Analytics/Proposals/Settings) nutzen identische Card-Struktur
+33. **UI Size Optimization** – Alle Cards, Texte und Icons verkleinert für weniger massive Darstellung (Padding: 80px→40px, Font-Sizes: 40px→24px, etc.)
+34. **Unified Border-Radius System** – Konsistente Apple-Style border-radius: 12px (Container), 8px (UI-Elemente), 50% (Kreise)
+35. **Analytics Cards Redesign** – Entfernung von h2-Titeln und kpi-description, Labels angepasst: "Opportunities"→"Gelegenheiten"
+36. **Analytics Fade-in Animation** – Konsistente 0.3s fade-in Animation für Analytics View wie bei Proposals/Settings
+37. **Analytics Settings Section** – Neue Settings-Sektion mit Instantly API Key und Durchschnittsumsatz pro Lead Konfiguration
 
 ### 🔄 **Nicht mehr verwendet (gelöst/ersetzt)**
 - **login.html** (Netlify Identity) – Datei entfernt, da überflüssig
@@ -329,7 +341,10 @@ const statusMap = {
 - **Keine Build‑Tools**: Alles bleibt Single-File HTML/JS/CSS
 - **Status-Values**: Nutze exakt `draft`/`pending`/`approved`/`signed`
 - **Signatur-PDF**: Komplettes PDF als Base64 an `save-sign` Webhook
-- **Error-Handling**: 15s Timeout + Status-Code-spezifische Meldungen
+- **Error-Handling**: 30s Timeout + Status-Code-spezifische Meldungen (Updated August 2025)
+- **2-Seiten Proposal System**: index.html (Code-Eingabe) → signature.html (Proposal-Anzeige + Signatur)
+- **SessionStorage Flow**: Daten werden von index.html → signature.html über sessionStorage übertragen
+- **Korrekte API-Endpunkte**: `/webhook/get-client` für öffentlichen Zugriff, **nicht** `/webhook/admin/load-client`
 
 ---
 
@@ -340,10 +355,38 @@ const statusMap = {
 2. **Admin-Login**: `admin/login.html` → Passwort → sessionStorage → Dashboard
 3. **Client-Liste**: `admin/index.html` → `load-clients` → Tabelle rendern
 4. **Client-Edit**: `admin/client.html` → `load-client` → TinyMCE → `save-template`/`save-proposal`
-5. **Signatur-Flow**: `index.html` → Signieren → PDF-Gen → `save-sign`
+5. **Signatur-Flow**: `index.html` → Code-Eingabe → `signature.html` → Signieren → PDF-Gen → `save-sign`
 
 ### Webhook-Parameter validieren:
 - Alle `proposal_code` als Query-Parameter URL-encoded
 - Alle POST-Bodies als `application/json`
 - `signed_pdf` als kompletter Base64-String ohne Prefix
 - `record_id` von Airtable für Updates verwenden
+
+---
+
+## Aktuelle Updates (August 2025)
+
+### **🔧 Kritische Fixes (August 12, 2025)**
+32. **API Endpunkt Korrektur** - Korrigiert von `/webhook/admin/load-client` zu `/webhook/get-client` für öffentlichen Zugriff
+33. **Timeout Erhöhung** - API-Timeout von 15s auf 30s erhöht für stabilere Verbindungen
+34. **2-Seiten Proposal System** - Aufgeteilte Architektur: index.html (Code-Eingabe) → signature.html (Proposal-Anzeige)
+35. **SessionStorage Data Flow** - Daten werden über sessionStorage zwischen Seiten übertragen, keine redundanten API-Calls
+36. **Sidebar Kunden-Info Wiederherstellung** - Rechtes Sidepanel zeigt wieder alle Kunden-Informationen (Name, Company, Adresse, etc.)
+37. **Logo System Korrigiert** - Farbiges Logo für Proposal-Content, weißes Logo für dunklen Header
+38. **Nächste Schritte Lesbarkeit** - Schwarze Schriftfarbe für "Nächste Schritte" Liste in Sidebar
+39. **Dynamischer Status für Signed Proposals** - "Unterschrieben" Status mit grünem Punkt wenn `Status Proposal = "signed"`
+
+### **📋 Architektur Updates**
+- **Proposal Loading Logic**: Wiederherstellung der ursprünglich funktionierenden Content-Rendering Logik aus `performAPIRequest`
+- **Status Display System**: Dynamische Status-Anzeige basierend auf Webhook `Status Proposal` Feld
+- **CSS Klassen für Status**: `.status-dot.signed` und `.status-text.signed` für grüne "Unterschrieben" Anzeige
+- **Error Resilience**: Robustes Error-Handling und Fallback-Mechanismen bei fehlenden sessionStorage-Daten
+
+### **🎨 Logo & Design Updates**
+```
+Header (dunkler Hintergrund): option Logo White.png
+Proposal Content (heller Hintergrund): option Logo Colour.png
+Sidebar Text: Schwarze Schriftfarbe für bessere Lesbarkeit
+Status Signed: Grüner Punkt + grüner "Unterschrieben" Text
+```
