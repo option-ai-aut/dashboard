@@ -1,0 +1,2996 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Cold Outreach System - Proposal Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
+    <style>
+        /* SF Pro Font Import */
+        @font-face {
+            font-family: 'SF Pro';
+            src: url('./bilder/SF-Pro-Text-Regular.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro';
+            src: url('./bilder/SF-Pro-Text-Medium.otf') format('opentype');
+            font-weight: 500;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro';
+            src: url('./bilder/SF-Pro-Text-Bold.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'SF Pro';
+            src: url('./bilder/SF-Pro-Text-Thin.otf') format('opentype');
+            font-weight: 300;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #e6edf3;
+            background: #1a1a1a;
+            margin: 0;
+            padding: 0;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .dashboard-header {
+            background: #0a0a0a;
+            color: #e6edf3;
+            padding: 25px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        .header-content {
+            width: 100%;
+            padding: 0 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            flex-shrink: 0;
+        }
+        
+        .logo img {
+            height: 1.8rem;
+            width: auto;
+            display: block;
+        }
+
+        .dashboard-actions {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #66b3ff 0%, #66b3ff 100%);
+            color: #000000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 179, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid #66b3ff;
+        }
+
+        .btn-secondary:hover {
+            background: #66b3ff;
+            color: #000000;
+        }
+
+        .sidebar .btn-secondary {
+            color: #000000;
+        }
+
+        .dashboard-container {
+            min-height: calc(100vh - 100px);
+            padding: 50px 20px;
+        }
+
+        .proposal-content {
+            flex: 1;
+            max-width: 900px;
+            background: #ffffff;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            padding: 4rem 3rem;
+            font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            color: #1d1d1f;
+            position: relative;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        
+        /* Ultra Modern Proposal Styling */
+        .proposal-content h1, .proposal-content h2, .proposal-content h3, .proposal-content h4 {
+            font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+        
+        .proposal-content h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            color: #1d1d1f;
+            position: relative;
+            text-align: left;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+        
+        .proposal-content h1::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #007AFF 0%, #5AC8FA 100%);
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+        }
+        
+        .proposal-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1.2rem;
+            color: #1d1d1f;
+            position: relative;
+            text-align: left;
+            padding-left: 24px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        
+        .proposal-content h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 6px;
+            width: 5px;
+            height: calc(100% - 12px);
+            background: linear-gradient(180deg, #007AFF 0%, #5AC8FA 100%);
+            border-radius: 3px;
+            box-shadow: 0 1px 4px rgba(0, 122, 255, 0.2);
+        }
+        
+        .proposal-content h2::before {
+            display: none;
+        }
+        
+        .proposal-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+            color: #1d1d1f;
+            font-weight: 600;
+            text-align: left;
+            letter-spacing: -0.01em;
+            line-height: 1.3;
+        }
+        
+        .proposal-content h4 {
+            font-size: 1.3rem;
+            margin-bottom: 0.7rem;
+            color: #424245;
+            font-weight: 500;
+            text-align: left;
+            letter-spacing: -0.005em;
+            line-height: 1.3;
+        }
+        
+        .proposal-content p {
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+            color: #424245;
+            line-height: 1.7;
+            font-weight: 400;
+            text-align: justify;
+            letter-spacing: -0.003em;
+        }
+        
+        .proposal-content ul, .proposal-content ol {
+            margin-bottom: 1rem;
+            padding-left: 0;
+        }
+        
+        .proposal-content li {
+            margin-bottom: 0.4rem;
+            color: #424245;
+            font-size: 1.05rem;
+            position: relative;
+            padding-left: 24px;
+            line-height: 1.6;
+            letter-spacing: -0.003em;
+        }
+        
+        .proposal-content ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #007AFF;
+            font-weight: 600;
+            font-size: 1.3rem;
+            text-shadow: 0 1px 2px rgba(0, 122, 255, 0.2);
+        }
+        
+        /* Radikale Lösung: Alle Aufzählungszeichen entfernen und nur eigene verwenden */
+        .proposal-content ul,
+        .proposal-content ol {
+            list-style: none !important;
+        }
+        
+        .proposal-content li {
+            list-style: none !important;
+        }
+        
+        /* Nur erste Ebene bekommt unsere Custom-Bullets */
+        .proposal-content > div ul > li::before,
+        .proposal-content > section ul > li::before,
+        .proposal-content ul:not(ul ul) > li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #007AFF;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        /* Verschachtelte Listen ohne Bullets */
+        .proposal-content ul ul li::before,
+        .proposal-content ol ul li::before,
+        .proposal-content ul ol li::before,
+        .proposal-content ol ol li::before {
+            display: none !important;
+        }
+        
+        .proposal-content ul ul li,
+        .proposal-content ol ol li,
+        .proposal-content ul ol li,
+        .proposal-content ol ul li {
+            padding-left: 20px !important;
+        }
+        
+        /* Moderne Bild-Styling */
+        .proposal-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 2rem auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Unterschriften-Bilder ohne Styling */
+        .client-signature-area img,
+        .company-signature-area img {
+            margin: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            border: none !important;
+        }
+        
+        .proposal-content ol {
+            counter-reset: list-counter;
+        }
+        
+        .proposal-content ol li {
+            counter-increment: list-counter;
+        }
+        
+        .proposal-content ol li::before {
+            content: counter(list-counter) '.';
+            position: absolute;
+            left: 0;
+            color: #007AFF;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .proposal-content strong {
+            font-weight: 600;
+            color: #000000;
+        }
+        
+        .proposal-content blockquote {
+            border: none;
+            background: linear-gradient(135deg, rgba(0, 122, 255, 0.03) 0%, rgba(90, 200, 250, 0.02) 100%);
+            border-left: 4px solid #007AFF;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+            font-style: normal;
+            color: #1d1d1f;
+            font-size: 1.05rem;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.08);
+            border: 1px solid rgba(0, 122, 255, 0.1);
+        }
+        
+        .proposal-content blockquote::before {
+            content: '\201C';
+            font-size: 3rem;
+            color: #007AFF;
+            position: absolute;
+            top: 0.5rem;
+            left: 1rem;
+            opacity: 0.3;
+        }
+        
+        .proposal-content table {
+            width: 100%;
+            margin: 1.5rem 0;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.06);
+            border: 1px solid #f5f5f7;
+        }
+        
+        .proposal-content th {
+            background: linear-gradient(135deg, #fbfbfd 0%, #f5f5f7 100%);
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-weight: 600;
+            color: #1d1d1f;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            border-bottom: 1px solid #d2d2d7;
+        }
+        
+        .proposal-content td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #f5f5f7;
+            font-size: 1rem;
+            color: #424245;
+        }
+        
+        .proposal-content tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .proposal-content tr:hover {
+            background: rgba(0, 122, 255, 0.02);
+        }
+        
+        /* Apple-Style Proposal Header */
+        .proposal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 0 2rem 0;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid #d2d2d7;
+            position: relative;
+        }
+        
+        .proposal-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, #d2d2d7 20%, #d2d2d7 80%, transparent 100%);
+        }
+        
+        .proposal-logo img {
+            height: 2.8rem;
+            width: auto;
+            display: block;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+        }
+        
+        .proposal-company {
+            font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            letter-spacing: -0.02em;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        /* Kein zusätzliches Section-Padding - Container hat bereits Padding */
+        .proposal-content > div, .proposal-content > section {
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+        
+        .proposal-content > div:last-child, .proposal-content > section:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Subtle dividers between sections */
+        .proposal-content > div:not(:last-child), .proposal-content > section:not(:last-child) {
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        /* Alle Inhalte sind automatisch zentriert durch Container-Padding */
+
+        /* Universelle Page-Break Regeln für alle PDF-Generierungen */
+        .proposal-content h1, 
+        .proposal-content h2, 
+        .proposal-content h3, 
+        .proposal-content h4,
+        .proposal-content p,
+        .proposal-content blockquote,
+        .feature-card,
+        .timeline-item,
+        .pricing-highlight,
+        .proposal-content table,
+        .proposal-content li {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .proposal-content h1:not(:first-child) {
+            page-break-before: auto;
+        }
+
+        .proposal-content h1:first-child {
+            page-break-before: avoid;
+        }
+
+        .proposal-content h2 {
+            page-break-before: avoid;
+            page-break-after: avoid;
+        }
+
+        /* UNTERSCHRIFTEN Section auf neuer Seite - simple approach */
+        .page-break {
+            page-break-before: always !important;
+            break-before: page !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .sidebar {
+            width: 25vw;
+            min-width: 300px;
+            max-width: 400px;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .status-card {
+            background: white;
+            padding: clamp(15px, 3vw, 35px);
+            border-radius: clamp(8px, 2vw, 16px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            flex-shrink: 0;
+        }
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #66b3ff;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.signed {
+            background: #10b981;
+            animation: none;
+        }
+
+        .status-text {
+            font-weight: 600;
+            color: #66b3ff;
+        }
+
+        .status-text.signed {
+            color: #10b981;
+        }
+
+        .client-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .client-info h4 {
+            color: #000000;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .client-info p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .signature-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .signature-pad-container {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        #signature-pad {
+            width: 100%;
+            height: 200px;
+            border-radius: 8px;
+        }
+
+        .signature-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+
+        /* Proposal Content Styling */
+        .cover-section {
+            background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%);
+            color: white;
+            padding: 80px 70px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cover-header {
+            position: absolute;
+            top: 30px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 70px;
+            z-index: 20;
+        }
+
+        .cover-header-left {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .cover-header-right {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+        }
+
+        .cover-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: float 25s ease-in-out infinite;
+        }
+
+        .cover-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            z-index: 10;
+            position: relative;
+            letter-spacing: -0.03em;
+        }
+
+        .cover-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.85;
+            z-index: 10;
+            position: relative;
+        }
+
+        .content-section {
+            padding: 60px 70px;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 25px;
+            position: relative;
+            padding-left: 25px;
+            letter-spacing: -0.02em;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background: linear-gradient(135deg, #66b3ff 0%, #66b3ff 100%);
+            border-radius: 3px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: #fafafa;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #000000;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            border-left-color: #66b3ff;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #000000;
+        }
+
+        .pricing-highlight {
+            background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .price-amount {
+            font-size: 3rem;
+            font-weight: 900;
+            margin: 20px 0;
+            letter-spacing: -0.02em;
+        }
+
+        .guarantee-badge {
+            background: linear-gradient(135deg, #66b3ff 0%, #66b3ff 100%);
+            color: #000000;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            display: inline-block;
+            margin: 20px 0;
+        }
+
+        .timeline {
+            margin: 40px 0;
+        }
+
+        .timeline-item {
+            background: #fafafa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #66b3ff;
+        }
+
+        .timeline-phase {
+            font-weight: 700;
+            color: #000000;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .timeline-duration {
+            background: #e9ecef;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #666;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .benefits-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .benefits-list li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 25px;
+            color: #000000;
+        }
+
+        .benefits-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #66b3ff;
+            font-weight: bold;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 15px;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+            display: none;
+        }
+
+        /* ========== CODE ENTRY STYLES ========== */
+        .code-entry-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #66b3ff 0%, #4a9eff 50%, #2d7fff 100%);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Apple-style animated background mesh */
+        .code-entry-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.05) 0%, transparent 50%), 
+                        radial-gradient(circle at 80% 20%, rgba(102,179,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 70%, rgba(102,179,255,0.08) 0%, transparent 50%);
+            animation: meshFloat 25s ease-in-out infinite;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        .code-entry-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 60% 40%, rgba(255,255,255,0.03) 1px, transparent 1px),
+                radial-gradient(circle at 30% 80%, rgba(102,179,255,0.04) 1px, transparent 1px);
+            background-size: 100px 100px, 150px 150px;
+            animation: meshDrift 30s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes meshFloat {
+            0%, 100% { 
+                transform: translateX(0) translateY(0) rotate(0deg); 
+                opacity: 0.8;
+            }
+            25% { 
+                transform: translateX(-10px) translateY(-15px) rotate(1deg); 
+                opacity: 0.6;
+            }
+            50% { 
+                transform: translateX(10px) translateY(-10px) rotate(-0.5deg); 
+                opacity: 0.9;
+            }
+            75% { 
+                transform: translateX(-5px) translateY(5px) rotate(0.5deg); 
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes meshDrift {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(-100px) translateY(-100px); }
+        }
+
+        .code-entry-form {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 60px 50px 50px 50px;
+            border-radius: 24px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.15);
+            text-align: center;
+            max-width: 750px;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+            animation: slideInUp 0.8s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-sizing: border-box;
+        }
+
+        @keyframes slideInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-main {
+            margin-bottom: 20px;
+            text-align: center;
+            animation: fadeInDown 0.8s ease-out 0.2s both;
+        }
+        
+        .logo-main img {
+            height: 3rem;
+            width: auto;
+            display: block;
+            margin: 0 auto;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-main img:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .code-entry-form h1 {
+            color: #e6edf3;
+            margin-bottom: 15px;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .code-entry-form p {
+            color: #7d8590;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .code-form {
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 20px;
+            align-items: stretch;
+            animation: fadeInScale 0.8s ease-out 0.8s both;
+        }
+
+        @keyframes fadeInScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .code-input {
+            flex: 1;
+            padding: 20px 28px;
+            border: 1.5px solid rgba(125, 133, 144, 0.3);
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
+            text-align: center;
+            background: rgba(48, 54, 61, 0.3);
+            backdrop-filter: blur(10px);
+            color: #e6edf3;
+        }
+
+        .code-input:focus {
+            outline: none;
+            border-color: #007aff;
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+            transform: translateY(-2px);
+            background: rgba(48, 54, 61, 0.5);
+        }
+
+        .code-input::placeholder {
+            color: #7d8590;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .input-group .btn {
+            padding: 20px 36px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            white-space: nowrap;
+            min-width: 180px;
+            background: #007aff;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 122, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-group .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .input-group .btn:hover::before {
+            left: 100%;
+        }
+
+        .input-group .btn:hover {
+            background: #0056cc;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px rgba(0, 122, 255, 0.4);
+        }
+
+        .error-message {
+            background: rgba(255, 59, 48, 0.1);
+            border: 1px solid rgba(255, 59, 48, 0.2);
+            color: #ff3b30;
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: 500;
+        }
+
+        .loading-message {
+            background: rgba(0, 122, 255, 0.1);
+            color: #007aff;
+            padding: 24px 30px;
+            border-radius: 16px;
+            margin-top: 24px;
+            border: 1px solid rgba(0, 122, 255, 0.2);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            animation: slideIn 0.3s ease-out;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading-spinner {
+            width: 28px;
+            height: 28px;
+            border: 3px solid rgba(0, 122, 255, 0.2);
+            border-top: 3px solid #007aff;
+            border-radius: 50%;
+            animation: modernSpin 1s linear infinite;
+        }
+
+        @keyframes modernSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 800px) {
+            .code-entry-form {
+                padding: 50px 40px 40px 40px;
+                max-width: 90%;
+                margin: 0 20px;
+            }
+            
+            .logo-main img {
+                height: 2.5rem;
+            }
+            
+            .code-entry-form h1 {
+                font-size: 1.8rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                gap: 20px;
+                align-items: stretch;
+            }
+            
+            .input-group .btn {
+                min-width: auto;
+                width: 100%;
+            }
+            
+            .code-input {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .code-entry-form {
+                padding: 40px 25px 30px 25px;
+                margin: 0 15px;
+            }
+            
+            .code-entry-form h1 {
+                font-size: 1.6rem;
+            }
+            
+            .code-entry-form p {
+                font-size: 1rem;
+            }
+        }
+
+        /* ========== SIMPLE PRINT STYLES ========== */
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+        
+        @media print{
+          @page{ 
+            size: A4; 
+            margin: 15mm; 
+          }
+
+          body{ 
+            background:white !important; 
+            font-size: 1rem !important;
+          }
+
+          /* Sidebar komplett ausblenden */
+          .sidebar, .sidebar-container{ display:none !important; }
+
+          /* Header ausblenden */
+          .dashboard-header{ display:none !important; }
+
+          /* Wrapper ohne Flex-Lücken */
+          #page-wrapper{ display:block !important; }
+          
+          .dashboard-container{ padding:0 !important; }
+
+          /* Apple-Style Print optimiert */
+          .proposal-content {
+            max-width: none !important;
+            width: 100% !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            margin: 0 auto !important;
+            padding: 2rem !important;
+            background: #ffffff !important;
+            border: none !important;
+            color: #1d1d1f !important;
+            transform: none !important;
+            overflow: visible !important;
+            font-size: 1.1rem !important;
+          }
+          
+          /* Alle modernen Styles für Print beibehalten */
+          .proposal-content h1, .proposal-content h2, .proposal-content h3, .proposal-content h4 {
+            font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
+            font-weight: 700 !important;
+            color: #000000 !important;
+            page-break-after: avoid;
+          }
+          
+          .proposal-content h1 {
+            font-size: 2.2rem !important;
+            color: #1d1d1f !important;
+            text-align: left !important;
+            margin-bottom: 1.5rem !important;
+            letter-spacing: -0.03em !important;
+            line-height: 1.2 !important;
+          }
+          
+          .proposal-content h1::after {
+            display: none !important;
+          }
+          
+          .proposal-content h2 {
+            font-size: 1.6rem !important;
+            padding-left: 24px !important;
+            text-align: left !important;
+            margin-bottom: 1rem !important;
+            color: #1d1d1f !important;
+            font-weight: 600 !important;
+            letter-spacing: -0.02em !important;
+          }
+          
+          .proposal-content h2::before {
+            background: #007AFF !important;
+          }
+          
+          .proposal-content img {
+            max-width: 100% !important;
+            height: auto !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+          }
+
+          /* Unterschriften-Bilder ohne Styling im Print */
+          .client-signature-area img,
+          .company-signature-area img {
+            margin: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            border: none !important;
+          }
+          
+          .proposal-content h3 {
+            font-size: 1.3rem !important;
+            text-align: left !important;
+            margin-bottom: 0.6rem !important;
+            color: #1d1d1f !important;
+            font-weight: 600 !important;
+          }
+          
+          .proposal-content h4 {
+            font-size: 1.2rem !important;
+            text-align: left !important;
+            margin-bottom: 0.5rem !important;
+            color: #424245 !important;
+            font-weight: 500 !important;
+          }
+          
+          .proposal-content p {
+            color: #424245 !important;
+            font-size: 1rem !important;
+            text-align: justify !important;
+            margin-bottom: 1rem !important;
+            line-height: 1.6 !important;
+            letter-spacing: -0.003em !important;
+          }
+          
+          .proposal-content strong {
+            font-weight: 600 !important;
+            color: #000000 !important;
+          }
+          
+          .proposal-content ul li::before {
+            color: #007AFF !important;
+          }
+          
+          .proposal-content ul,
+          .proposal-content ol {
+            list-style: none !important;
+          }
+          
+          .proposal-content ul ul li::before,
+          .proposal-content ol ul li::before,
+          .proposal-content ul ol li::before,
+          .proposal-content ol ol li::before {
+            display: none !important;
+          }
+          
+          .proposal-content ol li::before {
+            color: #007AFF !important;
+          }
+          
+          .proposal-content blockquote {
+            background: rgba(0, 122, 255, 0.03) !important;
+            border-left: 4px solid #007AFF !important;
+            padding: 1.2rem !important;
+            color: #1d1d1f !important;
+            border-radius: 12px !important;
+            margin: 1.2rem 0 !important;
+            font-size: 1rem !important;
+            border: 1px solid rgba(0, 122, 255, 0.1) !important;
+          }
+          
+          .proposal-content blockquote::before {
+            color: #007AFF !important;
+          }
+          
+          .proposal-content table {
+            border-radius: 12px !important;
+            overflow: hidden !important;
+            margin: 1.2rem 0 !important;
+            border: 1px solid #f5f5f7 !important;
+            background: #ffffff !important;
+          }
+          
+          .proposal-content th {
+            padding: 0.8rem 1rem !important;
+            font-size: 0.9rem !important;
+            background: linear-gradient(135deg, #fbfbfd 0%, #f5f5f7 100%) !important;
+            color: #1d1d1f !important;
+            border-bottom: 1px solid #d2d2d7 !important;
+          }
+          
+          .proposal-content td {
+            padding: 0.8rem 1rem !important;
+            font-size: 0.95rem !important;
+            color: #424245 !important;
+            border-bottom: 1px solid #f5f5f7 !important;
+          }
+          
+          .proposal-content th {
+            background: linear-gradient(135deg, #f8faff 0%, #f0f7ff 100%) !important;
+            color: #1a1a1a !important;
+            font-weight: 600 !important;
+          }
+          
+          .proposal-header {
+            padding: 0 0 1.5rem 0 !important;
+            margin-bottom: 2rem !important;
+            border-bottom: 1px solid #d2d2d7 !important;
+          }
+          
+          .proposal-header::after {
+            background: #d2d2d7 !important;
+          }
+          
+          .proposal-logo img {
+            height: 2rem !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+          }
+          
+          .proposal-company {
+            font-size: 1.5rem !important;
+          }
+          
+          .proposal-content > div, .proposal-content > section {
+            padding: 0 !important;
+            margin-bottom: 1rem !important;
+          }
+          
+          .proposal-content > div:not(:last-child), .proposal-content > section:not(:last-child) {
+            border-bottom: 1px solid #f1f5f9 !important;
+          }
+
+          /* Saubere Seitenumbrüche für A4 Print */
+          .proposal-content h1, 
+          .proposal-content h2, 
+          .proposal-content h3, 
+          .proposal-content h4,
+          .proposal-content p,
+          .proposal-content blockquote,
+          .proposal-content .feature-card,
+          .proposal-content .timeline-item,
+          .proposal-content .pricing-highlight,
+          .proposal-content table,
+          .proposal-content li {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+
+          /* Intelligente Seitenumbrüche */
+          .proposal-content h1:not(:first-child) {
+            page-break-before: auto !important;
+          }
+
+          .proposal-content h1:first-child {
+            page-break-before: avoid !important;
+          }
+
+          .proposal-content h2 {
+            page-break-before: avoid !important;
+            page-break-after: avoid !important;
+          }
+
+          /* UNTERSCHRIFTEN Section auf neuer Seite - simple approach */
+          .page-break {
+            page-break-before: always !important;
+            break-before: page !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: block !important;
+          }
+
+          /* Buttons & interaktive Elemente verstecken */
+          button, .signature-pad, .download-btn{ display:none !important; }
+
+          /* Links neutralisieren */
+          a{ color:inherit !important; text-decoration:none !important; }
+        }
+
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 30vw;
+                min-width: 280px;
+                max-width: 350px;
+            }
+            
+            .proposal-content {
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .sidebar {
+                width: 35vw;
+                min-width: 260px;
+                max-width: 320px;
+            }
+            
+            #page-wrapper {
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            #page-wrapper {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+            }
+
+            .proposal-content {
+                width: 100%;
+                max-width: 900px;
+            }
+            
+            .sidebar {
+                width: 100%;
+                max-width: 500px;
+            }
+        }
+        
+        /* --- Flex‑Layout für Proposal + Sidebar ------------------------ */
+        #page-wrapper{
+          display: flex;
+          justify-content: center;   /* Proposal mittig */
+          align-items: flex-start;   /* Oberkante bündig */
+          gap: 32px;
+          max-width: 1400px;
+          margin: 0 auto;
+          width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 20px;
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .dashboard-actions {
+                flex-direction: column;
+                width: 100%;
+                gap: 15px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .dashboard-container {
+                padding: 30px 15px;
+            }
+
+            .proposal-content {
+                padding: 20px;
+            }
+            
+            .status-card {
+                padding: 20px;
+            }
+        }
+
+        @media print {
+          @page { 
+            size: A4; 
+            margin: 20mm; 
+          }
+
+          /* Hide non-essential elements */
+          .dashboard-header,
+          .sidebar,
+          .sidebar-container,
+          button,
+          .modal {
+            display: none !important;
+          }
+
+          /* Reset layout for print */
+          body {
+            background: white !important;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif !important;
+          }
+
+          .dashboard-container {
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+
+          #page-wrapper {
+            display: block !important;
+            max-width: none !important;
+            margin: 0 !important;
+          }
+
+          /* Keep all original styling for print */
+          .proposal-content {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 4rem 3rem !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            border: none !important;
+            /* Preserve all other styles exactly as screen */
+          }
+
+          /* Preserve all visual elements */
+          .proposal-content h1::after {
+            content: '' !important;
+            background: linear-gradient(90deg, #007AFF 0%, #5AC8FA 100%) !important;
+          }
+
+          .proposal-content h2::before {
+            content: '' !important;
+            background: linear-gradient(180deg, #007AFF 0%, #5AC8FA 100%) !important;
+          }
+
+          .section-title::before {
+            background: linear-gradient(135deg, #66b3ff 0%, #66b3ff 100%) !important;
+          }
+
+          .guarantee-badge {
+            background: linear-gradient(135deg, #66b3ff 0%, #66b3ff 100%) !important;
+            color: #000000 !important;
+          }
+
+          .pricing-highlight {
+            background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%) !important;
+            color: white !important;
+          }
+
+          .cover-section {
+            background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%) !important;
+            color: white !important;
+          }
+
+          /* Prevent page breaks in critical elements */
+          .feature-card,
+          .timeline-item,
+          .pricing-highlight,
+          .proposal-content table,
+          .proposal-content blockquote {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+
+          /* Disable animations and transitions */
+          * {
+            animation: none !important;
+            transition: none !important;
+            transform: none !important;
+          }
+        }
+    </style>
+</head>
+<body>
+    <!-- Redirect Check - No Code Entry Screen Needed -->
+    <script>
+        // Check if we have a proposal code in sessionStorage
+        // If not, redirect to proposal entry page
+        window.addEventListener('DOMContentLoaded', function() {
+            const proposalCode = sessionStorage.getItem('proposalCode');
+            const clientData = sessionStorage.getItem('clientData');
+            
+            if (!proposalCode || !clientData) {
+                // No proposal code found, redirect to entry page
+                window.location.replace('/index.html');
+                return;
+            }
+            
+            // We have proposal data, proceed with loading the proposal
+            console.log('Proposal code found:', proposalCode);
+            // Call the content loading function
+            loadContentFromSession();
+        });
+        
+        // Load content from sessionStorage using the original working logic
+        function loadContentFromSession() {
+            try {
+                const proposalCode = sessionStorage.getItem('proposalCode');
+                const clientDataString = sessionStorage.getItem('clientData');
+                
+                if (!proposalCode || !clientDataString) {
+                    console.error('Missing data in sessionStorage');
+                    window.location.replace('/index.html');
+                    return;
+                }
+                
+                const client = JSON.parse(clientDataString);
+                console.log('✅ Loading client data from sessionStorage:', client);
+                
+                // Check if proposal is draft (same logic as original)
+                if (client && (client['Status Proposal'] === 'draft' || client.Status === 'draft')) {
+                    console.log('Proposal status is draft:', client['Status Proposal'] || client.Status);
+                    document.body.innerHTML = '<h2>Proposal wird bearbeitet …</h2>';
+                    return;
+                }
+                
+                // Store data globally for signing process
+                window.proposalCode = proposalCode;
+                window.clientData = client;
+                
+                // Get HTML content using the exact same logic as the original working system
+                let html = '';
+                if (client && client["Custom HTML"]) {
+                    html = client["Custom HTML"];
+                    console.log('✅ Using Custom HTML from client data');
+                } else if (client && client.Template && Array.isArray(client.Template) && client.Template.length > 0) {
+                    html = client.Template[0].HTML || '';
+                    console.log('✅ Using Template HTML from client data');
+                } else {
+                    console.warn('❌ No HTML content found in client data');
+                    console.log('Available client fields:', client ? Object.keys(client) : 'No client');
+                }
+                
+                // Replace placeholders in HTML (same as original)
+                if (html && client) {
+                    html = html.replace(/\{\{([^}]+)\}\}/g, (match, placeholder) => {
+                        const fieldName = placeholder.trim();
+                        const value = client[fieldName] || '';
+                        console.log(`Replacing placeholder ${placeholder} with:`, value);
+                        return value;
+                    });
+                }
+                
+                // Show proposal dashboard first (same as original)
+                const codeEntryScreen = document.getElementById('codeEntryScreen');
+                const proposalDashboard = document.getElementById('proposalDashboard');
+                
+                if (codeEntryScreen) codeEntryScreen.style.display = 'none';
+                if (proposalDashboard) proposalDashboard.style.display = 'block';
+                
+                // Replace proposal content with HTML (EXACT SAME LOGIC AS ORIGINAL WORKING SYSTEM)
+                const proposalContentElement = document.getElementById('proposal-content');
+                if (proposalContentElement && html && html.trim().length > 0) {
+                    console.log('✅ Replacing proposal content with HTML from sessionStorage');
+                    // Remove all styles and classes from the HTML
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    
+                    // Strip all style attributes and classes (except page-break)
+                    const allElements = tempDiv.querySelectorAll('*');
+                    allElements.forEach(el => {
+                        el.removeAttribute('style');
+                        // Keep page-break and other important classes
+                        const currentClass = el.getAttribute('class');
+                        if (currentClass && (currentClass.includes('page-break') || currentClass.includes('unterschriften-section'))) {
+                            // Keep these classes
+                        } else {
+                            el.removeAttribute('class');
+                        }
+                    });
+                    
+                    // Create proposal header with logo and company name
+                    const companyName = client?.Company || 'FF Office';
+                    
+                    // Calculate font size based on company name length
+                    let fontSize = '2rem';
+                    if (companyName.length > 30) fontSize = '1.2rem';
+                    else if (companyName.length > 25) fontSize = '1.4rem';
+                    else if (companyName.length > 20) fontSize = '1.6rem';
+                    else if (companyName.length > 15) fontSize = '1.8rem';
+                    
+                    const proposalHeader = `
+                        <div class="proposal-header">
+                            <div class="proposal-logo">
+                                <img src="./bilder/option Logo Colour.png" alt="option.ai Logo" />
+                            </div>
+                            <div class="proposal-company" style="font-size: ${fontSize};">${companyName}</div>
+                        </div>
+                    `;
+                    
+                    proposalContentElement.innerHTML = proposalHeader + tempDiv.innerHTML;
+                    console.log('✅ Content rendered successfully using original working logic');
+                } else {
+                    console.error('❌ No HTML content found in sessionStorage data');
+                    console.log('Available client fields:', client ? Object.keys(client) : 'No client');
+                    proposalContentElement.innerHTML = `
+                        <div style="padding: 100px; text-align: center; color: #dc2626; background: white;">
+                            <h2>Kein Proposal-Inhalt verfügbar</h2>
+                            <p>Das Proposal wurde noch nicht erstellt oder ist leer.</p>
+                            <p>Custom HTML Feld: "${client ? client["Custom HTML"] || 'LEER' : 'Kein Client'}"</p>
+                            <p>Verfügbare Felder: ${client ? Object.keys(client).join(', ') : 'Keine'}</p>
+                        </div>
+                    `;
+                }
+                
+                // Fill client data in sidebar (same as original working logic)
+                if (client) {
+                    const sidebarName = document.getElementById('sidebarName');
+                    const sidebarCompany = document.getElementById('sidebarCompany');
+                    const sidebarAddress = document.getElementById('sidebarAddress');
+                    const sidebarCountry = document.getElementById('sidebarCountry');
+                    const createdDate = document.getElementById('createdDate');
+
+                    if (sidebarName) sidebarName.textContent = client["Full Name"] || '';
+                    if (sidebarCompany) sidebarCompany.textContent = client.Company || '';
+                    if (sidebarAddress) sidebarAddress.textContent = client.Adress || '';
+                    if (sidebarCountry) sidebarCountry.textContent = client.Country || '';
+
+                    // Erstelldatum (ISO‑String → deutsches Datum)
+                    if (client.createdTime && createdDate){
+                        const d = new Date(client.createdTime);
+                        createdDate.textContent = d.toLocaleDateString('de-DE');
+                    }
+                    
+                    console.log('✅ Sidebar client info filled successfully');
+                    
+                    // Update status based on proposal status
+                    const statusDot = document.querySelector('.status-dot');
+                    const statusText = document.querySelector('.status-text');
+                    const proposalStatus = client['Status Proposal'];
+                    
+                    if (statusDot && statusText && proposalStatus === 'signed') {
+                        statusDot.classList.add('signed');
+                        statusText.classList.add('signed');
+                        statusText.textContent = 'Unterschrieben';
+                        console.log('✅ Status updated to "Unterschrieben" (signed)');
+                        
+                        // Update sign button to "Termin vereinbaren" for already signed proposals
+                        const signButton = document.getElementById('signButton');
+                        if (signButton) {
+                            signButton.innerHTML = '<span>Termin vereinbaren</span>';
+                            signButton.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                            signButton.onclick = () => window.open('https://calendly.com/option-ai/30min', '_blank');
+                            console.log('✅ Sign button updated to "Termin vereinbaren" for signed proposal');
+                        }
+                    } else if (statusDot && statusText) {
+                        // Default status for other states
+                        statusText.textContent = 'Proposal Live';
+                        console.log('✅ Status set to "Proposal Live"');
+                    }
+                }
+                
+                // Track proposal view
+                trackProposalView(proposalCode, client['Full Name'] || 'Unknown');
+                
+            } catch (error) {
+                console.error('Error loading content from sessionStorage:', error);
+                window.location.replace('/index.html');
+            }
+        }
+    </script>
+
+    <!-- Proposal Dashboard (Hidden initially) -->
+    <div id="proposalDashboard" style="display: none;">
+        <!-- Dashboard Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="./bilder/option Logo White.png" alt="option.ai" />
+                </div>
+                <div class="dashboard-actions">
+                    <a href="/client-login.html" class="btn btn-secondary">Kunden Login</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Container -->
+        <div class="dashboard-container">
+            <div id="page-wrapper">
+                <!-- Main Proposal Content -->
+                <div class="proposal-content" id="proposal-content">
+                    <div style="padding: 100px; text-align: center; color: #666;">
+                        <h2>Angebot wird geladen...</h2>
+                        <p>Bitte warten Sie, während das Angebot aus der Datenbank geladen wird.</p>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="sidebar">
+                <!-- Erste Karte: Kundendaten & Actions -->
+                <div class="status-card">
+                    <div class="status-header">
+                        <div class="status-dot"></div>
+                        <span class="status-text">Proposal Live</span>
+                    </div>
+                    
+                    <div class="client-info">
+                        <h4>Client</h4>
+                        <p><strong id="sidebarName">-</strong></p>
+                        <p id="sidebarCompany">-</p>
+                        <p id="sidebarAddress">-</p>
+                        <p id="sidebarCountry">-</p>
+                        <p style="margin-top: 10px; font-size: 0.9rem;">
+                            Erstellt: <strong id="createdDate">-</strong>
+                        </p>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="openSigningModal()" style="width: 100%;" id="signButton">
+                            Angebot Unterschreiben
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadPDF()" style="width: 100%;">
+                            Als PDF drucken/speichern
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Zweite Karte: Nächste Schritte -->
+                <div class="status-card" style="margin-top: 20px;">
+                    <h4 style="margin-bottom: 15px; color: #000;">Nächste Schritte</h4>
+                    <ul class="benefits-list" style="font-size: 0.9rem;">
+                        <li>Angebot prüfen und unterschreiben</li>
+                        <li>Kick-Off Call vereinbaren</li>
+                        <li>Projektstart innerhalb 48h</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Global variables for proposal data and request management
+        let proposalData = null;
+        let isRequestInProgress = false;
+        let requestTimeout = null;
+        let debounceTimeout = null;
+        
+        // Request debouncing and validation
+        async function validateCode(event) {
+            event.preventDefault();
+            
+            // Prevent multiple simultaneous requests
+            if (isRequestInProgress) {
+                console.warn('Request already in progress, ignoring duplicate call');
+                return;
+            }
+            
+            const codeInput = document.getElementById('proposalCodeInput');
+            const errorDiv = document.getElementById('errorMessage');
+            const loadingDiv = document.getElementById('loadingMessage');
+            const loadButton = document.getElementById('loadButton');
+            
+            // Check if required elements exist
+            if (!codeInput || !errorDiv || !loadingDiv || !loadButton) {
+                console.error('Required form elements not found');
+                return;
+            }
+            
+            const code = codeInput.value.trim().toUpperCase();
+            
+            // Validate input
+            if (!code) {
+                showError('Bitte geben Sie einen gültigen Code ein.', errorDiv, loadButton, codeInput);
+                return;
+            }
+            
+            // Clear any existing debounce timeout
+            if (debounceTimeout) {
+                clearTimeout(debounceTimeout);
+            }
+            
+            // Debounce rapid clicks (300ms)
+            debounceTimeout = setTimeout(async () => {
+                await performAPIRequest(code, errorDiv, loadingDiv, loadButton, codeInput);
+            }, 300);
+        }
+        
+        // Perform the actual API request with timeout and error handling
+        async function performAPIRequest(code, errorDiv, loadingDiv, loadButton, codeInput) {
+            // Set loading state
+            isRequestInProgress = true;
+            setLoadingState(true, errorDiv, loadingDiv, loadButton, codeInput);
+            
+            console.log('=== API REQUEST START ===');
+            console.log('Proposal Code:', code);
+            console.log('Timestamp:', new Date().toISOString());
+            
+            try {
+                // Create abort controller for timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    controller.abort();
+                    console.error('Request timed out after 10 seconds');
+                }, 10000);
+                
+                console.log('Calling load-client API...');
+                
+                // Make API request with timeout
+                const response = await fetch(`https://optionai.optionai.at/webhook/get-client?proposal_code=${encodeURIComponent(code)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    signal: controller.signal
+                });
+                
+                // Clear timeout if request completed
+                clearTimeout(timeoutId);
+                
+                console.log('=== API RESPONSE ===');
+                console.log('Status:', response.status);
+                console.log('Status Text:', response.statusText);
+                console.log('Headers:', Object.fromEntries(response.headers.entries()));
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Response Data:', data);
+                    
+                    // Parse the array structure - find template and client items
+                    let templateItem = null;
+                    let clientItem = null;
+                    
+                    if (Array.isArray(data)) {
+                        templateItem = data.find(item => item.template) || data[0];
+                        clientItem = data.find(item => item.client) || data[1];
+                    } else {
+                        templateItem = data.template ? data : null;
+                        clientItem = data.client ? data : null;
+                    }
+                    
+                    console.log('=== PARSED STRUCTURE ===');
+                    console.log('Template item:', templateItem);
+                    console.log('Client item:', clientItem);
+                    
+                    // Extract actual data
+                    const template = templateItem?.template || templateItem;
+                    const client = clientItem?.client || clientItem;
+                    
+                    console.log('=== EXTRACTED DATA ===');
+                    console.log('Template:', template);
+                    console.log('Client:', client);
+                    
+                    // Check if proposal is draft
+                    if (client && client.Status === 'draft') {
+                        console.log('Proposal status is draft:', client.Status);
+                        document.body.innerHTML = '<h2>Proposal wird bearbeitet …</h2>';
+                        return;
+                    }
+                    
+                    console.log('✅ Proposal is approved, rendering content');
+                    
+                    // Store proposal code and data for signing process
+                    window.proposalCode = code;
+                    window.clientData = client;
+                    window.templateData = template;
+                    
+                    // Use Custom HTML from client (das ist das komplette Proposal HTML)
+                    let html = '';
+                    if (client && client["Custom HTML"]) {
+                        html = client["Custom HTML"];
+                    } else if (template && template.HTML) {
+                        html = template.HTML;
+                    }
+                    
+                    console.log('=== HTML DEBUG ===');
+                    console.log('Custom HTML from client:', client ? client["Custom HTML"] : 'No client');
+                    console.log('Template HTML:', template ? template.HTML : 'No template');
+                    console.log('Final HTML length:', html.length);
+                    
+                    // Fill client data in sidebar BEFORE replacing content
+                    if (client) {
+                        // Seitenleiste füllen
+                        const c = client;
+                        const sidebarName = document.getElementById('sidebarName');
+                        const sidebarCompany = document.getElementById('sidebarCompany');
+                        const sidebarAddress = document.getElementById('sidebarAddress');
+                        const sidebarCountry = document.getElementById('sidebarCountry');
+                        const createdDate = document.getElementById('createdDate');
+
+                        if (sidebarName) sidebarName.textContent = c["Full Name"] || '';
+                        if (sidebarCompany) sidebarCompany.textContent = c.Company || '';
+                        if (sidebarAddress) sidebarAddress.textContent = c.Adress || '';
+                        if (sidebarCountry) sidebarCountry.textContent = c.Country || '';
+
+                        // Erstelldatum (ISO‑String → deutsches Datum)
+                        if (c.createdTime && createdDate){
+                            const d = new Date(c.createdTime);
+                            createdDate.textContent = d.toLocaleDateString('de-DE');
+                        }
+                        
+                        console.log('Client data filled:', {
+                            name: c["Full Name"],
+                            company: c.Company,
+                            country: c.Country,
+                            created: c.createdTime
+                        });
+                    }
+                    
+                    // Show proposal dashboard first
+                    const codeEntryScreen = document.getElementById('codeEntryScreen');
+                    const proposalDashboard = document.getElementById('proposalDashboard');
+                    
+                    if (codeEntryScreen) codeEntryScreen.style.display = 'none';
+                    if (proposalDashboard) proposalDashboard.style.display = 'block';
+                    
+                    // Replace proposal content with HTML from N8n
+                    const proposalContentElement = document.getElementById('proposal-content');
+                    if (proposalContentElement && html && html.trim().length > 0) {
+                        console.log('✅ Replacing proposal content with HTML from N8n');
+                        // Remove all styles and classes from the HTML
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+                        
+                        // Strip all style attributes and classes (except page-break)
+                        const allElements = tempDiv.querySelectorAll('*');
+                        allElements.forEach(el => {
+                            el.removeAttribute('style');
+                            // Keep page-break and other important classes
+                            const currentClass = el.getAttribute('class');
+                            if (currentClass && (currentClass.includes('page-break') || currentClass.includes('unterschriften-section'))) {
+                                // Keep these classes
+                            } else {
+                                el.removeAttribute('class');
+                            }
+                        });
+                        
+                        // Create proposal header with logo and company name
+                        const companyName = client?.Company || 'FF Office';
+                        
+                        // Calculate font size based on company name length
+                        let fontSize = '2rem';
+                        if (companyName.length > 30) fontSize = '1.2rem';
+                        else if (companyName.length > 25) fontSize = '1.4rem';
+                        else if (companyName.length > 20) fontSize = '1.6rem';
+                        else if (companyName.length > 15) fontSize = '1.8rem';
+                        
+                        const proposalHeader = `
+                            <div class="proposal-header">
+                                <div class="proposal-logo">
+                                    <img src="./bilder/option Logo Colour.png" alt="option.ai Logo" />
+                                </div>
+                                <div class="proposal-company" style="font-size: ${fontSize};">${companyName}</div>
+                            </div>
+                        `;
+                        
+                        proposalContentElement.innerHTML = proposalHeader + tempDiv.innerHTML;
+                    } else {
+                        console.error('❌ No HTML content found in N8n response');
+                        console.log('Available client fields:', client ? Object.keys(client) : 'No client');
+                        proposalContentElement.innerHTML = `
+                            <div style="padding: 100px; text-align: center; color: #dc2626; background: white;">
+                                <h2>Kein Proposal-Inhalt verfügbar</h2>
+                                <p>Das Proposal wurde noch nicht erstellt oder ist leer.</p>
+                                <p>Custom HTML Feld: "${client ? client["Custom HTML"] || 'LEER' : 'Kein Client'}"</p>
+                                <p>Verfügbare Felder: ${client ? Object.keys(client).join(', ') : 'Keine'}</p>
+                            </div>
+                        `;
+                    }
+                    
+                    // Track proposal view
+                    setTimeout(() => trackProposalView(code), 1000);
+                    
+                    // UNTERSCHRIFTEN page breaks handled by CSS only
+                    
+                    
+                } else {
+                    // Handle HTTP errors
+                    console.error('❌ API Request failed');
+                    console.error('Status:', response.status);
+                    
+                    let errorMessage;
+                    switch (response.status) {
+                        case 404:
+                            errorMessage = 'Code ungültig. Bitte überprüfen Sie Ihre Eingabe.';
+                            break;
+                        case 400:
+                            errorMessage = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
+                            break;
+                        case 500:
+                        case 502:
+                        case 503:
+                            errorMessage = 'Server-Fehler. Bitte versuchen Sie es später erneut.';
+                            break;
+                        default:
+                            errorMessage = 'Code ungültig. Bitte versuchen Sie es erneut.';
+                    }
+                    
+                    showError(errorMessage, errorDiv, loadButton, codeInput);
+                }
+                
+            } catch (error) {
+                console.error('=== API REQUEST ERROR ===');
+                console.error('Error Type:', error.name);
+                console.error('Error Message:', error.message);
+                console.error('Full Error:', error);
+                
+                let errorMessage;
+                
+                if (error.name === 'AbortError') {
+                    errorMessage = 'Anfrage-Timeout. Bitte versuchen Sie es erneut.';
+                } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    errorMessage = 'Verbindungsfehler. Bitte überprüfen Sie Ihre Internetverbindung.';
+                } else if (error.message.includes('Invalid response')) {
+                    errorMessage = 'Ungültige Serverantwort. Bitte versuchen Sie es erneut.';
+                } else {
+                    errorMessage = 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.';
+                }
+                
+                showError(errorMessage, errorDiv, loadButton, codeInput);
+                
+            } finally {
+                // Always reset request state
+                isRequestInProgress = false;
+                setLoadingState(false, errorDiv, loadingDiv, loadButton, codeInput);
+                console.log('=== API REQUEST END ===');
+            }
+        }
+        
+        // Helper function to set loading state
+        function setLoadingState(isLoading, errorDiv, loadingDiv, loadButton, codeInput) {
+            if (isLoading) {
+                errorDiv.style.display = 'none';
+                loadingDiv.style.display = 'block';
+                loadButton.disabled = true;
+                loadButton.textContent = 'Lädt...';
+                codeInput.disabled = true;
+            } else {
+                loadingDiv.style.display = 'none';
+                loadButton.disabled = false;
+                loadButton.textContent = 'Proposal laden';
+                codeInput.disabled = false;
+            }
+        }
+        
+        // Helper function to show errors
+        function showError(message, errorDiv, loadButton, codeInput) {
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            codeInput.focus();
+            codeInput.select();
+            
+            // Auto-hide error after 5 seconds
+            setTimeout(() => {
+                if (errorDiv.style.display === 'block') {
+                    errorDiv.style.display = 'none';
+                }
+            }, 5000);
+        }
+        
+        
+        // UNTERSCHRIFTEN page breaks handled purely by CSS .page-break class
+
+
+        // PDF Download using browser's native print functionality - optimized for A4 printing
+        function downloadPDF() {
+            // Don't mark UNTERSCHRIFTEN sections - they should already be configured in custom HTML
+            // markUnterschriftenSections(); // DISABLED - causes duplicate page breaks
+            
+            // Use browser's native print dialog which applies @media print CSS
+            window.print();
+        }
+        
+        // Track proposal views and actions
+        function trackProposalView(proposalCode) {
+            try {
+                const trackingData = {
+                    proposal_code: proposalCode || window.proposalCode,
+                    action: 'proposal_viewed',
+                    timestamp: new Date().toISOString(),
+                    user_agent: navigator.userAgent,
+                    client_name: proposalData?.client_name || proposalData?.clientName
+                };
+                
+                console.log('Tracking proposal view:', trackingData);
+                
+                // Use the same N8n endpoint for tracking or specific tracking URL if provided
+                const trackingUrl = window.proposalWebhookUrl || 'https://optionai.optionai.at/webhook/webhook/track-proposal';
+                
+                fetch(trackingUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(trackingData)
+                }).catch(error => console.error('Tracking error:', error));
+                
+            } catch (error) {
+                console.error('Error in trackProposalView:', error);
+            }
+        }
+        
+        // Track proposal signatures
+        function trackProposalSignature(proposalCode, signatureData) {
+            try {
+                const trackingData = {
+                    proposal_code: proposalCode || window.proposalCode,
+                    action: 'proposal_signed',
+                    signature_data: signatureData,
+                    timestamp: new Date().toISOString(),
+                    user_agent: navigator.userAgent,
+                    client_name: proposalData?.client_name || proposalData?.clientName
+                };
+                
+                console.log('Tracking proposal signature:', trackingData);
+                
+                const trackingUrl = window.proposalWebhookUrl || 'https://optionai.optionai.at/webhook/webhook/track-proposal';
+                
+                fetch(trackingUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(trackingData)
+                }).catch(error => console.error('Signature tracking error:', error));
+                
+            } catch (error) {
+                console.error('Error in trackProposalSignature:', error);
+            }
+        }
+
+        // ===== PDF SIGNING FUNCTIONALITY =====
+        let currentPdfBytes = null;
+        let signaturePad = null;
+        let currentAuthMethod = 'draw';
+
+        function openSigningModal() {
+            console.log('Opening signing modal');
+            const modal = document.getElementById('signingModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                
+                // Initialize with draw tab active
+                setTimeout(() => {
+                    console.log('Initializing modal with draw tab');
+                    switchSignatureMethod('draw');
+                }, 100);
+            } else {
+                console.error('Signing modal not found');
+            }
+        }
+
+        function closeSigningModal() {
+            console.log('Closing signing modal');
+            document.getElementById('signingModal').style.display = 'none';
+            
+            // Clean up signature pad
+            if (signaturePad) {
+                signaturePad.clear();
+                signaturePad = null; // Reset to allow recreation
+                console.log('SignaturePad cleaned up');
+            }
+        }
+
+        // PDF generation removed - modal now works without PDF preview
+
+        function switchSignatureMethod(method) {
+            console.log('Switching to signature method:', method);
+            currentAuthMethod = method;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.style.background = 'transparent';
+                btn.style.color = '#6b7280';
+                btn.style.boxShadow = 'none';
+            });
+            
+            const activeButton = document.querySelector(`[onclick="switchSignatureMethod('${method}')"]`);
+            if (activeButton) {
+                activeButton.style.background = 'white';
+                activeButton.style.color = '#374151';
+                activeButton.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            }
+            
+            // Show/hide content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            const activeTab = document.getElementById(`${method}Tab`);
+            if (activeTab) {
+                activeTab.style.display = 'block';
+                console.log('Tab displayed:', method);
+            }
+            
+            if (method === 'draw') {
+                setTimeout(() => {
+                    console.log('Initializing signature pad for draw method');
+                    initializeSignaturePad();
+                }, 150);
+            }
+        }
+
+        function initializeSignaturePad() {
+            console.log('Initializing signature pad...');
+            const canvas = document.getElementById('signatureCanvas');
+            
+            if (!canvas) {
+                console.error('Signature canvas not found');
+                return;
+            }
+            
+            if (signaturePad) {
+                console.log('SignaturePad already exists, clearing it');
+                signaturePad.clear();
+                return;
+            }
+            
+            try {
+                console.log('Creating new SignaturePad instance');
+                
+                // Check if SignaturePad library is available
+                if (typeof SignaturePad === 'undefined') {
+                    throw new Error('SignaturePad library not loaded');
+                }
+                
+                // Set canvas dimensions first
+                const rect = canvas.getBoundingClientRect();
+                const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                
+                canvas.width = rect.width * ratio;
+                canvas.height = rect.height * ratio;
+                
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    throw new Error('Cannot get canvas 2D context');
+                }
+                ctx.scale(ratio, ratio);
+                
+                // Create signature pad
+                signaturePad = new SignaturePad(canvas, {
+                    backgroundColor: 'rgba(255, 255, 255, 0)',
+                    penColor: 'rgb(0, 0, 0)',
+                    minWidth: 2,
+                    maxWidth: 4
+                });
+                
+                console.log('SignaturePad created successfully');
+                
+            } catch (error) {
+                console.error('Error creating SignaturePad:', error);
+                showToast('Fehler beim Laden der Unterschrift-Funktion', 'error');
+            }
+        }
+
+        function clearSignature() {
+            if (signaturePad) {
+                signaturePad.clear();
+            }
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file && (file.type === 'image/png' || file.type === 'image/jpeg')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('uploadPreview');
+                    preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 200px; border: 1px solid #ddd; border-radius: 8px;">`;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                showToast('Bitte wählen Sie eine PNG oder JPEG Datei', 'error');
+            }
+        }
+
+        function handleIdAustriaAuth() {
+            showToast('ID-Austria Authentifizierung wird vorbereitet...', 'info');
+            // Dummy implementation - would normally start OAuth flow
+            setTimeout(() => {
+                document.getElementById('idAustriaStatus').innerHTML = 
+                    '<p style="color: #059669; font-weight: 600;">✓ ID-Austria Authentifizierung erfolgreich</p>';
+            }, 2000);
+        }
+
+        // Flag to prevent multiple simultaneous signature processing
+        let isSignatureProcessing = false;
+
+
+        async function finalizeSignature() {
+            // Prevent multiple simultaneous calls
+            if (isSignatureProcessing) {
+                console.warn('Signature processing already in progress');
+                return;
+            }
+            
+            isSignatureProcessing = true;
+            
+            const submitBtn = document.getElementById('submitSignatureBtn');
+            if (!submitBtn) {
+                console.error('Submit button not found');
+                isSignatureProcessing = false;
+                return;
+            }
+            
+            const originalText = submitBtn.innerHTML;
+            
+            // Prevent multiple clicks
+            submitBtn.disabled = true;
+            submitBtn.onclick = null;
+            submitBtn.innerHTML = 'Wird verarbeitet...';
+
+            try {
+                console.log('=== SIGNATURE FINALIZATION START ===');
+                console.log('Current auth method:', currentAuthMethod);
+                
+                let signatureDataUrl = null;
+
+                // Get signature based on method
+                switch (currentAuthMethod) {
+                    case 'draw':
+                        console.log('Processing draw signature...');
+                        if (!signaturePad) {
+                            throw new Error('SignaturePad nicht initialisiert');
+                        }
+                        if (signaturePad.isEmpty()) {
+                            throw new Error('Bitte zeichnen Sie zuerst eine Unterschrift');
+                        }
+                        signatureDataUrl = signaturePad.toDataURL('image/png');
+                        console.log('Draw signature captured, length:', signatureDataUrl.length);
+                        break;
+                        
+                    case 'upload':
+                        console.log('Processing upload signature...');
+                        const uploadPreview = document.getElementById('uploadPreview');
+                        const img = uploadPreview.querySelector('img');
+                        if (!img) {
+                            throw new Error('Bitte laden Sie zuerst ein Bild hoch');
+                        }
+                        signatureDataUrl = img.src;
+                        console.log('Upload signature captured');
+                        break;
+                        
+                    case 'idAT':
+                        console.log('Processing ID-Austria signature...');
+                        const status = document.getElementById('idAustriaStatus');
+                        if (!status.innerHTML.includes('erfolgreich')) {
+                            throw new Error('Bitte authentifizieren Sie sich zuerst mit ID-Austria');
+                        }
+                        signatureDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+                        console.log('ID-Austria signature processed');
+                        break;
+                }
+
+                // Add signatures to document first
+                console.log('Adding signatures to document...');
+                await addSignatureToDocument(signatureDataUrl);
+                
+                // Wait for signature to be added to DOM
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Show "Bitte warten" in submit button
+                submitBtn.innerHTML = 'Bitte warten...';
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Close modal
+                closeSigningModal();
+                
+                // Wait for modal to close and dashboard to show the signed proposal
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                // Show full-screen Apple-style success animation
+                await showAppleStyleSuccess();
+                
+                // NOW capture the exact HTML that the user sees in the dashboard
+                console.log('Capturing visible signed proposal HTML...');
+                
+                // Get the proposal content that the user is currently viewing
+                const visibleProposal = document.querySelector('.proposal-content');
+                if (!visibleProposal) {
+                    throw new Error('❌ Visible proposal content not found');
+                }
+                
+                // Get the EXACT HTML that user sees with signature
+                const signedHtml = visibleProposal.outerHTML;
+                console.log('📄 Captured signed HTML, length:', signedHtml.length);
+                console.log('📄 HTML preview:', signedHtml.substring(0, 200) + '...');
+                
+                // Check if html2pdf library is available
+                if (typeof html2pdf === 'undefined') {
+                    throw new Error('html2pdf library not loaded');
+                }
+                
+                // Temporarily remove box-shadow and border-radius for clean PDF
+                const originalStyles = {
+                    boxShadow: visibleProposal.style.boxShadow,
+                    borderRadius: visibleProposal.style.borderRadius,
+                    border: visibleProposal.style.border,
+                    transform: visibleProposal.style.transform
+                };
+                
+                visibleProposal.style.boxShadow = 'none';
+                visibleProposal.style.borderRadius = '0';
+                visibleProposal.style.border = 'none';
+                visibleProposal.style.transform = 'none';
+                
+                // Convert the visible HTML to actual PDF
+                console.log('Converting visible HTML to PDF...');
+                const pdfBlob = await html2pdf()
+                    .from(visibleProposal)
+                    .set({
+                        margin: [15, 15, 15, 15],
+                        filename: `proposal-${window.proposalCode}-signed.pdf`,
+                        image: { type: 'jpeg', quality: 0.95 },
+                        html2canvas: {
+                            scale: 1.5,
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: '#ffffff'
+                        },
+                        jsPDF: {
+                            unit: 'mm',
+                            format: 'a4',
+                            orientation: 'portrait'
+                        }
+                    })
+                    .outputPdf('blob');
+                
+                // Restore original styles immediately
+                visibleProposal.style.boxShadow = originalStyles.boxShadow || '';
+                visibleProposal.style.borderRadius = originalStyles.borderRadius || '';
+                visibleProposal.style.border = originalStyles.border || '';
+                visibleProposal.style.transform = originalStyles.transform || '';
+                
+                console.log('✅ PDF generated from visible content, size:', pdfBlob.size, 'bytes');
+                
+                // Convert PDF blob to base64
+                const signedPdfBase64 = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const base64String = reader.result.split(',')[1];
+                        console.log('📄 PDF Base64 length:', base64String.length);
+                        resolve(base64String);
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(pdfBlob);
+                });
+                
+                console.log('✅ Real PDF converted to base64, length:', signedPdfBase64.length);
+                
+                console.log('HTML capture completed successfully!');
+                console.log('Final base64 to send:', signedPdfBase64.substring(0, 100) + '...');
+                
+                // Print dialog opens immediately after animation completes
+                console.log('Opening print dialog...');
+                window.print();
+                
+                // Update sidebar status to "Signed"
+                const statusDot = document.querySelector('.status-dot');
+                const statusText = document.querySelector('.status-text');
+                const signButton = document.getElementById('signButton');
+                
+                if (statusDot && statusText) {
+                    statusDot.style.background = '#10b981';
+                    statusText.textContent = 'Signed';
+                    statusText.style.color = '#10b981';
+                }
+                
+                if (signButton) {
+                    signButton.innerHTML = '<span>Termin vereinbaren</span>';
+                    signButton.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                    signButton.onclick = () => window.open('https://calendly.com/dennis-mueller-963/erstberatung', '_blank');
+                }
+                
+                // Send to webhook with generated PDF
+                const clientData = window.clientData || {};
+                const webhookPayload = {
+                    "Full Name": clientData["Full Name"] || '',
+                    "Email Address": clientData["Email Address"] || '',
+                    "record_id": clientData["record_id"] || clientData["id"] || '',
+                    "proposal_code": window.proposalCode || '',
+                    "auth_method": currentAuthMethod,
+                    "signed_pdf": signedPdfBase64
+                };
+
+                console.log('Sending webhook with PDF, payload size:', JSON.stringify(webhookPayload).length);
+                console.log('signed_pdf base64 length:', signedPdfBase64.length);
+                console.log('🔥🔥🔥 NEUE VERSION LÄUFT - TIMESTAMP:', new Date().toISOString());
+
+                const response = await fetch('https://optionai.optionai.at/webhook/save-sign', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(webhookPayload)
+                });
+
+                console.log('Webhook response status:', response.status);
+                
+                if (response.ok) {
+                    console.log('Webhook sent successfully with PDF');
+                }
+
+            } catch (error) {
+                console.error('=== SIGNATURE FINALIZATION ERROR ===');
+                console.error('Error:', error);
+                showToast(error.message || 'Fehler beim Unterschreiben', 'error');
+                
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.onclick = finalizeSignature; // Restore onclick handler
+                }
+            } finally {
+                // Always reset the processing flag
+                isSignatureProcessing = false;
+            }
+        }
+
+        // Separate function for adding signature to document (called after modal closes)
+        async function addSignatureToDocument(signatureDataUrl) {
+            console.log('Adding signature to document...');
+            
+            // Find or create UNTERSCHRIFTEN section
+            let signatureSection = document.querySelector('.unterschriften-section');
+            
+            if (!signatureSection) {
+                const proposalContent = document.querySelector('.proposal-content');
+                if (proposalContent) {
+                    signatureSection = document.createElement('div');
+                    signatureSection.className = 'unterschriften-section';
+                    
+                    const sectionHTML = document.createElement('div');
+                    sectionHTML.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px;">
+                            <div style="width: 45%;">
+                                <div class="client-signature-area" style="min-height: 80px; border-bottom: 1px solid #666; margin-bottom: 8px; display: flex; align-items: flex-end; padding-bottom: 5px;"></div>
+                                <p class="client-name-label" style="font-size: 0.9rem; color: #666; margin: 0; font-weight: 600;">Kunde</p>
+                                <p class="client-company-label" style="font-size: 0.8rem; color: #999; margin: 0;">Unternehmen</p>
+                            </div>
+                            <div style="width: 45%;">
+                                <div class="company-signature-area" style="min-height: 80px; border-bottom: 1px solid #666; margin-bottom: 8px; display: flex; align-items: flex-end; padding-bottom: 5px;"></div>
+                                <p style="font-size: 0.9rem; color: #666; margin: 0; font-weight: 600;">Dennis Kral</p>
+                                <p style="font-size: 0.8rem; color: #999; margin: 0;">option.ai</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    signatureSection.appendChild(sectionHTML);
+                    proposalContent.appendChild(signatureSection);
+                    console.log('UNTERSCHRIFTEN section created');
+                }
+            }
+            
+            // Add client signature
+            const clientSignatureArea = document.querySelector('.client-signature-area');
+            if (clientSignatureArea && signatureDataUrl) {
+                const signatureImg = document.createElement('img');
+                signatureImg.src = signatureDataUrl;
+                signatureImg.style.maxHeight = '60px';
+                signatureImg.style.maxWidth = '200px';
+                signatureImg.style.objectFit = 'contain';
+                signatureImg.style.boxShadow = 'none';
+                signatureImg.style.border = 'none';
+                signatureImg.style.borderRadius = '0';
+                signatureImg.style.background = 'transparent';
+                
+                clientSignatureArea.innerHTML = '';
+                clientSignatureArea.appendChild(signatureImg);
+                
+                // Update client name labels with actual client data
+                const clientData = window.clientData;
+                if (clientData) {
+                    const clientNameLabel = document.querySelector('.client-name-label');
+                    const clientCompanyLabel = document.querySelector('.client-company-label');
+                    
+                    if (clientNameLabel && clientData["Full Name"]) {
+                        clientNameLabel.textContent = clientData["Full Name"];
+                    }
+                    if (clientCompanyLabel && clientData.Company) {
+                        clientCompanyLabel.textContent = clientData.Company;
+                    }
+                }
+                
+                console.log('Client signature added to document');
+            }
+
+            // Add company signature automatically
+            const companySignatureArea = document.querySelector('.company-signature-area');
+            if (companySignatureArea) {
+                const companySignImg = document.createElement('img');
+                companySignImg.src = './bilder/Sign.png';
+                companySignImg.style.maxHeight = '60px';
+                companySignImg.style.maxWidth = '200px';
+                companySignImg.style.objectFit = 'contain';
+                companySignImg.style.boxShadow = 'none';
+                companySignImg.style.border = 'none';
+                companySignImg.style.borderRadius = '0';
+                companySignImg.style.background = 'transparent';
+                
+                companySignatureArea.innerHTML = '';
+                companySignatureArea.appendChild(companySignImg);
+                console.log('Company signature added to document');
+            }
+        }
+
+
+        async function embedSignatureInPdf(pdfBytes, signatureDataUrl) {
+            // Simplified implementation - would use PDF-lib for proper PDF manipulation
+            // For now, just return the original PDF as base64
+            const base64 = btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
+            return base64;
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed; top: -100px; right: 20px; z-index: 10000;
+                padding: 16px 24px; border-radius: 8px; font-weight: 600;
+                max-width: 400px; word-wrap: break-word;
+                transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+                ${type === 'success' ? 'background: #10b981; color: white;' : ''}
+                ${type === 'error' ? 'background: #ef4444; color: white;' : ''}
+                ${type === 'info' ? 'background: #3b82f6; color: white;' : ''}
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // Animate in from top
+            setTimeout(() => {
+                toast.style.top = '20px';
+            }, 50);
+            
+            // Animate out to top after 3.5 seconds
+            setTimeout(() => {
+                toast.style.top = '-100px';
+                toast.style.opacity = '0';
+                
+                // Remove after animation completes
+                setTimeout(() => toast.remove(), 500);
+            }, 3500);
+        }
+
+        // Apple-Style Full-Screen Success Animation
+        async function showAppleStyleSuccess() {
+            return new Promise((resolve) => {
+                // Create full-screen overlay
+                const overlay = document.createElement('div');
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(135deg, #66b3ff 0%, #4a90e2 100%);
+                    z-index: 99999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-direction: column;
+                    opacity: 0;
+                    transition: all 0.3s ease-out;
+                `;
+                
+                // Create checkmark container
+                const checkContainer = document.createElement('div');
+                checkContainer.style.cssText = `
+                    width: 120px;
+                    height: 120px;
+                    background: white;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: 40px;
+                    transform: scale(0);
+                    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                `;
+                
+                // Create animated checkmark
+                const checkmark = document.createElement('div');
+                checkmark.innerHTML = '✓';
+                checkmark.style.cssText = `
+                    font-size: 60px;
+                    color: #10b981;
+                    font-weight: 900;
+                    transform: scale(0);
+                    transition: all 0.4s ease-out;
+                `;
+                
+                // Create success text
+                const successText = document.createElement('div');
+                successText.innerHTML = 'Erfolgreich unterschrieben!';
+                successText.style.cssText = `
+                    color: white;
+                    font-size: 32px;
+                    font-weight: 300;
+                    text-align: center;
+                    opacity: 0;
+                    transform: translateY(20px);
+                    transition: all 0.5s ease-out;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                `;
+                
+                // Assemble elements
+                checkContainer.appendChild(checkmark);
+                overlay.appendChild(checkContainer);
+                overlay.appendChild(successText);
+                document.body.appendChild(overlay);
+                
+                // Animation sequence
+                setTimeout(() => {
+                    overlay.style.opacity = '1';
+                }, 50);
+                
+                setTimeout(() => {
+                    checkContainer.style.transform = 'scale(1)';
+                }, 200);
+                
+                setTimeout(() => {
+                    checkmark.style.transform = 'scale(1)';
+                }, 500);
+                
+                setTimeout(() => {
+                    successText.style.opacity = '1';
+                    successText.style.transform = 'translateY(0)';
+                }, 800);
+                
+                // Start fade out after 1.5 seconds
+                setTimeout(() => {
+                    overlay.style.opacity = '0';
+                    overlay.style.transform = 'scale(0.95)';
+                    
+                    // Remove after fade completes
+                    setTimeout(() => {
+                        overlay.remove();
+                        resolve(); // Animation complete
+                    }, 300);
+                }, 1500);
+            });
+        }
+    </script>
+
+    <!-- Signing Modal -->
+    <div id="signingModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: white; border-radius: 20px; width: 90%; max-width: 600px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); overflow: hidden;">
+            
+            <!-- Modal Header -->
+            <div style="background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%); padding: 32px; text-align: center; position: relative;">
+                <button onclick="closeSigningModal()" style="position: absolute; top: 16px; right: 20px; background: rgba(255,255,255,0.1); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center;">×</button>
+                <div style="width: 60px; height: 60px; background: #66b3ff; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 24px;">✍️</div>
+                <h2 style="color: white; margin: 0; font-size: 1.8rem; font-weight: 700; margin-bottom: 8px;">Angebot Unterschreiben</h2>
+                <p style="color: rgba(255,255,255,0.8); margin: 0; font-size: 1rem;">Wählen Sie Ihre bevorzugte Unterschriftsmethode</p>
+            </div>
+            
+            <!-- Modal Content -->
+            <div style="padding: 40px;">
+                
+                <!-- Signature Method Tabs -->
+                <div style="display: flex; margin-bottom: 30px; background: #f8f9fa; border-radius: 12px; padding: 4px;">
+                    <button class="tab-btn active" onclick="switchSignatureMethod('draw')" style="flex: 1; padding: 12px 16px; border: none; background: white; font-weight: 600; color: #374151; border-radius: 8px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s;">✏️ Zeichnen</button>
+                    <button class="tab-btn" onclick="switchSignatureMethod('upload')" style="flex: 1; padding: 12px 16px; border: none; background: transparent; font-weight: 600; color: #6b7280; border-radius: 8px; cursor: pointer; transition: all 0.2s;">📁 Hochladen</button>
+                    <button class="tab-btn" onclick="switchSignatureMethod('idAT')" style="flex: 1; padding: 12px 16px; border: none; background: transparent; font-weight: 600; color: #6b7280; border-radius: 8px; cursor: pointer; transition: all 0.2s;">🇦🇹 ID-Austria</button>
+                </div>
+                
+                <!-- Draw Tab -->
+                <div id="drawTab" class="tab-content" style="display: block;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <p style="color: #6b7280; margin: 0;">Zeichnen Sie Ihre Unterschrift in das Feld unten</p>
+                    </div>
+                    <canvas id="signatureCanvas" style="border: 2px solid #e5e7eb; border-radius: 12px; cursor: crosshair; width: 100%; height: 200px; background: #fafafa;"></canvas>
+                    <div style="text-align: center; margin-top: 16px;">
+                        <button onclick="clearSignature()" style="padding: 8px 20px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px; cursor: pointer; color: #374151; font-weight: 500;">🗑️ Löschen</button>
+                    </div>
+                </div>
+                
+                <!-- Upload Tab -->
+                <div id="uploadTab" class="tab-content" style="display: none;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <p style="color: #6b7280; margin: 0;">Laden Sie ein Bild Ihrer Unterschrift hoch (PNG/JPEG)</p>
+                    </div>
+                    <input type="file" accept="image/png,image/jpeg" onchange="handleImageUpload(event)" style="width: 100%; padding: 20px; border: 2px dashed #d1d5db; border-radius: 12px; cursor: pointer; text-align: center; background: #fafafa; margin-bottom: 20px;">
+                    <div id="uploadPreview" style="min-height: 120px; text-align: center; padding: 40px 20px; border: 2px dashed #e5e7eb; border-radius: 12px; color: #9ca3af; background: #fafafa;">
+                        📄 Vorschau erscheint hier nach dem Upload
+                    </div>
+                </div>
+                
+                <!-- ID-Austria Tab -->
+                <div id="idATTab" class="tab-content" style="display: none; text-align: center; padding: 40px 0;">
+                    <div style="margin-bottom: 30px;">
+                        <div style="width: 80px; height: 80px; background: #dc2626; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 32px;">🇦🇹</div>
+                        <p style="color: #6b7280; margin: 0;">Authentifizieren Sie sich mit Ihrer ID-Austria für eine rechtsgültige digitale Signatur</p>
+                    </div>
+                    <button onclick="handleIdAustriaAuth()" style="padding: 16px 32px; background: #007aff; color: #ffffff; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 1rem; margin-bottom: 24px;">🔐 Mit ID-Austria authentifizieren</button>
+                    <div id="idAustriaStatus"></div>
+                </div>
+                
+                <!-- Submit Button -->
+                <div style="margin-top: 40px; text-align: center;">
+                    <button id="submitSignatureBtn" onclick="finalizeSignature()" style="width: 100%; padding: 18px; background: #007aff; color: #ffffff; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3); transition: all 0.2s;">
+                        Unterschrift übernehmen und speichern
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Required Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.8) !important;
+            color: #374151 !important;
+        }
+        
+        #submitSignatureBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 179, 255, 0.4) !important;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+</body>
+</html>

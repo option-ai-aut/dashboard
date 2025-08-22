@@ -370,10 +370,10 @@
                 sessionStorage.setItem('proposalCode', proposalCode);
                 sessionStorage.setItem('clientData', JSON.stringify(data));
                 
-                console.log('Stored data, redirecting to signature.html');
+                console.log('Stored data, redirecting to proposal.html');
                 
-                // Redirect to signature page
-                window.location.href = '/signature.html';
+                // Redirect to proposal page
+                window.location.href = '/proposal.html';
                 
             } catch (error) {
                 console.error('Fetch error:', error);

@@ -15,7 +15,7 @@ Backend = **n8n Webhooks + Airtable + Dual Auth-System** – steht bereits.
 | Zweck | URL | Methode | Body / Query | Auth | Verwendet von |
 |-------|-----|---------|--------------|------|---------------|
 | **Clients‑Liste** | `https://optionai.optionai.at/webhook/admin/load-clients` | GET | – | sessionStorage | admin/index.html |
-| **Einzel‑Client + Template** | `https://optionai.optionai.at/webhook/get-client` | GET | `?proposal_code=PROP‑…` | none | admin/client.html, index.html, signature.html |
+| **Einzel‑Client + Template** | `https://optionai.optionai.at/webhook/get-client` | GET | `?proposal_code=PROP‑…` | none | admin/client.html, index.html, proposal.html |
 | **Template speichern** | `https://optionai.optionai.at/webhook/admin/save-template` | POST | `{template_id, html}` | sessionStorage | admin/client.html |
 | **Proposal speichern** | `https://optionai.optionai.at/webhook/admin/save-proposal` | POST | `{proposal_code, custom_html?, status?}` | sessionStorage | admin/client.html |
 | **Signatur speichern** | `https://optionai.optionai.at/webhook/save-sign` | POST | `{Full Name, Email Address, record_id, proposal_code, auth_method, signed_pdf}` | none | index.html |
@@ -34,8 +34,8 @@ Backend = **n8n Webhooks + Airtable + Dual Auth-System** – steht bereits.
 
 | Datei | Zweck | Zeilen | Features |
 |-------|-------|--------|----------|
-| **/index.html** | Proposal-Code Eingabe & Weiterleitung | 410 | Code-Validation, Timeout-Handling, sessionStorage, Redirect zu signature.html |
-| **/signature.html** | **HAUPT-PROPOSAL-VIEWER** + Signatur-System | 2800+ | PDF-Gen, 3 Signatur-Methoden, Status-Gate, Sidebar mit Kunden-Info, Dynamischer Status |
+| **/index.html** | Proposal-Code Eingabe & Weiterleitung | 410 | Code-Validation, Timeout-Handling, sessionStorage, Redirect zu proposal.html |
+| **/proposal.html** | **HAUPT-PROPOSAL-VIEWER** + Signatur-System | 2800+ | PDF-Gen, 3 Signatur-Methoden, Status-Gate, Sidebar mit Kunden-Info, Dynamischer Status |
 | **/client-login.html** | Kunden-Login + Sign-Up | 717 | Apple Design, Modal Sign-Up, Pre-load client data |
 | **/dashboard/index.html** | **SPA Kunden-Dashboard (HAUPTDATEI)** | 3200+ | **Single Page Application**, Analytics + Proposals + Settings, Dark Apple Design, Navigation ohne Reload |
 | ~~**/dashboard/settings.html**~~ | ~~**Gelöscht**~~ | ~~870~~ | ~~**ENTFERNT** - Funktionalität komplett in SPA integriert~~ |
@@ -69,9 +69,9 @@ netlifyIdentity.currentUser().token.access_token
 ## UX‑Flows (Aktuell)
 
 ### 1. **Kunde (Öffentlich) - Neues 2-Seiten System**  
-   `index.html` → Code‑Eingabe → `get-client` API → sessionStorage → redirect zu `signature.html`  
+   `index.html` → Code‑Eingabe → `get-client` API → sessionStorage → redirect zu `proposal.html`  
    
-   **signature.html Workflow:**
+   **proposal.html Workflow:**
    - Lädt Daten aus sessionStorage (kein neuer API-Call)
    - `status = 'draft'` ⇒ "Proposal wird bearbeitet …"  
    - `status = 'approved/pending'` ⇒ Template‑HTML + Custom‑HTML rendern → **Signatur‑System**
@@ -179,8 +179,8 @@ netlifyIdentity.currentUser().token.access_token
 
 | Datei | Bibliothek | Version | Zweck |
 |-------|------------|---------|-------|
-| **signature.html** | `signature_pad` | 4.1.7 | Canvas-Signatur |
-| **signature.html** | `html2pdf.js` | 0.10.1 | PDF-Generierung |
+| **proposal.html** | `signature_pad` | 4.1.7 | Canvas-Signatur |
+| **proposal.html** | `html2pdf.js` | 0.10.1 | PDF-Generierung |
 | **admin/client.html** | `tinymce` | 5.10.7 | WYSIWYG HTML-Editor |
 | **login.html** | `netlify-identity-widget.js` | v1 | Netlify Auth (inaktiv) |
 
@@ -342,8 +342,8 @@ const statusMap = {
 - **Status-Values**: Nutze exakt `draft`/`pending`/`approved`/`signed`
 - **Signatur-PDF**: Komplettes PDF als Base64 an `save-sign` Webhook
 - **Error-Handling**: 30s Timeout + Status-Code-spezifische Meldungen (Updated August 2025)
-- **2-Seiten Proposal System**: index.html (Code-Eingabe) → signature.html (Proposal-Anzeige + Signatur)
-- **SessionStorage Flow**: Daten werden von index.html → signature.html über sessionStorage übertragen
+- **2-Seiten Proposal System**: index.html (Code-Eingabe) → proposal.html (Proposal-Anzeige + Signatur)
+- **SessionStorage Flow**: Daten werden von index.html → proposal.html über sessionStorage übertragen
 - **Korrekte API-Endpunkte**: `/webhook/get-client` für öffentlichen Zugriff, **nicht** `/webhook/admin/load-client`
 
 ---
@@ -355,7 +355,7 @@ const statusMap = {
 2. **Admin-Login**: `admin/login.html` → Passwort → sessionStorage → Dashboard
 3. **Client-Liste**: `admin/index.html` → `load-clients` → Tabelle rendern
 4. **Client-Edit**: `admin/client.html` → `load-client` → TinyMCE → `save-template`/`save-proposal`
-5. **Signatur-Flow**: `index.html` → Code-Eingabe → `signature.html` → Signieren → PDF-Gen → `save-sign`
+5. **Signatur-Flow**: `index.html` → Code-Eingabe → `proposal.html` → Signieren → PDF-Gen → `save-sign`
 
 ### Webhook-Parameter validieren:
 - Alle `proposal_code` als Query-Parameter URL-encoded
@@ -370,7 +370,7 @@ const statusMap = {
 ### **🔧 Kritische Fixes (August 12, 2025)**
 32. **API Endpunkt Korrektur** - Korrigiert von `/webhook/admin/load-client` zu `/webhook/get-client` für öffentlichen Zugriff
 33. **Timeout Erhöhung** - API-Timeout von 15s auf 30s erhöht für stabilere Verbindungen
-34. **2-Seiten Proposal System** - Aufgeteilte Architektur: index.html (Code-Eingabe) → signature.html (Proposal-Anzeige)
+34. **2-Seiten Proposal System** - Aufgeteilte Architektur: index.html (Code-Eingabe) → proposal.html (Proposal-Anzeige)
 35. **SessionStorage Data Flow** - Daten werden über sessionStorage zwischen Seiten übertragen, keine redundanten API-Calls
 36. **Sidebar Kunden-Info Wiederherstellung** - Rechtes Sidepanel zeigt wieder alle Kunden-Informationen (Name, Company, Adresse, etc.)
 37. **Logo System Korrigiert** - Farbiges Logo für Proposal-Content, weißes Logo für dunklen Header
