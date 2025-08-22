@@ -1746,12 +1746,20 @@
                     
                     // Create proposal header with logo and company name
                     const companyName = client?.Company || 'FF Office';
+                    
+                    // Calculate font size based on company name length
+                    let fontSize = '2rem';
+                    if (companyName.length > 30) fontSize = '1.2rem';
+                    else if (companyName.length > 25) fontSize = '1.4rem';
+                    else if (companyName.length > 20) fontSize = '1.6rem';
+                    else if (companyName.length > 15) fontSize = '1.8rem';
+                    
                     const proposalHeader = `
                         <div class="proposal-header">
                             <div class="proposal-logo">
                                 <img src="./bilder/option Logo Colour.png" alt="option.ai Logo" />
                             </div>
-                            <div class="proposal-company">${companyName}</div>
+                            <div class="proposal-company" style="font-size: ${fontSize};">${companyName}</div>
                         </div>
                     `;
                     
@@ -2094,12 +2102,20 @@
                         
                         // Create proposal header with logo and company name
                         const companyName = client?.Company || 'FF Office';
+                        
+                        // Calculate font size based on company name length
+                        let fontSize = '2rem';
+                        if (companyName.length > 30) fontSize = '1.2rem';
+                        else if (companyName.length > 25) fontSize = '1.4rem';
+                        else if (companyName.length > 20) fontSize = '1.6rem';
+                        else if (companyName.length > 15) fontSize = '1.8rem';
+                        
                         const proposalHeader = `
                             <div class="proposal-header">
                                 <div class="proposal-logo">
                                     <img src="./bilder/option Logo Colour.png" alt="option.ai Logo" />
                                 </div>
-                                <div class="proposal-company">${companyName}</div>
+                                <div class="proposal-company" style="font-size: ${fontSize};">${companyName}</div>
                             </div>
                         `;
                         
