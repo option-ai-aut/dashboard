@@ -2299,69 +2299,6 @@
         let signaturePad = null;
         let currentAuthMethod = 'draw';
         
-        // Create clean HTML without CSS for PDF generation
-        function createCleanHtmlForPdf(element) {
-            // Clone the element to avoid modifying the original
-            const clone = element.cloneNode(true);
-            
-            // Extract signature images before cleaning styles
-            const signatureImages = clone.querySelectorAll('.signature-image, .client-signature-area img');
-            const signatures = [];
-            signatureImages.forEach((img, index) => {
-                if (img.src) {
-                    signatures.push({
-                        src: img.src,
-                        alt: img.alt || `Unterschrift ${index + 1}`
-                    });
-                }
-            });
-            
-            // Remove all style attributes and classes
-            removeAllStyles(clone);
-            
-            // Convert to plain HTML with basic formatting
-            let cleanHtml = clone.innerHTML;
-            
-            // Replace complex elements with simple equivalents
-            cleanHtml = cleanHtml
-                .replace(/<div[^>]*>/g, '<div>')
-                .replace(/<span[^>]*>/g, '<span>')
-                .replace(/<p[^>]*>/g, '<p>')
-                .replace(/<h([1-6])[^>]*>/g, '<h$1>')
-                .replace(/style="[^"]*"/g, '')
-                .replace(/class="[^"]*"/g, '')
-                .replace(/id="[^"]*"/g, '');
-            
-            // Add signature section at the end if we found signatures
-            if (signatures.length > 0) {
-                const signatureHtml = signatures.map(sig => 
-                    `<div style="margin: 30px 0; padding: 20px 0; border-top: 1px solid #ccc;">
-                        <p><strong>Unterschrift:</strong></p>
-                        <img src="${sig.src}" alt="${sig.alt}" style="max-width: 200px; max-height: 100px; margin: 10px 0;">
-                    </div>`
-                ).join('');
-                cleanHtml += signatureHtml;
-            }
-            
-            // Wrap in basic HTML structure
-            return `
-                <div style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; color: #000000; max-width: 100%; padding: 20px;">
-                    ${cleanHtml}
-                </div>
-            `;
-        }
-        
-        function removeAllStyles(element) {
-            // Remove style and class attributes
-            element.removeAttribute('style');
-            element.removeAttribute('class');
-            element.removeAttribute('id');
-            
-            // Recursively clean child elements
-            for (let child of element.children) {
-                removeAllStyles(child);
-            }
-        }
 
         function openSigningModal() {
             console.log('Opening signing modal');
@@ -2609,25 +2546,45 @@
                     throw new Error('❌ Visible proposal content not found');
                 }
                 
-                // Create clean HTML version without CSS for PDF
-                const cleanHtml = createCleanHtmlForPdf(visibleProposal);
-                console.log('📄 Clean HTML created, length:', cleanHtml.length);
-                console.log('📄 HTML preview:', cleanHtml.substring(0, 200) + '...');
+                // Get Custom HTML from client data + add signature at the end
+                const clientData = window.clientData || {};
+                let customHtml = clientData["Custom HTML"] || '';
+                
+                // Add signature to a new page at the end
+                const signatureImg = document.querySelector('.signature-image, .client-signature-area img');
+                let signatureHtml = '';
+                if (signatureImg && signatureImg.src) {
+                    signatureHtml = `
+                        <div style="page-break-before: always; padding: 50px 0; text-align: center;">
+                            <h3 style="margin-bottom: 30px;">Unterschrift</h3>
+                            <img src="${signatureImg.src}" style="max-width: 300px; max-height: 150px; border: 1px solid #ccc;">
+                            <p style="margin-top: 20px;">
+                                <strong>${clientData["Full Name"] || 'Kunde'}</strong><br>
+                                ${clientData.Company || ''}
+                            </p>
+                        </div>
+                    `;
+                }
+                
+                // Combine Custom HTML + Signature
+                const finalHtml = `
+                    <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #000;">
+                        ${customHtml}
+                        ${signatureHtml}
+                    </div>
+                `;
+                
+                console.log('📄 Final PDF HTML length:', finalHtml.length);
+                console.log('📄 Has signature:', signatureHtml.length > 0);
                 
                 // Create temporary container for PDF generation
                 const pdfContainer = document.createElement('div');
-                pdfContainer.innerHTML = cleanHtml;
+                pdfContainer.innerHTML = finalHtml;
                 pdfContainer.style.position = 'absolute';
                 pdfContainer.style.left = '-9999px';
                 pdfContainer.style.top = '-9999px';
                 pdfContainer.style.backgroundColor = '#ffffff';
-                pdfContainer.style.color = '#000000';
-                pdfContainer.style.fontFamily = 'Arial, sans-serif';
-                pdfContainer.style.fontSize = '12px';
-                pdfContainer.style.lineHeight = '1.4';
-                pdfContainer.style.width = '170mm'; // A4 width minus margins
-                pdfContainer.style.padding = '0';
-                pdfContainer.style.margin = '0';
+                pdfContainer.style.width = '210mm';
                 document.body.appendChild(pdfContainer);
                 
                 // Check if html2pdf library is available
@@ -2635,29 +2592,25 @@
                     throw new Error('html2pdf library not loaded');
                 }
                 
-                // Convert clean HTML to PDF with optimized settings
-                console.log('Converting clean HTML to PDF...');
+                // Convert to PDF
+                console.log('Converting Custom HTML + Signature to PDF...');
                 const pdfBlob = await html2pdf()
                     .from(pdfContainer)
                     .set({
-                        margin: [15, 15, 15, 15], // Smaller margins
+                        margin: [20, 20, 20, 20],
                         filename: `proposal-${window.proposalCode}-signed.pdf`,
-                        image: { type: 'jpeg', quality: 0.95 },
+                        image: { type: 'jpeg', quality: 0.98 },
                         html2canvas: {
-                            scale: 1.2, // Better resolution
+                            scale: 1.2,
                             useCORS: true,
                             allowTaint: true,
-                            backgroundColor: '#ffffff',
-                            logging: false,
-                            letterRendering: true
+                            backgroundColor: '#ffffff'
                         },
                         jsPDF: {
                             unit: 'mm',
                             format: 'a4',
-                            orientation: 'portrait',
-                            compress: false
-                        },
-                        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                            orientation: 'portrait'
+                        }
                     })
                     .outputPdf('blob');
                 
