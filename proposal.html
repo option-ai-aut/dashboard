@@ -2546,17 +2546,72 @@
                     throw new Error('❌ Visible proposal content not found');
                 }
                 
-                // Get Custom HTML from client data (send as-is without PDF generation)
-                const clientData = window.clientData || {};
-                const customHtml = clientData["Custom HTML"] || '';
+                // Get the EXACT HTML that user sees with signature
+                const signedHtml = visibleProposal.outerHTML;
+                console.log('📄 Captured signed HTML, length:', signedHtml.length);
+                console.log('📄 HTML preview:', signedHtml.substring(0, 200) + '...');
                 
-                console.log('📄 Sending Custom HTML directly, length:', customHtml.length);
-                console.log('📄 Custom HTML preview:', customHtml.substring(0, 500) + '...');
+                // Check if html2pdf library is available
+                if (typeof html2pdf === 'undefined') {
+                    throw new Error('html2pdf library not loaded');
+                }
                 
-                // Skip PDF generation - send Custom HTML as base64 string instead
-                const signedPdfBase64 = btoa(unescape(encodeURIComponent(customHtml)));
+                // Temporarily remove box-shadow and border-radius for clean PDF
+                const originalStyles = {
+                    boxShadow: visibleProposal.style.boxShadow,
+                    borderRadius: visibleProposal.style.borderRadius,
+                    border: visibleProposal.style.border,
+                    transform: visibleProposal.style.transform
+                };
                 
-                console.log('✅ Custom HTML encoded to base64, length:', signedPdfBase64.length);
+                visibleProposal.style.boxShadow = 'none';
+                visibleProposal.style.borderRadius = '0';
+                visibleProposal.style.border = 'none';
+                visibleProposal.style.transform = 'none';
+                
+                // Convert the visible HTML to actual PDF
+                console.log('Converting visible HTML to PDF...');
+                const pdfBlob = await html2pdf()
+                    .from(visibleProposal)
+                    .set({
+                        margin: [15, 15, 15, 15],
+                        filename: `proposal-${window.proposalCode}-signed.pdf`,
+                        image: { type: 'jpeg', quality: 0.95 },
+                        html2canvas: {
+                            scale: 1.5,
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: '#ffffff'
+                        },
+                        jsPDF: {
+                            unit: 'mm',
+                            format: 'a4',
+                            orientation: 'portrait'
+                        }
+                    })
+                    .outputPdf('blob');
+                
+                // Restore original styles immediately
+                visibleProposal.style.boxShadow = originalStyles.boxShadow || '';
+                visibleProposal.style.borderRadius = originalStyles.borderRadius || '';
+                visibleProposal.style.border = originalStyles.border || '';
+                visibleProposal.style.transform = originalStyles.transform || '';
+                
+                console.log('✅ PDF generated from visible content, size:', pdfBlob.size, 'bytes');
+                
+                // Convert PDF blob to base64
+                const signedPdfBase64 = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const base64String = reader.result.split(',')[1];
+                        console.log('📄 PDF Base64 length:', base64String.length);
+                        resolve(base64String);
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(pdfBlob);
+                });
+                
+                console.log('✅ Real PDF converted to base64, length:', signedPdfBase64.length);
                 console.log('Final base64 to send:', signedPdfBase64.substring(0, 100) + '...');
                 
                 // Print dialog opens immediately after animation completes
