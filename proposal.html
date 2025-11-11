@@ -1792,8 +1792,8 @@
                     if (sidebarCountry) sidebarCountry.textContent = client.Country || '';
 
                     // Erstelldatum (ISO‑String → deutsches Datum)
-                    if (client.createdTime && createdDate){
-                        const d = new Date(client.createdTime);
+                    if (client.created && createdDate){
+                        const d = new Date(client.created);
                         createdDate.textContent = d.toLocaleDateString('de-DE');
                     }
                     
@@ -2059,8 +2059,8 @@
                         if (sidebarCountry) sidebarCountry.textContent = c.Country || '';
 
                         // Erstelldatum (ISO‑String → deutsches Datum)
-                        if (c.createdTime && createdDate){
-                            const d = new Date(c.createdTime);
+                        if (c.created && createdDate){
+                            const d = new Date(c.created);
                             createdDate.textContent = d.toLocaleDateString('de-DE');
                         }
                         
