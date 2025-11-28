@@ -2789,7 +2789,8 @@ ${rawHtmlWithBase64Images}
                     signatureSection = document.createElement('div');
                     signatureSection.className = 'unterschriften-section';
                     
-                    const sectionHTML = document.createElement('div');
+                    const today = new Date().toLocaleDateString('de-DE');
+                    
                     sectionHTML.innerHTML = `
                         <h2 style="font-size: 1.5rem; font-weight: bold; color: #000; margin-bottom: 2rem; font-family: Helvetica, Arial, sans-serif;">UNTERSCHRIFTEN</h2>
                         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px;">
@@ -2797,11 +2798,13 @@ ${rawHtmlWithBase64Images}
                                 <div class="client-signature-area" style="min-height: 80px; border-bottom: 1px solid #666; margin-bottom: 8px; display: flex; align-items: flex-end; padding-bottom: 5px;"></div>
                                 <p class="client-name-label" style="font-size: 0.9rem; color: #666; margin: 0; font-weight: 600;">Kunde</p>
                                 <p class="client-company-label" style="font-size: 0.8rem; color: #999; margin: 0;">Unternehmen</p>
+                                <p style="font-size: 0.8rem; color: #999; margin-top: 4px;">Datum: ${today}</p>
                             </div>
                             <div style="width: 45%;">
                                 <div class="company-signature-area" style="min-height: 80px; border-bottom: 1px solid #666; margin-bottom: 8px; display: flex; align-items: flex-end; padding-bottom: 5px;"></div>
                                 <p style="font-size: 0.9rem; color: #666; margin: 0; font-weight: 600;">Dennis Kral</p>
                                 <p style="font-size: 0.8rem; color: #999; margin: 0;">option.ai</p>
+                                <p style="font-size: 0.8rem; color: #999; margin-top: 4px;">Datum: ${today}</p>
                             </div>
                         </div>
                     `;
